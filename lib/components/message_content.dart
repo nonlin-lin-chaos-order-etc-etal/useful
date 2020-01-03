@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_html/style.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
+import 'package:linkify/linkify.dart';
 import 'package:universal_html/prefer_universal/html.dart' as html;
 import 'package:url_launcher/url_launcher.dart';
 
@@ -98,8 +99,21 @@ class MessageContent extends StatelessWidget {
           );
           style.whiteSpace = WhiteSpace.PRE;
 
+          String text = event.formattedText;
+          final linkify_result = linkify(text);
+
+          for (var element in linkify_result) {
+            if (element is LinkableElement) {
+              if (element.url.contains("https://matrix.to/#/@") || element.url.contains("https://matrix.to/#/!")) {
+                continue;
+              }
+              text = text.replaceAll(element.url, "<a href=\"${element.url}\">${element.text}</a>");
+            }
+          }
+
+
           return Html(
-            data: senderPrefix + event.formattedText,
+            data: senderPrefix + text,
             onLinkTap: (link) =>
                 kIsWeb ? html.window.open(link, "new") : launch(link),
             shrinkWrap: true,

@@ -43,6 +43,7 @@ dependencies:
   # Rich Text message rendering
   flutter_html: ^1.0.0-pre.1
   flutter_linkify: ^3.0.0
+  linkify: ^2.0.2
   universal_html: ^1.1.4
 
 dev_dependencies:
