@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_html/style.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
+import 'package:universal_html/prefer_universal/html.dart' as html;
 import 'package:url_launcher/url_launcher.dart';
 
 import 'matrix.dart';
@@ -99,6 +100,8 @@ class MessageContent extends StatelessWidget {
 
           return Html(
             data: senderPrefix + event.formattedText,
+            onLinkTap: (link) =>
+                kIsWeb ? html.window.open(link, "new") : launch(link),
             shrinkWrap: true,
             style: {
               "html": style,
@@ -122,13 +125,8 @@ class MessageContent extends StatelessWidget {
         return Linkify(
           maxLines: maxLines,
           overflow: textOnly ? TextOverflow.ellipsis : TextOverflow.visible,
-          onOpen: (link) async {
-            if (await canLaunch(link.url)) {
-              await launch(link.url);
-            } else {
-              throw 'Could not launch $link';
-            }
-          },
+          onOpen: (link) =>
+              kIsWeb ? html.window.open(link.url, "new") : launch(link.url),
           text: senderPrefix + event.getBody(),
           style: TextStyle(
             color: textColor,
