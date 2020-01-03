@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_html/style.dart';
+import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'matrix.dart';
@@ -87,7 +88,7 @@ class MessageContent extends StatelessWidget {
                     ? "You: "
                     : "${event.sender.calcDisplayname()}: "
                 : "";
-        if (event.formattedText.isNotEmpty) {
+        if (event.formattedText.isNotEmpty && !event.redacted) {
           final style = Style.fromTextStyle(
             TextStyle(
               color: textColor,
@@ -105,10 +106,30 @@ class MessageContent extends StatelessWidget {
             },
           );
         }
-        return Text(
-          senderPrefix + event.getBody(),
+
+        if (this.textOnly) {
+          return Text(
+            senderPrefix + event.getBody(),
+            maxLines: maxLines,
+            overflow: textOnly ? TextOverflow.ellipsis : TextOverflow.visible,
+            style: TextStyle(
+              color: textColor,
+              decoration: event.redacted ? TextDecoration.lineThrough : null,
+            ),
+          );
+        }
+
+        return Linkify(
           maxLines: maxLines,
-          overflow: textOnly ? TextOverflow.ellipsis : null,
+          overflow: textOnly ? TextOverflow.ellipsis : TextOverflow.visible,
+          onOpen: (link) async {
+            if (await canLaunch(link.url)) {
+              await launch(link.url);
+            } else {
+              throw 'Could not launch $link';
+            }
+          },
+          text: senderPrefix + event.getBody(),
           style: TextStyle(
             color: textColor,
             decoration: event.redacted ? TextDecoration.lineThrough : null,
