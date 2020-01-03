@@ -56,26 +56,52 @@ class Message extends StatelessWidget {
       );
     }
 
+    var _tapPosition;
+
+    void _storePosition(TapDownDetails details) {
+      _tapPosition = details.globalPosition;
+    }
+
+    void _showPopupMenu() {
+      final RenderBox overlay = Overlay.of(context).context.findRenderObject();
+      showMenu(
+        context: context,
+        position: RelativeRect.fromRect(
+            _tapPosition & Size(40, 40), // smaller rect, the touch area
+            Offset.zero & overlay.size   // Bigger rect, the entire screen
+        ),
+        items: popupMenuList,
+        //elevation: 8.0,
+      ).then<void>((String choice) async {
+        // choice would be null if user taps on outside the popup menu
+        // (causing it to close without making selection)
+        if (choice == null) return;
+
+        switch (choice) {
+          case "remove":
+            await showDialog(
+              context: context,
+              builder: (BuildContext context) => RedactMessageDialog(event),
+            );
+            break;
+          case "resend":
+            await event.sendAgain();
+            break;
+          case "delete":
+            await event.remove();
+            break;
+        }
+      });
+    }
+
     List<Widget> rowChildren = [
       Expanded(
-        child: PopupMenuButton(
-          onSelected: (String choice) async {
-            switch (choice) {
-              case "remove":
-                await showDialog(
-                  context: context,
-                  builder: (BuildContext context) => RedactMessageDialog(event),
-                );
-                break;
-              case "resend":
-                await event.sendAgain();
-                break;
-              case "delete":
-                await event.remove();
-                break;
-            }
-          },
-          itemBuilder: (BuildContext context) => popupMenuList,
+        child: GestureDetector(
+          // This does not give the tap position ...
+          onTap: _showPopupMenu,
+
+          // Have to remember it on tap-down.
+          onTapDown: _storePosition,
           child: Opacity(
             opacity: event.status == 0 ? 0.5 : 1,
             child: Bubble(
