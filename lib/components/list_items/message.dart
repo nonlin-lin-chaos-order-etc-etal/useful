@@ -4,6 +4,7 @@ import 'package:fluffychat/components/dialogs/redact_message_dialog.dart';
 import 'package:fluffychat/components/message_content.dart';
 import 'package:fluffychat/utils/chat_time.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../avatar.dart';
 import '../matrix.dart';
@@ -33,6 +34,14 @@ class Message extends StatelessWidget {
           : Theme.of(context).primaryColor;
     }
     List<PopupMenuEntry<String>> popupMenuList = [];
+    if (!event.redacted && (event.type == EventTypes.Text || event.type == EventTypes.Reply)) {
+      popupMenuList.add(
+        const PopupMenuItem<String>(
+          value: "copy",
+          child: Text('Copy message'),
+        ),
+      );
+    }
     if (event.canRedact && !event.redacted && event.status > 1) {
       popupMenuList.add(
         const PopupMenuItem<String>(
@@ -68,8 +77,8 @@ class Message extends StatelessWidget {
         context: context,
         position: RelativeRect.fromRect(
             _tapPosition & Size(40, 40), // smaller rect, the touch area
-            Offset.zero & overlay.size   // Bigger rect, the entire screen
-        ),
+            Offset.zero & overlay.size // Bigger rect, the entire screen
+            ),
         items: popupMenuList,
         //elevation: 8.0,
       ).then<void>((String choice) async {
@@ -89,6 +98,13 @@ class Message extends StatelessWidget {
             break;
           case "delete":
             await event.remove();
+            break;
+          case "copy":
+            await Clipboard.setData(ClipboardData(text: event.text));
+            Scaffold.of(context).showSnackBar(SnackBar(
+              content: Text("Copied to Clipboard"),
+            ));
+
             break;
         }
       });
