@@ -3,6 +3,11 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:famedlysdk/famedlysdk.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_html/style.dart';
+import 'package:flutter_linkify/flutter_linkify.dart';
+import 'package:linkify/linkify.dart';
+import 'package:universal_html/prefer_universal/html.dart' as html;
 import 'package:url_launcher/url_launcher.dart';
 
 import 'matrix.dart';
@@ -85,10 +90,58 @@ class MessageContent extends StatelessWidget {
                     ? "You: "
                     : "${event.sender.calcDisplayname()}: "
                 : "";
-        return Text(
-          senderPrefix + event.getBody(),
+        if (event.formattedText.isNotEmpty && !event.redacted) {
+          final style = Style.fromTextStyle(
+            TextStyle(
+              color: textColor,
+              decoration: event.redacted ? TextDecoration.lineThrough : null,
+            ),
+          );
+          style.whiteSpace = WhiteSpace.PRE;
+
+          String text = event.formattedText;
+          final linkify_result = linkify(text);
+
+          for (var element in linkify_result) {
+            if (element is LinkableElement) {
+              if (element.url.contains("https://matrix.to/#/@") || element.url.contains("https://matrix.to/#/!")) {
+                continue;
+              }
+              text = text.replaceAll(element.url, "<a href=\"${element.url}\">${element.text}</a>");
+            }
+          }
+
+
+          return Html(
+            data: senderPrefix + text,
+            onLinkTap: (link) =>
+                kIsWeb ? html.window.open(link, "new") : launch(link),
+            shrinkWrap: true,
+            style: {
+              "html": style,
+              "body": Style(margin: EdgeInsets.zero),
+            },
+          );
+        }
+
+        if (this.textOnly) {
+          return Text(
+            senderPrefix + event.getBody(),
+            maxLines: maxLines,
+            overflow: textOnly ? TextOverflow.ellipsis : TextOverflow.visible,
+            style: TextStyle(
+              color: textColor,
+              decoration: event.redacted ? TextDecoration.lineThrough : null,
+            ),
+          );
+        }
+
+        return Linkify(
           maxLines: maxLines,
-          overflow: textOnly ? TextOverflow.ellipsis : null,
+          overflow: textOnly ? TextOverflow.ellipsis : TextOverflow.visible,
+          onOpen: (link) =>
+              kIsWeb ? html.window.open(link.url, "new") : launch(link.url),
+          text: senderPrefix + event.getBody(),
           style: TextStyle(
             color: textColor,
             decoration: event.redacted ? TextDecoration.lineThrough : null,
