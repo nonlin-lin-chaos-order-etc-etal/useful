@@ -175,11 +175,21 @@ class _ChatState extends State<Chat> {
               AnimatedContainer(
                 duration: Duration(milliseconds: 500),
                 height: typingText.isEmpty ? 0 : 20,
-                child: Text(
-                  typingText,
-                  style: TextStyle(
-                    color: Theme.of(context).primaryColor,
-                  ),
+                child: Row(
+                  children: <Widget>[
+                    typingText.isEmpty
+                        ? Container()
+                        : Icon(Icons.edit,
+                            color: Theme.of(context).primaryColor, size: 10),
+                    SizedBox(width: 4),
+                    Text(
+                      typingText,
+                      style: TextStyle(
+                        color: Theme.of(context).primaryColor,
+                        fontStyle: FontStyle.italic,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],

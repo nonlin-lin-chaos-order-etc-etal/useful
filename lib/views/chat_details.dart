@@ -127,28 +127,17 @@ class _ChatDetailsState extends State<ChatDetails> {
                             ),
                           )
                         : Container(),
-                    Row(
-                      children: <Widget>[
-                        Expanded(
-                          child: Container(
-                              height: 8,
-                              color: Theme.of(context).secondaryHeaderColor),
+                    ListTile(
+                      title: Text(
+                        "$actualMembersCount participant" +
+                            (actualMembersCount > 1 ? "s:" : ":"),
+                        style: TextStyle(
+                          color: Theme.of(context).primaryColor,
+                          fontWeight: FontWeight.bold,
                         ),
-                        SizedBox(width: 8),
-                        Text(
-                          "$actualMembersCount participant(s)",
-                          style: TextStyle(
-                            fontSize: 15,
-                          ),
-                        ),
-                        SizedBox(width: 8),
-                        Expanded(
-                          child: Container(
-                              height: 8,
-                              color: Theme.of(context).secondaryHeaderColor),
-                        ),
-                      ],
+                      ),
                     ),
+                    Divider(height: 1),
                     widget.room.canInvite
                         ? ListTile(
                             title: Text("Invite contact"),
