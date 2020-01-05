@@ -234,105 +234,111 @@ class _ChatState extends State<Chat> {
                   },
                 ),
               ),
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.2),
-                      spreadRadius: 1,
-                      blurRadius: 2,
-                      offset: Offset(0, -1), // changes position of shadow
-                    ),
-                  ],
-                ),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    kIsWeb
-                        ? Container()
-                        : PopupMenuButton<String>(
-                            icon: Icon(Icons.add),
-                            onSelected: (String choice) async {
-                              if (choice == "file") {
-                                sendFileAction(context);
-                              } else if (choice == "image") {
-                                sendImageAction(context);
-                              }
-                              if (choice == "camera") openCameraAction(context);
-                            },
-                            itemBuilder: (BuildContext context) =>
-                                <PopupMenuEntry<String>>[
-                              const PopupMenuItem<String>(
-                                value: "file",
-                                child: ListTile(
-                                  leading: Icon(Icons.attach_file),
-                                  title: Text('Send file'),
-                                  contentPadding: EdgeInsets.all(0),
-                                ),
-                              ),
-                              const PopupMenuItem<String>(
-                                value: "image",
-                                child: ListTile(
-                                  leading: Icon(Icons.image),
-                                  title: Text('Send image'),
-                                  contentPadding: EdgeInsets.all(0),
-                                ),
-                              ),
-                              const PopupMenuItem<String>(
-                                value: "camera",
-                                child: ListTile(
-                                  leading: Icon(Icons.camera),
-                                  title: Text('Open camera'),
-                                  contentPadding: EdgeInsets.all(0),
-                                ),
-                              ),
-                            ],
+              room.canSendDefaultMessages && room.membership == Membership.join
+                  ? Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.2),
+                            spreadRadius: 1,
+                            blurRadius: 2,
+                            offset: Offset(0, -1), // changes position of shadow
                           ),
-                    SizedBox(width: 8),
-                    Expanded(
-                        child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8.0),
-                      child: TextField(
-                        minLines: 1,
-                        maxLines: kIsWeb ? 1 : null,
-                        keyboardType: kIsWeb
-                            ? TextInputType.text
-                            : TextInputType.multiline,
-                        onSubmitted: (t) => send(),
-                        controller: sendController,
-                        decoration: InputDecoration(
-                          hintText: "Write a message...",
-                          border: InputBorder.none,
-                        ),
-                        onChanged: (String text) {
-                          this.typingCoolDown?.cancel();
-                          this.typingCoolDown = Timer(Duration(seconds: 2), () {
-                            this.typingCoolDown = null;
-                            this.currentlyTyping = false;
-                            room.sendTypingInfo(false);
-                          });
-                          this.typingTimeout ??=
-                              Timer(Duration(seconds: 30), () {
-                            this.typingTimeout = null;
-                            this.currentlyTyping = false;
-                          });
-                          if (!this.currentlyTyping) {
-                            this.currentlyTyping = true;
-                            room.sendTypingInfo(true,
-                                timeout: Duration(seconds: 30).inMilliseconds);
-                          }
-                        },
+                        ],
                       ),
-                    )),
-                    SizedBox(width: 8),
-                    IconButton(
-                      icon: Icon(Icons.send),
-                      onPressed: () => send(),
-                    ),
-                  ],
-                ),
-              ),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          kIsWeb
+                              ? Container()
+                              : PopupMenuButton<String>(
+                                  icon: Icon(Icons.add),
+                                  onSelected: (String choice) async {
+                                    if (choice == "file") {
+                                      sendFileAction(context);
+                                    } else if (choice == "image") {
+                                      sendImageAction(context);
+                                    }
+                                    if (choice == "camera") {
+                                      openCameraAction(context);
+                                    }
+                                  },
+                                  itemBuilder: (BuildContext context) =>
+                                      <PopupMenuEntry<String>>[
+                                    const PopupMenuItem<String>(
+                                      value: "file",
+                                      child: ListTile(
+                                        leading: Icon(Icons.attach_file),
+                                        title: Text('Send file'),
+                                        contentPadding: EdgeInsets.all(0),
+                                      ),
+                                    ),
+                                    const PopupMenuItem<String>(
+                                      value: "image",
+                                      child: ListTile(
+                                        leading: Icon(Icons.image),
+                                        title: Text('Send image'),
+                                        contentPadding: EdgeInsets.all(0),
+                                      ),
+                                    ),
+                                    const PopupMenuItem<String>(
+                                      value: "camera",
+                                      child: ListTile(
+                                        leading: Icon(Icons.camera),
+                                        title: Text('Open camera'),
+                                        contentPadding: EdgeInsets.all(0),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                          SizedBox(width: 8),
+                          Expanded(
+                              child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 8.0),
+                            child: TextField(
+                              minLines: 1,
+                              maxLines: kIsWeb ? 1 : null,
+                              keyboardType: kIsWeb
+                                  ? TextInputType.text
+                                  : TextInputType.multiline,
+                              onSubmitted: (t) => send(),
+                              controller: sendController,
+                              decoration: InputDecoration(
+                                hintText: "Write a message...",
+                                border: InputBorder.none,
+                              ),
+                              onChanged: (String text) {
+                                this.typingCoolDown?.cancel();
+                                this.typingCoolDown =
+                                    Timer(Duration(seconds: 2), () {
+                                  this.typingCoolDown = null;
+                                  this.currentlyTyping = false;
+                                  room.sendTypingInfo(false);
+                                });
+                                this.typingTimeout ??=
+                                    Timer(Duration(seconds: 30), () {
+                                  this.typingTimeout = null;
+                                  this.currentlyTyping = false;
+                                });
+                                if (!this.currentlyTyping) {
+                                  this.currentlyTyping = true;
+                                  room.sendTypingInfo(true,
+                                      timeout:
+                                          Duration(seconds: 30).inMilliseconds);
+                                }
+                              },
+                            ),
+                          )),
+                          SizedBox(width: 8),
+                          IconButton(
+                            icon: Icon(Icons.send),
+                            onPressed: () => send(),
+                          ),
+                        ],
+                      ),
+                    )
+                  : Container(),
             ],
           ),
         ),
