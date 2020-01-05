@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:famedlysdk/famedlysdk.dart';
@@ -26,7 +27,13 @@ class _ChatState extends State<Chat> {
 
   Timeline timeline;
 
+  String seenByText = "";
+
   final ScrollController _scrollController = ScrollController();
+
+  Timer typingCoolDown;
+  Timer typingTimeout;
+  bool currentlyTyping = false;
 
   @override
   void initState() {
@@ -43,10 +50,31 @@ class _ChatState extends State<Chat> {
     super.initState();
   }
 
-  Future<bool> getTimeline() async {
-    timeline ??= await room.getTimeline(onUpdate: () {
-      setState(() {});
+  void updateView() {
+    String seenByText = "";
+    if (timeline.events.isNotEmpty) {
+      List lastReceipts = List.from(timeline.events.first.receipts);
+      lastReceipts.removeWhere((r) =>
+          r.user.id == room.client.userID ||
+          r.user.id == timeline.events.first.senderId);
+      if (lastReceipts.length == 1) {
+        seenByText = "Seen by ${lastReceipts.first.user.calcDisplayname()}";
+      } else if (lastReceipts.length == 2) {
+        seenByText =
+            "Seen by ${lastReceipts.first.user.calcDisplayname()} and ${lastReceipts[1].user.calcDisplayname()}";
+      } else if (lastReceipts.length > 2) {
+        seenByText =
+            "Seen by ${lastReceipts.first.user.calcDisplayname()} and ${lastReceipts.length - 1} others";
+      }
+    }
+    setState(() {
+      this.seenByText = seenByText;
     });
+  }
+
+  Future<bool> getTimeline() async {
+    timeline ??= await room.getTimeline(onUpdate: updateView);
+    updateView();
     return true;
   }
 
@@ -118,6 +146,20 @@ class _ChatState extends State<Chat> {
 
     if (room.membership == Membership.invite) room.join();
 
+    String typingText = "";
+    List<User> typingUsers = room.typingUsers;
+    typingUsers.removeWhere((User u) => u.id == client.userID);
+
+    if (typingUsers.length == 1) {
+      typingText = "${typingUsers.first.calcDisplayname()} is typing...";
+    } else if (typingUsers.length == 2) {
+      typingText =
+          "${typingUsers.first.calcDisplayname()} and ${typingUsers[1].calcDisplayname()} are typing...";
+    } else if (typingUsers.length > 2) {
+      typingText =
+          "${typingUsers.first.calcDisplayname()} and ${typingUsers.length - 1} others are typing...";
+    }
+
     return AdaptivePageLayout(
       primaryPage: FocusPage.SECOND,
       firstScaffold: ChatList(
@@ -125,7 +167,23 @@ class _ChatState extends State<Chat> {
       ),
       secondScaffold: Scaffold(
         appBar: AppBar(
-          title: Text(room.displayname),
+          title: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text(room.displayname),
+              AnimatedContainer(
+                duration: Duration(milliseconds: 500),
+                height: typingText.isEmpty ? 0 : 20,
+                child: Text(
+                  typingText,
+                  style: TextStyle(
+                    color: Theme.of(context).primaryColor,
+                  ),
+                ),
+              ),
+            ],
+          ),
           actions: <Widget>[ChatSettingsPopupMenu(room, !room.isDirectChat)],
         ),
         body: SafeArea(
@@ -140,6 +198,7 @@ class _ChatState extends State<Chat> {
                         child: CircularProgressIndicator(),
                       );
                     }
+
                     if (room.notificationCount != null &&
                         room.notificationCount > 0 &&
                         timeline != null &&
@@ -148,10 +207,29 @@ class _ChatState extends State<Chat> {
                     }
                     return ListView.builder(
                       reverse: true,
-                      itemCount: timeline.events.length,
+                      itemCount: timeline.events.length + 1,
                       controller: _scrollController,
-                      itemBuilder: (BuildContext context, int i) =>
-                          Message(timeline.events[i]),
+                      itemBuilder: (BuildContext context, int i) => i == 0
+                          ? AnimatedContainer(
+                              height: seenByText.isEmpty ? 0 : 36,
+                              duration: seenByText.isEmpty
+                                  ? Duration(milliseconds: 0)
+                                  : Duration(milliseconds: 500),
+                              alignment: timeline.events.first.senderId ==
+                                      client.userID
+                                  ? Alignment.centerRight
+                                  : Alignment.centerLeft,
+                              child: Text(
+                                seenByText,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  color: Theme.of(context).primaryColor,
+                                ),
+                              ),
+                              padding: EdgeInsets.all(8),
+                            )
+                          : Message(timeline.events[i - 1]),
                     );
                   },
                 ),
@@ -213,17 +291,38 @@ class _ChatState extends State<Chat> {
                           ),
                     SizedBox(width: 8),
                     Expanded(
-                        child: TextField(
-                      minLines: 1,
-                      maxLines: kIsWeb ? 1 : null,
-                      keyboardType:
-                          kIsWeb ? TextInputType.text : TextInputType.multiline,
-                      onSubmitted: (t) => send(),
-                      controller: sendController,
-                      decoration: InputDecoration(
-                        labelText: "Write a message...",
-                        hintText: "You're message",
-                        border: InputBorder.none,
+                        child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      child: TextField(
+                        minLines: 1,
+                        maxLines: kIsWeb ? 1 : null,
+                        keyboardType: kIsWeb
+                            ? TextInputType.text
+                            : TextInputType.multiline,
+                        onSubmitted: (t) => send(),
+                        controller: sendController,
+                        decoration: InputDecoration(
+                          hintText: "Write a message...",
+                          border: InputBorder.none,
+                        ),
+                        onChanged: (String text) {
+                          this.typingCoolDown?.cancel();
+                          this.typingCoolDown = Timer(Duration(seconds: 2), () {
+                            this.typingCoolDown = null;
+                            this.currentlyTyping = false;
+                            room.sendTypingInfo(false);
+                          });
+                          this.typingTimeout ??=
+                              Timer(Duration(seconds: 30), () {
+                            this.typingTimeout = null;
+                            this.currentlyTyping = false;
+                          });
+                          if (!this.currentlyTyping) {
+                            this.currentlyTyping = true;
+                            room.sendTypingInfo(true,
+                                timeout: Duration(seconds: 30).inMilliseconds);
+                          }
+                        },
                       ),
                     )),
                     SizedBox(width: 8),
