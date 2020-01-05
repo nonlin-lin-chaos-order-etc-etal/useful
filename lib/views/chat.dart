@@ -143,8 +143,15 @@ class _ChatState extends State<Chat> {
   Widget build(BuildContext context) {
     Client client = Matrix.of(context).client;
     room ??= client.getRoomById(widget.id);
+    if (room == null) {
+      return Center(
+        child: Text("You are no longer participating in this chat"),
+      );
+    }
 
-    if (room.membership == Membership.invite) room.join();
+    if (room.membership == Membership.invite) {
+      Matrix.of(context).tryRequestWithLoadingDialog(room.join());
+    }
 
     String typingText = "";
     List<User> typingUsers = room.typingUsers;

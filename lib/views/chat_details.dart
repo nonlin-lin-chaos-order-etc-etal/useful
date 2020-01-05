@@ -81,6 +81,11 @@ class _ChatDetailsState extends State<ChatDetails> {
 
   @override
   Widget build(BuildContext context) {
+    if (widget.room == null) {
+      return Center(
+        child: Text("You are no longer participating in this chat"),
+      );
+    }
     members ??= widget.room.getParticipants();
     final int actualMembersCount =
         widget.room.mInvitedMemberCount + widget.room.mJoinedMemberCount;
