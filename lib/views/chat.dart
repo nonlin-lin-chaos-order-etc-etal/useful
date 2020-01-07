@@ -81,6 +81,7 @@ class _ChatState extends State<Chat> {
   @override
   void dispose() {
     timeline?.sub?.cancel();
+    Matrix.of(context).activeRoomId = "";
     super.dispose();
   }
 
@@ -148,6 +149,7 @@ class _ChatState extends State<Chat> {
         child: Text("You are no longer participating in this chat"),
       );
     }
+    Matrix.of(context).activeRoomId = widget.id;
 
     if (room.membership == Membership.invite) {
       Matrix.of(context).tryRequestWithLoadingDialog(room.join());

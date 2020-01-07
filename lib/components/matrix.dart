@@ -3,7 +3,9 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:famedlysdk/famedlysdk.dart';
+import 'package:fluffychat/utils/app_route.dart';
 import 'package:fluffychat/utils/sqflite_store.dart';
+import 'package:fluffychat/views/chat.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:localstorage/localstorage.dart';
@@ -35,6 +37,8 @@ class MatrixState extends State<Matrix> {
   BuildContext context;
 
   FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+
+  String activeRoomId;
 
   /// Used to load the old account if there is no store available.
   void loadAccount() async {
@@ -155,13 +159,40 @@ class MatrixState extends State<Matrix> {
       format: "event_id_only",
     );
 
+    Function goToRoom = (Map<String, dynamic> message) async {
+      try {
+        await Navigator.of(context).pushAndRemoveUntil(
+            AppRoute.defaultRoute(
+              context,
+              Chat(message["data"]["room_id"]),
+            ),
+            (r) => r.isFirst);
+      } catch (_) {
+        Toast.show("Failed to open chat...", context);
+        print(_);
+      }
+    };
+
     _firebaseMessaging.configure(
-      onResume: (Map<String, dynamic> message) async {
-        print('on resume $message');
+      onMessage: (Map<String, dynamic> message) async {
+        final String roomId = message["data"]["room_id"];
+        final String eventId = message["data"]["event_id"];
+        if (roomId.isEmpty || eventId.isEmpty) return null;
+        if (activeRoomId == roomId) return null;
+        final Room room = client.getRoomById(roomId);
+        final Event event = await client.store.getEventById(eventId, room);
+        final String title = room.isDirectChat
+            ? event.sender.calcDisplayname()
+            : ("${event.sender.calcDisplayname()} (${room.displayname})");
+        if (event.type == EventTypes.Message &&
+            [MessageTypes.Text, MessageTypes.Emote, MessageTypes.Notice]
+                .contains(event.messageType)) {
+          Toast.show("$title: ${event.getBody()}", context, duration: 5);
+        }
+        return message;
       },
-      onLaunch: (Map<String, dynamic> message) async {
-        print('on launch $message');
-      },
+      onResume: goToRoom,
+      onLaunch: goToRoom,
     );
   }
 
