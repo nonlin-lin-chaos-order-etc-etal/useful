@@ -179,8 +179,30 @@ class MatrixState extends State<Matrix> {
         final String eventId = message["data"]["event_id"];
         if (roomId.isEmpty || eventId.isEmpty) return null;
         if (activeRoomId == roomId) return null;
-        final Room room = client.getRoomById(roomId);
-        final Event event = await client.store.getEventById(eventId, room);
+
+        // Get the room
+        Room room = client.getRoomById(roomId);
+        if (room == null) {
+          await client.onRoomUpdate.stream
+              .where((u) => u.id == roomId)
+              .first
+              .timeout(Duration(seconds: 10));
+          room = client.getRoomById(roomId);
+          if (room == null) return null;
+        }
+
+        // Get the event
+        Event event = await client.store.getEventById(eventId, room);
+        if (event == null) {
+          final EventUpdate eventUpdate = await client.onEvent.stream
+              .where((u) => u.content["event_id"] == eventId)
+              .first
+              .timeout(Duration(seconds: 10));
+          event = Event.fromJson(eventUpdate.content, room);
+          if (room == null) return null;
+        }
+
+        // Display notification
         final String title = room.isDirectChat
             ? event.sender.calcDisplayname()
             : ("${event.sender.calcDisplayname()} (${room.displayname})");
@@ -189,7 +211,7 @@ class MatrixState extends State<Matrix> {
                 .contains(event.messageType)) {
           Toast.show("$title: ${event.getBody()}", context, duration: 5);
         }
-        return message;
+        return null;
       },
       onResume: goToRoom,
       onLaunch: goToRoom,
