@@ -8,6 +8,7 @@ import 'package:fluffychat/utils/sqflite_store.dart';
 import 'package:fluffychat/views/chat.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:localstorage/localstorage.dart';
 import 'package:toast/toast.dart';
 
@@ -37,6 +38,8 @@ class MatrixState extends State<Matrix> {
   BuildContext context;
 
   FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+  FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
 
   String activeRoomId;
 
@@ -133,10 +136,7 @@ class MatrixState extends State<Matrix> {
 
   hideLoadingDialog() => Navigator.of(_loadingDialogContext)?.pop();
 
-  StreamSubscription onSetupFirebase;
-
-  void setupFirebase(LoginState login) async {
-    if (login != LoginState.logged) return;
+  Future<void> setupFirebase() async {
     if (Platform.isIOS) iOS_Permission();
 
     final String token = await _firebaseMessaging.getToken();
@@ -159,12 +159,20 @@ class MatrixState extends State<Matrix> {
       format: "event_id_only",
     );
 
-    Function goToRoom = (Map<String, dynamic> message) async {
+    Function goToRoom = (dynamic message) async {
       try {
+        String roomId;
+        if (message is String) {
+          roomId = message;
+        } else if (message is Map) {
+          roomId = message["data"]["room_id"];
+        }
+        if (roomId?.isEmpty ?? true) throw ("Bad roomId");
+        print("[Push] Go to room: $roomId");
         await Navigator.of(context).pushAndRemoveUntil(
             AppRoute.defaultRoute(
               context,
-              Chat(message["data"]["room_id"]),
+              Chat(roomId),
             ),
             (r) => r.isFirst);
       } catch (_) {
@@ -173,49 +181,103 @@ class MatrixState extends State<Matrix> {
       }
     };
 
+    // initialise the plugin. app_icon needs to be a added as a drawable resource to the Android head project
+    var initializationSettingsAndroid =
+        AndroidInitializationSettings('notifications_icon');
+    var initializationSettingsIOS =
+        IOSInitializationSettings(onDidReceiveLocalNotification: (i, a, b, c) {
+      print("onDidReceiveLocalNotification: $i $a $b $c");
+      return null;
+    });
+    var initializationSettings = InitializationSettings(
+        initializationSettingsAndroid, initializationSettingsIOS);
+    await _flutterLocalNotificationsPlugin.initialize(initializationSettings,
+        onSelectNotification: goToRoom);
+    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
+        'fluffychat_push',
+        'FluffyChat push channel',
+        'Push notifications for FluffyChat',
+        importance: Importance.Max,
+        priority: Priority.High,
+        ticker: 'New message in FluffyChat');
+    var iOSPlatformChannelSpecifics = IOSNotificationDetails();
+    var platformChannelSpecifics = NotificationDetails(
+        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+
     _firebaseMessaging.configure(
       onMessage: (Map<String, dynamic> message) async {
-        final String roomId = message["data"]["room_id"];
-        final String eventId = message["data"]["event_id"];
-        if (roomId.isEmpty || eventId.isEmpty) return null;
-        if (activeRoomId == roomId) return null;
+        try {
+          final String roomId = message["data"]["room_id"];
+          final String eventId = message["data"]["event_id"];
+          final int unread = json.decode(message["data"]["counts"])["unread"];
+          if ((roomId?.isEmpty ?? true) ||
+              (eventId?.isEmpty ?? true) ||
+              unread == 0) {
+            await _flutterLocalNotificationsPlugin.cancelAll();
+            return null;
+          }
+          if (activeRoomId == roomId) return null;
 
-        // Get the room
-        Room room = client.getRoomById(roomId);
-        if (room == null) {
-          await client.onRoomUpdate.stream
-              .where((u) => u.id == roomId)
-              .first
-              .timeout(Duration(seconds: 10));
-          room = client.getRoomById(roomId);
-          if (room == null) return null;
-        }
+          // Get the room
+          Room room = client.getRoomById(roomId);
+          if (room == null) {
+            await client.onRoomUpdate.stream
+                .where((u) => u.id == roomId)
+                .first
+                .timeout(Duration(seconds: 10));
+            room = client.getRoomById(roomId);
+            if (room == null) return null;
+          }
 
-        // Get the event
-        Event event = await client.store.getEventById(eventId, room);
-        if (event == null) {
-          final EventUpdate eventUpdate = await client.onEvent.stream
-              .where((u) => u.content["event_id"] == eventId)
-              .first
-              .timeout(Duration(seconds: 10));
-          event = Event.fromJson(eventUpdate.content, room);
-          if (room == null) return null;
-        }
+          // Get the event
+          Event event = await client.store.getEventById(eventId, room);
+          if (event == null) {
+            final EventUpdate eventUpdate = await client.onEvent.stream
+                .where((u) => u.content["event_id"] == eventId)
+                .first
+                .timeout(Duration(seconds: 10));
+            event = Event.fromJson(eventUpdate.content, room);
+            if (room == null) return null;
+          }
 
-        // Display notification
-        final String title = room.isDirectChat
-            ? event.sender.calcDisplayname()
-            : ("${event.sender.calcDisplayname()} (${room.displayname})");
-        if (event.type == EventTypes.Message &&
-            [MessageTypes.Text, MessageTypes.Emote, MessageTypes.Notice]
-                .contains(event.messageType)) {
-          Toast.show("$title: ${event.getBody()}", context, duration: 5);
+          // Display notification
+          final String title = room.isDirectChat
+              ? event.sender.calcDisplayname()
+              : ("${event.sender.calcDisplayname()} (${room.displayname})");
+          if (event.type == EventTypes.Message &&
+              [MessageTypes.Text, MessageTypes.Emote, MessageTypes.Notice]
+                  .contains(event.messageType)) {
+            String body = event.getBody();
+            if (unread > 1) {
+              body = "Unread messages in $unread chats";
+            } else if (room.notificationCount > 1) {
+              body = "${room.notificationCount} unread messages";
+            }
+            await _flutterLocalNotificationsPlugin.show(
+                0, title, body, platformChannelSpecifics,
+                payload: roomId);
+          }
+        } catch (exception) {
+          final String roomId = message["data"]["room_id"];
+          final int unread = message["data"]["counts"]["unread"] ?? 1;
+          await _flutterLocalNotificationsPlugin.show(0, "New message",
+              "Unread messages in $unread chats", platformChannelSpecifics,
+              payload: roomId);
+          print(exception.toString());
         }
         return null;
       },
-      onResume: goToRoom,
-      onLaunch: goToRoom,
+      onResume: (message) {
+        print("[Push] onResume");
+        return goToRoom(message);
+      },
+      onLaunch: (message) {
+        print("[Push] onLaunch");
+        return goToRoom(message);
+      },
     );
+    print("[Push] Firebase initialized");
+    return;
   }
 
   void iOS_Permission() {
@@ -227,25 +289,31 @@ class MatrixState extends State<Matrix> {
     });
   }
 
+  void _initWithStore() async {
+    Future<LoginState> initLoginState = client.onLoginStateChanged.stream.first;
+    client.store = Store(client);
+    if (await initLoginState == LoginState.logged) {
+      await setupFirebase();
+    }
+  }
+
   @override
   void initState() {
     if (widget.client == null) {
       client = Client(widget.clientName, debug: false);
       if (!kIsWeb) {
-        client.store = Store(client);
+        _initWithStore();
       } else {
         loadAccount();
       }
     } else {
       client = widget.client;
     }
-    onSetupFirebase ??= client.onLoginStateChanged.stream.listen(setupFirebase);
     super.initState();
   }
 
   @override
   void dispose() {
-    onSetupFirebase?.cancel();
     super.dispose();
   }
 

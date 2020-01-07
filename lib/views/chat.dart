@@ -27,6 +27,8 @@ class _ChatState extends State<Chat> {
 
   Timeline timeline;
 
+  MatrixState matrix;
+
   String seenByText = "";
 
   final ScrollController _scrollController = ScrollController();
@@ -81,7 +83,7 @@ class _ChatState extends State<Chat> {
   @override
   void dispose() {
     timeline?.sub?.cancel();
-    Matrix.of(context).activeRoomId = "";
+    matrix.activeRoomId = "";
     super.dispose();
   }
 
@@ -99,7 +101,7 @@ class _ChatState extends State<Chat> {
     }
     File file = await FilePicker.getFile();
     if (file == null) return;
-    await Matrix.of(context).tryRequestWithLoadingDialog(
+    await matrix.tryRequestWithLoadingDialog(
       room.sendFileEvent(
         MatrixFile(bytes: await file.readAsBytes(), path: file.path),
       ),
@@ -116,7 +118,7 @@ class _ChatState extends State<Chat> {
         maxWidth: 1600,
         maxHeight: 1600);
     if (file == null) return;
-    await Matrix.of(context).tryRequestWithLoadingDialog(
+    await matrix.tryRequestWithLoadingDialog(
       room.sendImageEvent(
         MatrixFile(bytes: await file.readAsBytes(), path: file.path),
       ),
@@ -133,7 +135,7 @@ class _ChatState extends State<Chat> {
         maxWidth: 1600,
         maxHeight: 1600);
     if (file == null) return;
-    await Matrix.of(context).tryRequestWithLoadingDialog(
+    await matrix.tryRequestWithLoadingDialog(
       room.sendImageEvent(
         MatrixFile(bytes: await file.readAsBytes(), path: file.path),
       ),
@@ -142,17 +144,18 @@ class _ChatState extends State<Chat> {
 
   @override
   Widget build(BuildContext context) {
-    Client client = Matrix.of(context).client;
+    matrix = Matrix.of(context);
+    Client client = matrix.client;
     room ??= client.getRoomById(widget.id);
     if (room == null) {
       return Center(
         child: Text("You are no longer participating in this chat"),
       );
     }
-    Matrix.of(context).activeRoomId = widget.id;
+    matrix.activeRoomId = widget.id;
 
     if (room.membership == Membership.invite) {
-      Matrix.of(context).tryRequestWithLoadingDialog(room.join());
+      matrix.tryRequestWithLoadingDialog(room.join());
     }
 
     String typingText = "";
