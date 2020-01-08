@@ -10,6 +10,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:localstorage/localstorage.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:toast/toast.dart';
 
 class Matrix extends StatefulWidget {
@@ -136,6 +137,27 @@ class MatrixState extends State<Matrix> {
 
   hideLoadingDialog() => Navigator.of(_loadingDialogContext)?.pop();
 
+  Future<String> downloadAndSaveContent(MxContent content,
+      {int width, int height, ThumbnailMethod method}) async {
+    final bool thumbnail = width == null && height == null ? false : true;
+    final String tempDirectory = (await getTemporaryDirectory()).path;
+    final String prefix = thumbnail ? "thumbnail" : "";
+    File file = File('$tempDirectory/${prefix}_${content.mxc.split("/").last}');
+
+    if (!file.existsSync()) {
+      final url = thumbnail
+          ? content.getThumbnail(client,
+              width: width, height: height, method: method)
+          : content.getDownloadLink(client);
+      var request = await HttpClient().getUrl(Uri.parse(url));
+      var response = await request.close();
+      var bytes = await consolidateHttpClientResponseBytes(response);
+      await file.writeAsBytes(bytes);
+    }
+
+    return file.path;
+  }
+
   Future<void> setupFirebase() async {
     if (Platform.isIOS) iOS_Permission();
 
@@ -193,20 +215,11 @@ class MatrixState extends State<Matrix> {
         initializationSettingsAndroid, initializationSettingsIOS);
     await _flutterLocalNotificationsPlugin.initialize(initializationSettings,
         onSelectNotification: goToRoom);
-    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
-        'fluffychat_push',
-        'FluffyChat push channel',
-        'Push notifications for FluffyChat',
-        importance: Importance.Max,
-        priority: Priority.High,
-        ticker: 'New message in FluffyChat');
-    var iOSPlatformChannelSpecifics = IOSNotificationDetails();
-    var platformChannelSpecifics = NotificationDetails(
-        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
 
     _firebaseMessaging.configure(
       onMessage: (Map<String, dynamic> message) async {
         try {
+          print("[Push] Push notification received");
           final String roomId = message["data"]["room_id"];
           final String eventId = message["data"]["event_id"];
           final int unread = json.decode(message["data"]["counts"])["unread"];
@@ -240,30 +253,78 @@ class MatrixState extends State<Matrix> {
             if (room == null) return null;
           }
 
-          // Display notification
-          final String title = room.isDirectChat
-              ? event.sender.calcDisplayname()
-              : ("${event.sender.calcDisplayname()} (${room.displayname})");
-          if (event.type == EventTypes.Message &&
-              [MessageTypes.Text, MessageTypes.Emote, MessageTypes.Notice]
-                  .contains(event.messageType)) {
-            String body = event.getBody();
-            if (unread > 1) {
-              body = "Unread messages in $unread chats";
-            } else if (room.notificationCount > 1) {
-              body = "${room.notificationCount} unread messages";
-            }
-            await _flutterLocalNotificationsPlugin.show(
-                0, title, body, platformChannelSpecifics,
-                payload: roomId);
+          // Count all unread events
+          int unreadEvents = 0;
+          client.rooms
+              .forEach((Room room) => unreadEvents += room.notificationCount);
+
+          // Calculate title
+          final String title = unread > 1
+              ? "$unreadEvents unread messages in $unread chats"
+              : "$unreadEvents unread messages";
+
+          // Calculate the body
+          String body;
+          switch (event.messageType) {
+            case MessageTypes.Image:
+              body = "${event.sender.calcDisplayname()} sent a picture";
+              break;
+            case MessageTypes.File:
+              body = "${event.sender.calcDisplayname()} sent a file";
+              break;
+            case MessageTypes.Audio:
+              body = "${event.sender.calcDisplayname()} sent an audio";
+              break;
+            case MessageTypes.Video:
+              body = "${event.sender.calcDisplayname()} sent a video";
+              break;
+            default:
+              body = "${event.sender.calcDisplayname()}: ${event.getBody()}";
+              break;
           }
-        } catch (exception) {
-          final String roomId = message["data"]["room_id"];
-          final int unread = message["data"]["counts"]["unread"] ?? 1;
-          await _flutterLocalNotificationsPlugin.show(0, "New message",
-              "Unread messages in $unread chats", platformChannelSpecifics,
+
+          // The person object for the android message style notification
+          final person = Person(
+            name: room.displayname,
+            icon: room.avatar.mxc.isEmpty
+                ? null
+                : await downloadAndSaveContent(
+                    room.avatar,
+                    width: 126,
+                    height: 126,
+                  ),
+            iconSource: IconSource.FilePath,
+          );
+
+          // Show notification
+          var androidPlatformChannelSpecifics = AndroidNotificationDetails(
+              'fluffychat_push',
+              'FluffyChat push channel',
+              'Push notifications for FluffyChat',
+              style: AndroidNotificationStyle.Messaging,
+              styleInformation: MessagingStyleInformation(
+                person,
+                conversationTitle: title,
+                messages: [
+                  Message(
+                    body,
+                    event.time,
+                    person,
+                  )
+                ],
+              ),
+              importance: Importance.Max,
+              priority: Priority.High,
+              ticker: 'New message in FluffyChat');
+          var iOSPlatformChannelSpecifics = IOSNotificationDetails();
+          var platformChannelSpecifics = NotificationDetails(
+              androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+          await _flutterLocalNotificationsPlugin.show(
+              0, room.displayname, body, platformChannelSpecifics,
               payload: roomId);
-          print(exception.toString());
+        } catch (exception) {
+          print("[Push] Error while processing notification: " +
+              exception.toString());
         }
         return null;
       },
