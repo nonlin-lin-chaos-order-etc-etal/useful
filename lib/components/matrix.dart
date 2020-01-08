@@ -326,14 +326,9 @@ class MatrixState extends State<Matrix> {
         }
         return null;
       },
-      onResume: (message) {
-        print("[Push] onResume");
-        return goToRoom(message);
-      },
-      onLaunch: (message) {
-        print("[Push] onLaunch");
-        return goToRoom(message);
-      },
+      onResume: goToRoom,
+      // Currently fires unexpectetly... https://github.com/FirebaseExtended/flutterfire/issues/1060
+      //onLaunch: goToRoom,
     );
     print("[Push] Firebase initialized");
     return;
