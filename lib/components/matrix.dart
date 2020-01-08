@@ -190,7 +190,6 @@ class MatrixState extends State<Matrix> {
           roomId = message["data"]["room_id"];
         }
         if (roomId?.isEmpty ?? true) throw ("Bad roomId");
-        print("[Push] Go to room: $roomId");
         await Navigator.of(context).pushAndRemoveUntil(
             AppRoute.defaultRoute(
               context,
@@ -219,7 +218,6 @@ class MatrixState extends State<Matrix> {
     _firebaseMessaging.configure(
       onMessage: (Map<String, dynamic> message) async {
         try {
-          print("[Push] Push notification received");
           final String roomId = message["data"]["room_id"];
           final String eventId = message["data"]["event_id"];
           final int unread = json.decode(message["data"]["counts"])["unread"];
