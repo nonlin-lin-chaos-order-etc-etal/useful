@@ -56,6 +56,8 @@ class _ChatState extends State<Chat> {
   }
 
   void updateView() {
+    if (!mounted) return;
+
     String seenByText = "";
     if (timeline.events.isNotEmpty) {
       List lastReceipts = List.from(timeline.events.first.receipts);
@@ -75,12 +77,18 @@ class _ChatState extends State<Chat> {
             (lastReceipts.length - 1).toString());
       }
     }
-    setState(() {
-      this.seenByText = seenByText;
-    });
+    if (timeline != null) {
+      setState(() {
+        this.seenByText = seenByText;
+      });
+    }
+
+
   }
 
   Future<bool> getTimeline() async {
+    // Don't create new timelines each time we rebuild
+    if (timeline != null) return true;
     Timeline newTimeline;
     if (room.client.store != null) {
       newTimeline = await room.getTimeline(onUpdate: updateView);
@@ -103,6 +111,7 @@ class _ChatState extends State<Chat> {
   @override
   void dispose() {
     timeline?.sub?.cancel();
+    timeline = null;
     matrix.activeRoomId = "";
     super.dispose();
   }

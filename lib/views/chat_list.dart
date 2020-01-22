@@ -47,14 +47,29 @@ class _ChatListState extends State<ChatList> {
   StreamSubscription sub;
   final TextEditingController searchController = TextEditingController();
   SelectMode selectMode = SelectMode.normal;
+  List<Room> roomList;
 
-  Future<bool> waitForFirstSync(BuildContext context) async {
+  void updateView() {
+    if (!mounted) return;
+    if (roomList != null) setState(() {});
+  }
+
+  Future<List<Room>> waitForFirstSync(BuildContext context) async {
+    List<Room> list;
+    if (roomList != null) {
+      list = roomList;
+      return list;
+    }
     Client client = Matrix.of(context).client;
     if (client.prevBatch?.isEmpty ?? true) {
       await client.onFirstSync.stream.first;
     }
-    sub ??= client.onSync.stream.listen((s) => setState(() => null));
-    return true;
+    list = await client.rooms;
+    sub ??= client.onSync.stream.listen((s) => updateView());
+
+
+    roomList = list;
+    return list;
   }
 
   @override
@@ -211,17 +226,16 @@ class _ChatListState extends State<ChatList> {
           ),
         ],
       ),
-      body: FutureBuilder<bool>(
+      body: FutureBuilder<List<Room>>(
         future: waitForFirstSync(context),
         builder: (BuildContext context, snapshot) {
           if (snapshot.hasData) {
-            List<Room> rooms = List<Room>.from(Matrix.of(context).client.rooms);
-            rooms.removeWhere((Room room) =>
+            roomList.removeWhere((Room room) =>
                 searchMode &&
                 !room.displayname
                     .toLowerCase()
                     .contains(searchController.text.toLowerCase() ?? ""));
-            if (rooms.isEmpty) {
+            if (roomList.isEmpty) {
               return Center(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -241,15 +255,26 @@ class _ChatListState extends State<ChatList> {
             return ListView.separated(
               separatorBuilder: (BuildContext context, int i) =>
                   Divider(indent: 70, height: 1),
-              itemCount: rooms.length,
+              itemCount: roomList.length,
               itemBuilder: (BuildContext context, int i) => ChatListItem(
-                rooms[i],
-                activeChat: widget.activeChat == rooms[i].id,
+                roomList[i],
+                activeChat: widget.activeChat == roomList[i].id,
               ),
             );
           } else {
             return Center(
-              child: CircularProgressIndicator(),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  CircularProgressIndicator(),
+                  SizedBox(
+                    height: 8,
+                  ),
+                  Text("Waiting for intial sync")
+                ],
+              ),
             );
           }
         },
