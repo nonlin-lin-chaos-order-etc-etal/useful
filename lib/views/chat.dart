@@ -20,6 +20,7 @@ class Chat extends StatefulWidget {
   final String id;
 
   const Chat(this.id, {Key key}) : super(key: key);
+
   @override
   _ChatState createState() => _ChatState();
 }
@@ -80,7 +81,21 @@ class _ChatState extends State<Chat> {
   }
 
   Future<bool> getTimeline() async {
-    timeline ??= await room.getTimeline(onUpdate: updateView);
+    Timeline newTimeline;
+    if (room.client.store != null) {
+      newTimeline = await room.getTimeline(onUpdate: updateView);
+    } else {
+      room.prev_batch = "";
+      newTimeline = Timeline(
+        room: room,
+        events: [],
+        onUpdate: updateView,
+      );
+      await room.requestHistory();
+    }
+
+    timeline ??= newTimeline;
+
     updateView();
     return true;
   }
