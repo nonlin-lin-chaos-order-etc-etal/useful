@@ -11,6 +11,7 @@ import 'package:fluffychat/utils/app_route.dart';
 import 'package:fluffychat/utils/url_launcher.dart';
 import 'package:fluffychat/views/archive.dart';
 import 'package:fluffychat/views/settings.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
@@ -36,6 +37,7 @@ class ChatList extends StatefulWidget {
   final String activeChat;
 
   const ChatList({this.activeChat, Key key}) : super(key: key);
+
   @override
   _ChatListState createState() => _ChatListState();
 }
@@ -60,13 +62,16 @@ class _ChatListState extends State<ChatList> {
     searchController.addListener(
       () => setState(() => null),
     );
-    getSharedData();
+    if (!kIsWeb) {
+      getSharedData();
+    }
     super.initState();
   }
 
   StreamSubscription _intentDataStreamSubscription;
 
   void processSharedText(String text) {
+    if (text == null) return;
     if (text.startsWith("https://matrix.to/#/")) {
       UrlLauncher(context, text).openMatrixToUrl();
     } else {

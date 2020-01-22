@@ -243,6 +243,9 @@ class _ChatState extends State<Chat> {
                         timeline.events.isNotEmpty) {
                       room.sendReadReceipt(timeline.events[0].eventId);
                     }
+
+                    if (timeline.events.isEmpty) return Container();
+
                     return ListView.builder(
                       reverse: true,
                       itemCount: timeline.events.length + 1,
