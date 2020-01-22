@@ -82,8 +82,6 @@ class _ChatState extends State<Chat> {
         this.seenByText = seenByText;
       });
     }
-
-
   }
 
   Future<bool> getTimeline() async {
@@ -104,7 +102,7 @@ class _ChatState extends State<Chat> {
 
     timeline ??= newTimeline;
 
-    updateView();
+    //updateView();
     return true;
   }
 
@@ -271,37 +269,38 @@ class _ChatState extends State<Chat> {
                     if (timeline.events.isEmpty) return Container();
 
                     return ListView.builder(
-                      reverse: true,
-                      itemCount: timeline.events.length + 1,
-                      controller: _scrollController,
-                      itemBuilder: (BuildContext context, int i) => i == 0
-                          ? AnimatedContainer(
-                              height: seenByText.isEmpty ? 0 : 24,
-                              duration: seenByText.isEmpty
-                                  ? Duration(milliseconds: 0)
-                                  : Duration(milliseconds: 500),
-                              alignment: timeline.events.first.senderId ==
-                                      client.userID
-                                  ? Alignment.topRight
-                                  : Alignment.topLeft,
-                              child: Text(
-                                seenByText,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  color: Theme.of(context).primaryColor,
-                                ),
-                              ),
-                              padding: EdgeInsets.only(
-                                left: 8,
-                                right: 8,
-                                bottom: 8,
-                              ),
-                            )
-                          : Message(timeline.events[i - 1],
-                              nextEvent:
-                                  i >= 2 ? timeline.events[i - 2] : null),
-                    );
+                        reverse: true,
+                        itemCount: timeline.events.length + 1,
+                        controller: _scrollController,
+                        itemBuilder: (BuildContext context, int i) {
+                          return i == 0
+                              ? AnimatedContainer(
+                                  height: seenByText.isEmpty ? 0 : 24,
+                                  duration: seenByText.isEmpty
+                                      ? Duration(milliseconds: 0)
+                                      : Duration(milliseconds: 500),
+                                  alignment: timeline.events.first.senderId ==
+                                          client.userID
+                                      ? Alignment.topRight
+                                      : Alignment.topLeft,
+                                  child: Text(
+                                    seenByText,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      color: Theme.of(context).primaryColor,
+                                    ),
+                                  ),
+                                  padding: EdgeInsets.only(
+                                    left: 8,
+                                    right: 8,
+                                    bottom: 8,
+                                  ),
+                                )
+                              : Message(timeline.events[i - 1],
+                                  nextEvent:
+                                      i >= 2 ? timeline.events[i - 2] : null);
+                        });
                   },
                 ),
               ),
