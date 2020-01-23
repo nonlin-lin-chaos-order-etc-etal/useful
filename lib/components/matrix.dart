@@ -347,7 +347,7 @@ class MatrixState extends State<Matrix> {
   void initState() {
     if (widget.client == null) {
       print("[Matrix] Init matrix client");
-      client = Client(widget.clientName, debug: true);
+      client = Client(widget.clientName, debug: false);
       if (!kIsWeb) {
         _initWithStore();
       } else {

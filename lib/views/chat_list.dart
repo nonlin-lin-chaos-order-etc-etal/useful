@@ -37,7 +37,6 @@ class ChatList extends StatefulWidget {
   final String activeChat;
 
   const ChatList({this.activeChat, Key key}) : super(key: key);
-
   @override
   _ChatListState createState() => _ChatListState();
 }
@@ -47,29 +46,15 @@ class _ChatListState extends State<ChatList> {
   StreamSubscription sub;
   final TextEditingController searchController = TextEditingController();
   SelectMode selectMode = SelectMode.normal;
-  List<Room> roomList;
 
-  void updateView() {
-    if (!mounted) return;
-    if (roomList != null) setState(() {});
-  }
-
-  Future<List<Room>> waitForFirstSync(BuildContext context) async {
-    List<Room> list;
-    if (roomList != null) {
-      list = roomList;
-      return list;
-    }
+  Future<bool> waitForFirstSync(BuildContext context) async {
     Client client = Matrix.of(context).client;
     if (client.prevBatch?.isEmpty ?? true) {
       await client.onFirstSync.stream.first;
     }
-    list = await client.rooms;
-    sub ??= client.onSync.stream.listen((s) => updateView());
-
-
-    roomList = list;
-    return list;
+    sub ??= client.onSync.stream
+        .listen((s) => mounted ? setState(() => null) : null);
+    return true;
   }
 
   @override
@@ -77,7 +62,7 @@ class _ChatListState extends State<ChatList> {
     searchController.addListener(
       () => setState(() => null),
     );
-    if (!kIsWeb) {
+    if (kIsWeb) {
       getSharedData();
     }
     super.initState();
@@ -86,7 +71,7 @@ class _ChatListState extends State<ChatList> {
   StreamSubscription _intentDataStreamSubscription;
 
   void processSharedText(String text) {
-    if (text == null) return;
+    if (text?.isEmpty ?? true) return;
     if (text.startsWith("https://matrix.to/#/")) {
       UrlLauncher(context, text).openMatrixToUrl();
     } else {
@@ -226,16 +211,17 @@ class _ChatListState extends State<ChatList> {
           ),
         ],
       ),
-      body: FutureBuilder<List<Room>>(
+      body: FutureBuilder<bool>(
         future: waitForFirstSync(context),
         builder: (BuildContext context, snapshot) {
           if (snapshot.hasData) {
-            roomList.removeWhere((Room room) =>
+            List<Room> rooms = List<Room>.from(Matrix.of(context).client.rooms);
+            rooms.removeWhere((Room room) =>
                 searchMode &&
                 !room.displayname
                     .toLowerCase()
                     .contains(searchController.text.toLowerCase() ?? ""));
-            if (roomList.isEmpty) {
+            if (rooms.isEmpty) {
               return Center(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -255,26 +241,15 @@ class _ChatListState extends State<ChatList> {
             return ListView.separated(
               separatorBuilder: (BuildContext context, int i) =>
                   Divider(indent: 70, height: 1),
-              itemCount: roomList.length,
+              itemCount: rooms.length,
               itemBuilder: (BuildContext context, int i) => ChatListItem(
-                roomList[i],
-                activeChat: widget.activeChat == roomList[i].id,
+                rooms[i],
+                activeChat: widget.activeChat == rooms[i].id,
               ),
             );
           } else {
             return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  CircularProgressIndicator(),
-                  SizedBox(
-                    height: 8,
-                  ),
-                  Text("Waiting for intial sync")
-                ],
-              ),
+              child: CircularProgressIndicator(),
             );
           }
         },
