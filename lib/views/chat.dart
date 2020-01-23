@@ -85,24 +85,8 @@ class _ChatState extends State<Chat> {
   }
 
   Future<bool> getTimeline() async {
-    // Don't create new timelines each time we rebuild
-    if (timeline != null) return true;
-    Timeline newTimeline;
-    if (room.client.store != null) {
-      newTimeline = await room.getTimeline(onUpdate: updateView);
-    } else {
-      room.prev_batch = "";
-      newTimeline = Timeline(
-        room: room,
-        events: [],
-        onUpdate: updateView,
-      );
-      await room.requestHistory();
-    }
-
-    timeline ??= newTimeline;
-
-    //updateView();
+    timeline ??= await room.getTimeline(onUpdate: updateView);
+    updateView();
     return true;
   }
 
