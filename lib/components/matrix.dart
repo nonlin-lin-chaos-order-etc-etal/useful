@@ -6,8 +6,8 @@ import 'package:famedlysdk/famedlysdk.dart';
 import 'package:fluffychat/i18n/i18n.dart';
 import 'package:fluffychat/utils/app_route.dart';
 import 'package:fluffychat/utils/event_extension.dart';
+import 'package:fluffychat/utils/famedlysdk_store.dart';
 import 'package:fluffychat/utils/room_extension.dart';
-import 'package:fluffychat/utils/sqflite_store.dart';
 import 'package:fluffychat/views/chat.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -47,49 +47,6 @@ class MatrixState extends State<Matrix> {
   Map<String, dynamic> shareContent;
 
   String activeRoomId;
-
-  /// Used to load the old account if there is no store available.
-  void loadAccount() async {
-    final LocalStorage storage = LocalStorage('LocalStorage');
-    await storage.ready;
-
-    final credentialsStr = storage.getItem(widget.clientName);
-    if (credentialsStr == null || credentialsStr.isEmpty) {
-      client.onLoginStateChanged.add(LoginState.loggedOut);
-      return;
-    }
-    print("[Matrix] Restoring account credentials");
-    final Map<String, dynamic> credentials = json.decode(credentialsStr);
-    client.connect(
-      newDeviceID: credentials["deviceID"],
-      newDeviceName: credentials["deviceName"],
-      newHomeserver: credentials["homeserver"],
-      newLazyLoadMembers: credentials["lazyLoadMembers"],
-      //newMatrixVersions: credentials["matrixVersions"], // FIXME: wrong List type
-      newToken: credentials["token"],
-      newUserID: credentials["userID"],
-    );
-  }
-
-  /// Used to save the current account persistently if there is no store available.
-  Future<void> saveAccount() async {
-    if (!kIsWeb) return;
-    print("[Matrix] Save account credentials in crypted preferences");
-    final Map<String, dynamic> credentials = {
-      "deviceID": client.deviceID,
-      "deviceName": client.deviceName,
-      "homeserver": client.homeserver,
-      "lazyLoadMembers": client.lazyLoadMembers,
-      "matrixVersions": client.matrixVersions,
-      "token": client.accessToken,
-      "userID": client.userID,
-    };
-
-    final LocalStorage storage = LocalStorage('LocalStorage');
-    await storage.ready;
-    await storage.setItem(widget.clientName, json.encode(credentials));
-    return;
-  }
 
   void clean() async {
     if (!kIsWeb) return;
@@ -337,7 +294,8 @@ class MatrixState extends State<Matrix> {
 
   void _initWithStore() async {
     Future<LoginState> initLoginState = client.onLoginStateChanged.stream.first;
-    client.store = Store(client);
+    client.storeAPI = kIsWeb ? Store(client) : ExtendedStore(client);
+    print("[Store] Store is extended: ${client.storeAPI.extended.toString()}");
     if (await initLoginState == LoginState.logged) {
       await setupFirebase();
     }
@@ -348,12 +306,7 @@ class MatrixState extends State<Matrix> {
     if (widget.client == null) {
       print("[Matrix] Init matrix client");
       client = Client(widget.clientName, debug: false);
-      if (!kIsWeb) {
-        _initWithStore();
-      } else {
-        print("[Web] Web platform detected - Store disabled!");
-        loadAccount();
-      }
+      _initWithStore();
     } else {
       client = widget.client;
     }

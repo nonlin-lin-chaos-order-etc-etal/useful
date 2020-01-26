@@ -86,9 +86,7 @@ class _LoginState extends State<Login> {
         return setState(() => loading = false);
       }
     }
-
-    print("[Login] Store account and go to ChatListView");
-    await Matrix.of(context).saveAccount();
+    print("[Login] Go to ChatListView");
     setState(() => loading = false);
     await Navigator.of(context).pushAndRemoveUntil(
         AppRoute.defaultRoute(context, ChatListView()), (r) => false);
