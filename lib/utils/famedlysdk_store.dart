@@ -43,7 +43,7 @@ class Store extends StoreAPI {
       client.onLoginStateChanged.add(LoginState.loggedOut);
       return;
     }
-    print("[Matrix] Restoring account credentials");
+    debugPrint("[Matrix] Restoring account credentials");
     final Map<String, dynamic> credentials = json.decode(credentialsStr);
     client.connect(
       newDeviceID: credentials["deviceID"],
@@ -62,7 +62,6 @@ class Store extends StoreAPI {
   }
 
   Future<void> storeClient() async {
-    print("[Matrix] Save account credentials in crypted preferences");
     final Map<String, dynamic> credentials = {
       "deviceID": client.deviceID,
       "deviceName": client.deviceName,
@@ -103,7 +102,8 @@ class ExtendedStore extends Store implements ExtendedStoreAPI {
         onCreate: (Database db, int version) async {
       await createTables(db);
     }, onUpgrade: (Database db, int oldVersion, int newVersion) async {
-      print("[Store] Migrate database from version $oldVersion to $newVersion");
+      debugPrint(
+          "[Store] Migrate database from version $oldVersion to $newVersion");
       if (oldVersion != newVersion) {
         // Look for an old entry in an old clients library
         List<Map> list = [];
@@ -115,7 +115,7 @@ class ExtendedStore extends Store implements ExtendedStoreAPI {
         }
 
         if (list.length == 1) {
-          print("[Store] Found old client from deprecated store");
+          debugPrint("[Store] Found old client from deprecated store");
           var clientList = list[0];
           _db = db;
           client.connect(
@@ -131,7 +131,7 @@ class ExtendedStore extends Store implements ExtendedStoreAPI {
           );
           await db.execute("DROP TABLE IF EXISTS Clients");
           if (client.debug) {
-            print(
+            debugPrint(
                 "[Store] Restore client credentials from deprecated database of ${client.userID}");
           }
           schemes.forEach((String name, String scheme) async {

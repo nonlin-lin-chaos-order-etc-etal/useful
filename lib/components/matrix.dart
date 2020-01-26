@@ -50,7 +50,6 @@ class MatrixState extends State<Matrix> {
 
   void clean() async {
     if (!kIsWeb) return;
-    print("Clear session...");
 
     final LocalStorage storage = LocalStorage('LocalStorage');
     await storage.ready;
@@ -159,7 +158,7 @@ class MatrixState extends State<Matrix> {
             (r) => r.isFirst);
       } catch (_) {
         Toast.show("Failed to open chat...", context);
-        print(_);
+        debugPrint(_);
       }
     };
 
@@ -168,7 +167,6 @@ class MatrixState extends State<Matrix> {
         AndroidInitializationSettings('notifications_icon');
     var initializationSettingsIOS =
         IOSInitializationSettings(onDidReceiveLocalNotification: (i, a, b, c) {
-      print("onDidReceiveLocalNotification: $i $a $b $c");
       return null;
     });
     var initializationSettings = InitializationSettings(
@@ -270,7 +268,7 @@ class MatrixState extends State<Matrix> {
               platformChannelSpecifics,
               payload: roomId);
         } catch (exception) {
-          print("[Push] Error while processing notification: " +
+          debugPrint("[Push] Error while processing notification: " +
               exception.toString());
         }
         return null;
@@ -279,7 +277,7 @@ class MatrixState extends State<Matrix> {
       // Currently fires unexpectetly... https://github.com/FirebaseExtended/flutterfire/issues/1060
       //onLaunch: goToRoom,
     );
-    print("[Push] Firebase initialized");
+    debugPrint("[Push] Firebase initialized");
     return;
   }
 
@@ -288,14 +286,15 @@ class MatrixState extends State<Matrix> {
         IosNotificationSettings(sound: true, badge: true, alert: true));
     _firebaseMessaging.onIosSettingsRegistered
         .listen((IosNotificationSettings settings) {
-      print("Settings registered: $settings");
+      debugPrint("Settings registered: $settings");
     });
   }
 
   void _initWithStore() async {
     Future<LoginState> initLoginState = client.onLoginStateChanged.stream.first;
     client.storeAPI = kIsWeb ? Store(client) : ExtendedStore(client);
-    print("[Store] Store is extended: ${client.storeAPI.extended.toString()}");
+    debugPrint(
+        "[Store] Store is extended: ${client.storeAPI.extended.toString()}");
     if (await initLoginState == LoginState.logged) {
       await setupFirebase();
     }
@@ -304,7 +303,7 @@ class MatrixState extends State<Matrix> {
   @override
   void initState() {
     if (widget.client == null) {
-      print("[Matrix] Init matrix client");
+      debugPrint("[Matrix] Init matrix client");
       client = Client(widget.clientName, debug: false);
       _initWithStore();
     } else {
