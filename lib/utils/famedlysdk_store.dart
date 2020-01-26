@@ -113,6 +113,7 @@ class ExtendedStore extends Store implements ExtendedStoreAPI {
         } catch (_) {}
 
         if (list.length == 1) {
+          print("[Store] Found old client from deprecated store");
           var clientList = list[0];
           client.connect(
             newToken: clientList["token"],
