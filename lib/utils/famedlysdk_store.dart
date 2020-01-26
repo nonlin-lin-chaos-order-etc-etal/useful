@@ -103,18 +103,21 @@ class ExtendedStore extends Store implements ExtendedStoreAPI {
         onCreate: (Database db, int version) async {
       await createTables(db);
     }, onUpgrade: (Database db, int oldVersion, int newVersion) async {
-      print("[Store] Migrate databse from version $oldVersion to $newVersion");
+      print("[Store] Migrate database from version $oldVersion to $newVersion");
       if (oldVersion != newVersion) {
         // Look for an old entry in an old clients library
         List<Map> list = [];
         try {
-          list = await _db.rawQuery(
-              "SELECT * FROM Clients WHERE client=?)", [client.clientName]);
-        } catch (_) {}
+          list = await db.rawQuery(
+              "SELECT * FROM Clients WHERE client=?", [client.clientName]);
+        } on DatabaseException catch (_) {} catch (_) {
+          rethrow;
+        }
 
         if (list.length == 1) {
           print("[Store] Found old client from deprecated store");
           var clientList = list[0];
+          _db = db;
           client.connect(
             newToken: clientList["token"],
             newHomeserver: clientList["homeserver"],
@@ -126,7 +129,7 @@ class ExtendedStore extends Store implements ExtendedStoreAPI {
                 clientList["matrix_versions"].toString().split(","),
             newPrevBatch: null,
           );
-          await _db.execute("DROP TABLE IF EXISTS Clients");
+          await db.execute("DROP TABLE IF EXISTS Clients");
           if (client.debug) {
             print(
                 "[Store] Restore client credentials from deprecated database of ${client.userID}");
@@ -178,6 +181,7 @@ class ExtendedStore extends Store implements ExtendedStoreAPI {
   /// Will be automatically called on every synchronisation.
   Future<void> storePrevBatch(String prevBatch) async {
     final credentialsStr = await getItem(client.clientName);
+    if (credentialsStr == null) return;
     final Map<String, dynamic> credentials = json.decode(credentialsStr);
     credentials["prev_batch"] = prevBatch;
     await setItem(client.clientName, json.encode(credentials));
