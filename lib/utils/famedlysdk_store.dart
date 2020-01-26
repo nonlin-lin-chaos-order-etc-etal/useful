@@ -15,7 +15,7 @@ class Store extends StoreAPI {
   final FlutterSecureStorage secureStorage;
 
   Store(this.client)
-      : storage = LocalStorage('LocalStorage'),
+      : storage = !kIsWeb ? null : LocalStorage('LocalStorage'),
         secureStorage = kIsWeb ? null : FlutterSecureStorage() {
     _init();
   }
