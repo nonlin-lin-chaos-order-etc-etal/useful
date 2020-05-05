@@ -117,8 +117,8 @@ packages:
     dependency: "direct main"
     description:
       path: "."
-      ref: "1265ebf7da56440ead152bbf44502b941436dc1b"
-      resolved-ref: "1265ebf7da56440ead152bbf44502b941436dc1b"
+      ref: c2bc27abfd1fabd053d8ee96aebd26ce46be1e80
+      resolved-ref: c2bc27abfd1fabd053d8ee96aebd26ce46be1e80
       url: "https://gitlab.com/famedly/famedlysdk.git"
     source: git
     version: "0.0.1"
@@ -342,11 +342,11 @@ packages:
     dependency: transitive
     description:
       path: "."
-      ref: HEAD
-      resolved-ref: b043fcc29031979dc65e5b08e10ebb9b8d2fae30
+      ref: "1.x.y"
+      resolved-ref: "32edeff765369a7a77a0822f4b19302ca24a017b"
       url: "https://gitlab.com/famedly/libraries/matrix_file_e2ee.git"
     source: git
-    version: "1.0.2"
+    version: "1.0.3"
   meta:
     dependency: transitive
     description:
