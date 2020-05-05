@@ -7,7 +7,7 @@ import 'package:fluffychat/i18n/i18n.dart';
 import 'package:fluffychat/utils/app_route.dart';
 import 'package:fluffychat/views/auth_web_view.dart';
 import 'package:flutter/material.dart';
-import 'package:toast/toast.dart';
+import 'package:flutter_styled_toast/flutter_styled_toast.dart';
 
 import 'chat_list.dart';
 
@@ -96,7 +96,7 @@ class _SignUpPasswordState extends State<SignUpPassword> {
     try {
       await matrix.client.setDisplayname(widget.displayname);
     } catch (exception) {
-      Toast.show(I18n.of(context).couldNotSetDisplayname, context, duration: 5);
+      showToast(I18n.of(context).couldNotSetDisplayname);
     }
     if (widget.avatar != null) {
       try {
@@ -107,7 +107,7 @@ class _SignUpPasswordState extends State<SignUpPassword> {
           ),
         );
       } catch (exception) {
-        Toast.show(I18n.of(context).couldNotSetAvatar, context, duration: 5);
+        showToast(I18n.of(context).couldNotSetAvatar);
       }
     }
     await Navigator.of(context).pushAndRemoveUntil(
@@ -119,23 +119,16 @@ class _SignUpPasswordState extends State<SignUpPassword> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(I18n.of(context).secureYourAccountWithAPassword),
+        elevation: 0,
+        leading: loading ? Container() : null,
+        title: Text(
+          I18n.of(context).chooseAStrongPassword,
+        ),
       ),
       body: ListView(
         padding: EdgeInsets.symmetric(
             horizontal: max((MediaQuery.of(context).size.width - 600) / 2, 0)),
         children: <Widget>[
-          Container(
-            height: 150,
-            color: Theme.of(context).secondaryHeaderColor,
-            child: Center(
-              child: Icon(
-                Icons.vpn_key,
-                color: Theme.of(context).primaryColor,
-                size: 40,
-              ),
-            ),
-          ),
           ListTile(
             leading: CircleAvatar(
               backgroundColor: Colors.white,
@@ -160,22 +153,25 @@ class _SignUpPasswordState extends State<SignUpPassword> {
             ),
           ),
           SizedBox(height: 20),
-          Container(
-            height: 50,
-            padding: EdgeInsets.symmetric(horizontal: 12),
-            child: RaisedButton(
-              elevation: 7,
-              color: Theme.of(context).primaryColor,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(6),
+          Hero(
+            tag: 'loginButton',
+            child: Container(
+              height: 50,
+              padding: EdgeInsets.symmetric(horizontal: 12),
+              child: RaisedButton(
+                elevation: 7,
+                color: Theme.of(context).primaryColor,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: loading
+                    ? CircularProgressIndicator()
+                    : Text(
+                        I18n.of(context).createAccountNow.toUpperCase(),
+                        style: TextStyle(color: Colors.white, fontSize: 16),
+                      ),
+                onPressed: () => loading ? null : _signUpAction(context),
               ),
-              child: loading
-                  ? CircularProgressIndicator()
-                  : Text(
-                      I18n.of(context).createAccountNow.toUpperCase(),
-                      style: TextStyle(color: Colors.white, fontSize: 16),
-                    ),
-              onPressed: () => loading ? null : _signUpAction(context),
             ),
           ),
         ],

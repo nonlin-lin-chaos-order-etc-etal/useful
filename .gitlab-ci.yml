@@ -1,5 +1,5 @@
 image: 
-  name: registry.gitlab.com/famedly/container/flutter-dockerimages:stable
+  name: registry.gitlab.com/famedly/containers/flutter-dockerimages:stable
 
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
@@ -22,7 +22,7 @@ test:
 
 build_web:
   stage: coverage
-  image: registry.gitlab.com/famedly/container/flutter-dockerimages:beta
+  image: registry.gitlab.com/famedly/containers/flutter-dockerimages:beta
   script:
     - sudo apt update
     - sudo apt install curl -y
@@ -32,7 +32,7 @@ build_web:
     - cd assets/js/ && tar xaf olm.tar.gz && cd ../../
     - flutter pub get
     - flutter clean
-    - flutter build web --release --verbose
+    - flutter build web --release --verbose --dart-define=FLUTTER_WEB_USE_SKIA=true
   artifacts:
     paths:
       - build/web/

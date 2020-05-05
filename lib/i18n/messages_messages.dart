@@ -25,45 +25,45 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static m2(username, targetName) => "${username} banned ${targetName}";
 
-  static m3(username) => "${username} changed the chat avatar";
+  static m3(homeserver) => "By default you will be connected to ${homeserver}";
 
-  static m4(username, description) => "${username} changed the chat description to: \'${description}\'";
+  static m4(username) => "${username} changed the chat avatar";
 
-  static m5(username, chatname) => "${username} changed the chat name to: \'${chatname}\'";
+  static m5(username, description) => "${username} changed the chat description to: \'${description}\'";
 
-  static m6(username) => "${username} changed the chat permissions";
+  static m6(username, chatname) => "${username} changed the chat name to: \'${chatname}\'";
 
-  static m7(username, displayname) => "${username} changed the displayname to: ${displayname}";
+  static m7(username) => "${username} changed the chat permissions";
 
-  static m8(username) => "${username} changed the guest access rules";
+  static m8(username, displayname) => "${username} changed the displayname to: ${displayname}";
 
-  static m9(username, rules) => "${username} changed the guest access rules to: ${rules}";
+  static m9(username) => "${username} changed the guest access rules";
 
-  static m10(username) => "${username} changed the history visibility";
+  static m10(username, rules) => "${username} changed the guest access rules to: ${rules}";
 
-  static m11(username, rules) => "${username} changed the history visibility to: ${rules}";
+  static m11(username) => "${username} changed the history visibility";
 
-  static m12(username) => "${username} changed the join rules";
+  static m12(username, rules) => "${username} changed the history visibility to: ${rules}";
 
-  static m13(username, joinRules) => "${username} changed the join rules to: ${joinRules}";
+  static m13(username) => "${username} changed the join rules";
 
-  static m14(username) => "${username} changed the profile avatar";
+  static m14(username, joinRules) => "${username} changed the join rules to: ${joinRules}";
 
-  static m15(username) => "${username} changed the room aliases";
+  static m15(username) => "${username} changed the profile avatar";
 
-  static m16(username) => "${username} changed the invitation link";
+  static m16(username) => "${username} changed the room aliases";
 
-  static m17(count) => "${count} participants";
+  static m17(username) => "${username} changed the invitation link";
 
-  static m18(username) => "${username} created the chat";
+  static m18(count) => "${count} participants";
 
-  static m19(date, timeOfDay) => "${date}, ${timeOfDay}";
+  static m19(username) => "${username} created the chat";
 
-  static m20(year, month, day) => "${year}-${month}-${day}";
+  static m20(date, timeOfDay) => "${date}, ${timeOfDay}";
 
-  static m21(month, day) => "${month}-${day}";
+  static m21(year, month, day) => "${year}-${month}-${day}";
 
-  static m22(fileName) => "Download ${fileName}";
+  static m22(month, day) => "${month}-${day}";
 
   static m23(displayname) => "Group with ${displayname}";
 
@@ -83,53 +83,55 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static m31(count) => "Load ${count} more participants";
 
-  static m32(number) => "${number} selected";
+  static m32(homeserver) => "Log in to ${homeserver}";
 
-  static m33(fileName) => "Play ${fileName}";
+  static m33(number) => "${number} selected";
 
-  static m34(username) => "${username} redacted an event";
+  static m34(fileName) => "Play ${fileName}";
 
-  static m35(username) => "${username} rejected the invitation";
+  static m35(username) => "${username} redacted an event";
 
-  static m36(username) => "Removed by ${username}";
+  static m36(username) => "${username} rejected the invitation";
 
-  static m37(username) => "Seen by ${username}";
+  static m37(username) => "Removed by ${username}";
 
-  static m38(username, count) => "Seen by ${username} and ${count} others";
+  static m38(username) => "Seen by ${username}";
 
-  static m39(username, username2) => "Seen by ${username} and ${username2}";
+  static m39(username, count) => "Seen by ${username} and ${count} others";
 
-  static m40(username) => "${username} sent a file";
+  static m40(username, username2) => "Seen by ${username} and ${username2}";
 
-  static m41(username) => "${username} sent a picture";
+  static m41(username) => "${username} sent a file";
 
-  static m42(username) => "${username} sent a sticker";
+  static m42(username) => "${username} sent a picture";
 
-  static m43(username) => "${username} sent a video";
+  static m43(username) => "${username} sent a sticker";
 
-  static m44(username) => "${username} sent an audio";
+  static m44(username) => "${username} sent a video";
 
-  static m45(username) => "${username} shared the location";
+  static m45(username) => "${username} sent an audio";
 
-  static m46(hours12, hours24, minutes, suffix) => "${hours12}:${minutes} ${suffix}";
+  static m46(username) => "${username} shared the location";
 
-  static m47(username, targetName) => "${username} unbanned ${targetName}";
+  static m47(hours12, hours24, minutes, suffix) => "${hours12}:${minutes} ${suffix}";
 
-  static m48(type) => "Unknown event \'${type}\'";
+  static m48(username, targetName) => "${username} unbanned ${targetName}";
 
-  static m49(unreadEvents) => "${unreadEvents} unread messages";
+  static m49(type) => "Unknown event \'${type}\'";
 
-  static m50(unreadEvents, unreadChats) => "${unreadEvents} unread messages in ${unreadChats} chats";
+  static m50(unreadEvents) => "${unreadEvents} unread messages";
 
-  static m51(username, count) => "${username} and ${count} others are typing...";
+  static m51(unreadEvents, unreadChats) => "${unreadEvents} unread messages in ${unreadChats} chats";
 
-  static m52(username, username2) => "${username} and ${username2} are typing...";
+  static m52(username, count) => "${username} and ${count} others are typing...";
 
-  static m53(username) => "${username} is typing...";
+  static m53(username, username2) => "${username} and ${username2} are typing...";
 
-  static m54(username) => "${username} left the chat";
+  static m54(username) => "${username} is typing...";
 
-  static m55(username, type) => "${username} sent a ${type} event";
+  static m55(username) => "${username} left the chat";
+
+  static m56(username, type) => "${username} sent a ${type} event";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static _notInlinedMessages(_) => <String, Function> {
@@ -149,13 +151,19 @@ class MessageLookup extends MessageLookupByLibrary {
     "Avatar has been changed" : MessageLookupByLibrary.simpleMessage("Avatar has been changed"),
     "Ban from chat" : MessageLookupByLibrary.simpleMessage("Ban from chat"),
     "Banned" : MessageLookupByLibrary.simpleMessage("Banned"),
+    "Cancel" : MessageLookupByLibrary.simpleMessage("Cancel"),
+    "Change the homeserver" : MessageLookupByLibrary.simpleMessage("Change the homeserver"),
     "Change the name of the group" : MessageLookupByLibrary.simpleMessage("Change the name of the group"),
+    "Change the server" : MessageLookupByLibrary.simpleMessage("Change the server"),
+    "Change wallpaper" : MessageLookupByLibrary.simpleMessage("Change wallpaper"),
     "Change your style" : MessageLookupByLibrary.simpleMessage("Change your style"),
     "Changelog" : MessageLookupByLibrary.simpleMessage("Changelog"),
     "Chat details" : MessageLookupByLibrary.simpleMessage("Chat details"),
+    "Choose a strong password" : MessageLookupByLibrary.simpleMessage("Choose a strong password"),
     "Choose a username" : MessageLookupByLibrary.simpleMessage("Choose a username"),
     "Close" : MessageLookupByLibrary.simpleMessage("Close"),
     "Confirm" : MessageLookupByLibrary.simpleMessage("Confirm"),
+    "Connect" : MessageLookupByLibrary.simpleMessage("Connect"),
     "Connection attempt failed" : MessageLookupByLibrary.simpleMessage("Connection attempt failed"),
     "Contact has been invited to the group" : MessageLookupByLibrary.simpleMessage("Contact has been invited to the group"),
     "Content viewer" : MessageLookupByLibrary.simpleMessage("Content viewer"),
@@ -170,17 +178,25 @@ class MessageLookup extends MessageLookupByLibrary {
     "Dark" : MessageLookupByLibrary.simpleMessage("Dark"),
     "Delete" : MessageLookupByLibrary.simpleMessage("Delete"),
     "Delete message" : MessageLookupByLibrary.simpleMessage("Delete message"),
+    "Deny" : MessageLookupByLibrary.simpleMessage("Deny"),
+    "Device" : MessageLookupByLibrary.simpleMessage("Device"),
     "Devices" : MessageLookupByLibrary.simpleMessage("Devices"),
     "Discard picture" : MessageLookupByLibrary.simpleMessage("Discard picture"),
     "Displayname has been changed" : MessageLookupByLibrary.simpleMessage("Displayname has been changed"),
     "Donate" : MessageLookupByLibrary.simpleMessage("Donate"),
+    "Download file" : MessageLookupByLibrary.simpleMessage("Download file"),
+    "Edit Jitsi instance" : MessageLookupByLibrary.simpleMessage("Edit Jitsi instance"),
     "Edit displayname" : MessageLookupByLibrary.simpleMessage("Edit displayname"),
     "Empty chat" : MessageLookupByLibrary.simpleMessage("Empty chat"),
     "Encryption algorithm" : MessageLookupByLibrary.simpleMessage("Encryption algorithm"),
+    "Encryption is not enabled" : MessageLookupByLibrary.simpleMessage("Encryption is not enabled"),
     "End to end encryption is currently in Beta! Use at your own risk!" : MessageLookupByLibrary.simpleMessage("End to end encryption is currently in Beta! Use at your own risk!"),
     "End-to-end encryption settings" : MessageLookupByLibrary.simpleMessage("End-to-end encryption settings"),
     "Enter a group name" : MessageLookupByLibrary.simpleMessage("Enter a group name"),
     "Enter a username" : MessageLookupByLibrary.simpleMessage("Enter a username"),
+    "Enter your homeserver" : MessageLookupByLibrary.simpleMessage("Enter your homeserver"),
+    "File name" : MessageLookupByLibrary.simpleMessage("File name"),
+    "File size" : MessageLookupByLibrary.simpleMessage("File size"),
     "FluffyChat" : MessageLookupByLibrary.simpleMessage("FluffyChat"),
     "Forward" : MessageLookupByLibrary.simpleMessage("Forward"),
     "Friday" : MessageLookupByLibrary.simpleMessage("Friday"),
@@ -195,6 +211,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "Help" : MessageLookupByLibrary.simpleMessage("Help"),
     "Homeserver is not compatible" : MessageLookupByLibrary.simpleMessage("Homeserver is not compatible"),
     "ID" : MessageLookupByLibrary.simpleMessage("ID"),
+    "Identity" : MessageLookupByLibrary.simpleMessage("Identity"),
     "Invite contact" : MessageLookupByLibrary.simpleMessage("Invite contact"),
     "Invited" : MessageLookupByLibrary.simpleMessage("Invited"),
     "Invited users only" : MessageLookupByLibrary.simpleMessage("Invited users only"),
@@ -217,6 +234,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "Mute chat" : MessageLookupByLibrary.simpleMessage("Mute chat"),
     "New message in FluffyChat" : MessageLookupByLibrary.simpleMessage("New message in FluffyChat"),
     "New private chat" : MessageLookupByLibrary.simpleMessage("New private chat"),
+    "No permission" : MessageLookupByLibrary.simpleMessage("No permission"),
     "No rooms found..." : MessageLookupByLibrary.simpleMessage("No rooms found..."),
     "None" : MessageLookupByLibrary.simpleMessage("None"),
     "Not supported in web" : MessageLookupByLibrary.simpleMessage("Not supported in web"),
@@ -229,6 +247,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "Please enter a matrix identifier" : MessageLookupByLibrary.simpleMessage("Please enter a matrix identifier"),
     "Please enter your password" : MessageLookupByLibrary.simpleMessage("Please enter your password"),
     "Please enter your username" : MessageLookupByLibrary.simpleMessage("Please enter your username"),
+    "Public Rooms" : MessageLookupByLibrary.simpleMessage("Public Rooms"),
+    "Recording" : MessageLookupByLibrary.simpleMessage("Recording"),
     "Rejoin" : MessageLookupByLibrary.simpleMessage("Rejoin"),
     "Remove" : MessageLookupByLibrary.simpleMessage("Remove"),
     "Remove all other devices" : MessageLookupByLibrary.simpleMessage("Remove all other devices"),
@@ -236,10 +256,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "Remove exile" : MessageLookupByLibrary.simpleMessage("Remove exile"),
     "Remove message" : MessageLookupByLibrary.simpleMessage("Remove message"),
     "Reply" : MessageLookupByLibrary.simpleMessage("Reply"),
+    "Request permission" : MessageLookupByLibrary.simpleMessage("Request permission"),
+    "Request to read older messages" : MessageLookupByLibrary.simpleMessage("Request to read older messages"),
     "Revoke all permissions" : MessageLookupByLibrary.simpleMessage("Revoke all permissions"),
     "Saturday" : MessageLookupByLibrary.simpleMessage("Saturday"),
     "Search for a chat" : MessageLookupByLibrary.simpleMessage("Search for a chat"),
-    "Secure your account with a password" : MessageLookupByLibrary.simpleMessage("Secure your account with a password"),
+    "Send" : MessageLookupByLibrary.simpleMessage("Send"),
     "Send a message" : MessageLookupByLibrary.simpleMessage("Send a message"),
     "Send file" : MessageLookupByLibrary.simpleMessage("Send file"),
     "Send image" : MessageLookupByLibrary.simpleMessage("Send image"),
@@ -254,18 +276,25 @@ class MessageLookup extends MessageLookupByLibrary {
     "Sunday" : MessageLookupByLibrary.simpleMessage("Sunday"),
     "System" : MessageLookupByLibrary.simpleMessage("System"),
     "Tap to show menu" : MessageLookupByLibrary.simpleMessage("Tap to show menu"),
+    "The encryption has been corrupted" : MessageLookupByLibrary.simpleMessage("The encryption has been corrupted"),
     "This room has been archived." : MessageLookupByLibrary.simpleMessage("This room has been archived."),
     "Thursday" : MessageLookupByLibrary.simpleMessage("Thursday"),
     "Try to send again" : MessageLookupByLibrary.simpleMessage("Try to send again"),
     "Tuesday" : MessageLookupByLibrary.simpleMessage("Tuesday"),
     "Unknown device" : MessageLookupByLibrary.simpleMessage("Unknown device"),
+    "Unknown encryption algorithm" : MessageLookupByLibrary.simpleMessage("Unknown encryption algorithm"),
     "Unmute chat" : MessageLookupByLibrary.simpleMessage("Unmute chat"),
     "Use Amoled compatible colors?" : MessageLookupByLibrary.simpleMessage("Use Amoled compatible colors?"),
     "Username" : MessageLookupByLibrary.simpleMessage("Username"),
+    "Verify" : MessageLookupByLibrary.simpleMessage("Verify"),
+    "Video call" : MessageLookupByLibrary.simpleMessage("Video call"),
     "Visibility of the chat history" : MessageLookupByLibrary.simpleMessage("Visibility of the chat history"),
     "Visible for all participants" : MessageLookupByLibrary.simpleMessage("Visible for all participants"),
     "Visible for everyone" : MessageLookupByLibrary.simpleMessage("Visible for everyone"),
+    "Voice message" : MessageLookupByLibrary.simpleMessage("Voice message"),
+    "Wallpaper" : MessageLookupByLibrary.simpleMessage("Wallpaper"),
     "Wednesday" : MessageLookupByLibrary.simpleMessage("Wednesday"),
+    "Welcome to the cutest instant messenger in the matrix network." : MessageLookupByLibrary.simpleMessage("Welcome to the cutest instant messenger in the matrix network."),
     "Who is allowed to join this group" : MessageLookupByLibrary.simpleMessage("Who is allowed to join this group"),
     "Write a message..." : MessageLookupByLibrary.simpleMessage("Write a message..."),
     "Yes" : MessageLookupByLibrary.simpleMessage("Yes"),
@@ -280,26 +309,26 @@ class MessageLookup extends MessageLookupByLibrary {
     "activatedEndToEndEncryption" : m1,
     "alias" : MessageLookupByLibrary.simpleMessage("alias"),
     "bannedUser" : m2,
-    "changedTheChatAvatar" : m3,
-    "changedTheChatDescriptionTo" : m4,
-    "changedTheChatNameTo" : m5,
-    "changedTheChatPermissions" : m6,
-    "changedTheDisplaynameTo" : m7,
-    "changedTheGuestAccessRules" : m8,
-    "changedTheGuestAccessRulesTo" : m9,
-    "changedTheHistoryVisibility" : m10,
-    "changedTheHistoryVisibilityTo" : m11,
-    "changedTheJoinRules" : m12,
-    "changedTheJoinRulesTo" : m13,
-    "changedTheProfileAvatar" : m14,
-    "changedTheRoomAliases" : m15,
-    "changedTheRoomInvitationLink" : m16,
-    "countParticipants" : m17,
-    "createdTheChat" : m18,
-    "dateAndTimeOfDay" : m19,
-    "dateWithYear" : m20,
-    "dateWithoutYear" : m21,
-    "download" : m22,
+    "byDefaultYouWillBeConnectedTo" : m3,
+    "changedTheChatAvatar" : m4,
+    "changedTheChatDescriptionTo" : m5,
+    "changedTheChatNameTo" : m6,
+    "changedTheChatPermissions" : m7,
+    "changedTheDisplaynameTo" : m8,
+    "changedTheGuestAccessRules" : m9,
+    "changedTheGuestAccessRulesTo" : m10,
+    "changedTheHistoryVisibility" : m11,
+    "changedTheHistoryVisibilityTo" : m12,
+    "changedTheJoinRules" : m13,
+    "changedTheJoinRulesTo" : m14,
+    "changedTheProfileAvatar" : m15,
+    "changedTheRoomAliases" : m16,
+    "changedTheRoomInvitationLink" : m17,
+    "countParticipants" : m18,
+    "createdTheChat" : m19,
+    "dateAndTimeOfDay" : m20,
+    "dateWithYear" : m21,
+    "dateWithoutYear" : m22,
     "groupWith" : m23,
     "hasWithdrawnTheInvitationFor" : m24,
     "inviteContactToGroup" : m25,
@@ -310,30 +339,31 @@ class MessageLookup extends MessageLookupByLibrary {
     "kicked" : m29,
     "kickedAndBanned" : m30,
     "loadCountMoreParticipants" : m31,
-    "numberSelected" : m32,
-    "play" : m33,
-    "redactedAnEvent" : m34,
-    "rejectedTheInvitation" : m35,
-    "removedBy" : m36,
-    "seenByUser" : m37,
-    "seenByUserAndCountOthers" : m38,
-    "seenByUserAndUser" : m39,
-    "sentAFile" : m40,
-    "sentAPicture" : m41,
-    "sentASticker" : m42,
-    "sentAVideo" : m43,
-    "sentAnAudio" : m44,
-    "sharedTheLocation" : m45,
-    "timeOfDay" : m46,
+    "logInTo" : m32,
+    "numberSelected" : m33,
+    "play" : m34,
+    "redactedAnEvent" : m35,
+    "rejectedTheInvitation" : m36,
+    "removedBy" : m37,
+    "seenByUser" : m38,
+    "seenByUserAndCountOthers" : m39,
+    "seenByUserAndUser" : m40,
+    "sentAFile" : m41,
+    "sentAPicture" : m42,
+    "sentASticker" : m43,
+    "sentAVideo" : m44,
+    "sentAnAudio" : m45,
+    "sharedTheLocation" : m46,
+    "timeOfDay" : m47,
     "title" : MessageLookupByLibrary.simpleMessage("FluffyChat"),
-    "unbannedUser" : m47,
-    "unknownEvent" : m48,
-    "unreadMessages" : m49,
-    "unreadMessagesInChats" : m50,
-    "userAndOthersAreTyping" : m51,
-    "userAndUserAreTyping" : m52,
-    "userIsTyping" : m53,
-    "userLeftTheChat" : m54,
-    "userSentUnknownEvent" : m55
+    "unbannedUser" : m48,
+    "unknownEvent" : m49,
+    "unreadMessages" : m50,
+    "unreadMessagesInChats" : m51,
+    "userAndOthersAreTyping" : m52,
+    "userAndUserAreTyping" : m53,
+    "userIsTyping" : m54,
+    "userLeftTheChat" : m55,
+    "userSentUnknownEvent" : m56
   };
 }

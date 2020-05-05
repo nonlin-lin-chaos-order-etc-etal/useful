@@ -1,5 +1,5 @@
 {
-  "@@last_modified": "2020-02-19T16:20:13.752724",
+  "@@last_modified": "2020-04-12T11:11:56.595233",
   "About": "About",
   "@About": {
     "type": "text",
@@ -102,6 +102,18 @@
       "targetName": {}
     }
   },
+  "byDefaultYouWillBeConnectedTo": "By default you will be connected to {homeserver}",
+  "@byDefaultYouWillBeConnectedTo": {
+    "type": "text",
+    "placeholders": {
+      "homeserver": {}
+    }
+  },
+  "Cancel": "Cancel",
+  "@Cancel": {
+    "type": "text",
+    "placeholders": {}
+  },
   "changedTheChatAvatar": "{username} changed the chat avatar",
   "@changedTheChatAvatar": {
     "type": "text",
@@ -139,6 +151,11 @@
       "username": {},
       "displayname": {}
     }
+  },
+  "Change the homeserver": "Change the homeserver",
+  "@Change the homeserver": {
+    "type": "text",
+    "placeholders": {}
   },
   "changedTheGuestAccessRules": "{username} changed the guest access rules",
   "@changedTheGuestAccessRules": {
@@ -216,8 +233,28 @@
     "type": "text",
     "placeholders": {}
   },
+  "Change wallpaper": "Change wallpaper",
+  "@Change wallpaper": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "Change the server": "Change the server",
+  "@Change the server": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "The encryption has been corrupted": "The encryption has been corrupted",
+  "@The encryption has been corrupted": {
+    "type": "text",
+    "placeholders": {}
+  },
   "Chat details": "Chat details",
   "@Chat details": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "Choose a strong password": "Choose a strong password",
+  "@Choose a strong password": {
     "type": "text",
     "placeholders": {}
   },
@@ -233,6 +270,11 @@
   },
   "Confirm": "Confirm",
   "@Confirm": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "Connect": "Connect",
+  "@Connect": {
     "type": "text",
     "placeholders": {}
   },
@@ -340,6 +382,16 @@
     "type": "text",
     "placeholders": {}
   },
+  "Deny": "Deny",
+  "@Deny": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "Device": "Device",
+  "@Device": {
+    "type": "text",
+    "placeholders": {}
+  },
   "Devices": "Devices",
   "@Devices": {
     "type": "text",
@@ -355,12 +407,10 @@
     "type": "text",
     "placeholders": {}
   },
-  "download": "Download {fileName}",
-  "@download": {
+  "Download file": "Download file",
+  "@Download file": {
     "type": "text",
-    "placeholders": {
-      "fileName": {}
-    }
+    "placeholders": {}
   },
   "Edit displayname": "Edit displayname",
   "@Edit displayname": {
@@ -382,6 +432,11 @@
     "type": "text",
     "placeholders": {}
   },
+  "Encryption is not enabled": "Encryption is not enabled",
+  "@Encryption is not enabled": {
+    "type": "text",
+    "placeholders": {}
+  },
   "End-to-end encryption settings": "End-to-end encryption settings",
   "@End-to-end encryption settings": {
     "type": "text",
@@ -394,6 +449,21 @@
   },
   "Enter a username": "Enter a username",
   "@Enter a username": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "Enter your homeserver": "Enter your homeserver",
+  "@Enter your homeserver": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "File name": "File name",
+  "@File name": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "File size": "File size",
+  "@File size": {
     "type": "text",
     "placeholders": {}
   },
@@ -482,6 +552,11 @@
     "type": "text",
     "placeholders": {}
   },
+  "Identity": "Identity",
+  "@Identity": {
+    "type": "text",
+    "placeholders": {}
+  },
   "Invite contact": "Invite contact",
   "@Invite contact": {
     "type": "text",
@@ -522,6 +597,11 @@
   },
   "is typing...": "is typing...",
   "@is typing...": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "Edit Jitsi instance": "Edit Jitsi instance",
+  "@Edit Jitsi instance": {
     "type": "text",
     "placeholders": {}
   },
@@ -602,6 +682,13 @@
     "type": "text",
     "placeholders": {}
   },
+  "logInTo": "Log in to {homeserver}",
+  "@logInTo": {
+    "type": "text",
+    "placeholders": {
+      "homeserver": {}
+    }
+  },
   "Make a moderator": "Make a moderator",
   "@Make a moderator": {
     "type": "text",
@@ -659,6 +746,11 @@
   },
   "None": "None",
   "@None": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "No permission": "No permission",
+  "@No permission": {
     "type": "text",
     "placeholders": {}
   },
@@ -731,8 +823,18 @@
     "type": "text",
     "placeholders": {}
   },
+  "Public Rooms": "Public Rooms",
+  "@Public Rooms": {
+    "type": "text",
+    "placeholders": {}
+  },
   "Rejoin": "Rejoin",
   "@Rejoin": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "Recording": "Recording",
+  "@Recording": {
     "type": "text",
     "placeholders": {}
   },
@@ -792,6 +894,16 @@
     "type": "text",
     "placeholders": {}
   },
+  "Request permission": "Request permission",
+  "@Request permission": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "Request to read older messages": "Request to read older messages",
+  "@Request to read older messages": {
+    "type": "text",
+    "placeholders": {}
+  },
   "Saturday": "Saturday",
   "@Saturday": {
     "type": "text",
@@ -811,11 +923,6 @@
   },
   "Search for a chat": "Search for a chat",
   "@Search for a chat": {
-    "type": "text",
-    "placeholders": {}
-  },
-  "Secure your account with a password": "Secure your account with a password",
-  "@Secure your account with a password": {
     "type": "text",
     "placeholders": {}
   },
@@ -841,6 +948,11 @@
       "username": {},
       "count": {}
     }
+  },
+  "Send": "Send",
+  "@Send": {
+    "type": "text",
+    "placeholders": {}
   },
   "Send a message": "Send a message",
   "@Send a message": {
@@ -1021,6 +1133,11 @@
     "type": "text",
     "placeholders": {}
   },
+  "Unknown encryption algorithm": "Unknown encryption algorithm",
+  "@Unknown encryption algorithm": {
+    "type": "text",
+    "placeholders": {}
+  },
   "unknownEvent": "Unknown event '{type}'",
   "@unknownEvent": {
     "type": "text",
@@ -1079,6 +1196,16 @@
       "type": {}
     }
   },
+  "Verify": "Verify",
+  "@Verify": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "Video call": "Video call",
+  "@Video call": {
+    "type": "text",
+    "placeholders": {}
+  },
   "Visible for all participants": "Visible for all participants",
   "@Visible for all participants": {
     "type": "text",
@@ -1094,6 +1221,16 @@
     "type": "text",
     "placeholders": {}
   },
+  "Voice message": "Voice message",
+  "@Voice message": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "Wallpaper": "Wallpaper",
+  "@Wallpaper": {
+    "type": "text",
+    "placeholders": {}
+  },
   "End to end encryption is currently in Beta! Use at your own risk!": "End to end encryption is currently in Beta! Use at your own risk!",
   "@End to end encryption is currently in Beta! Use at your own risk!": {
     "type": "text",
@@ -1101,6 +1238,11 @@
   },
   "Wednesday": "Wednesday",
   "@Wednesday": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "Welcome to the cutest instant messenger in the matrix network.": "Welcome to the cutest instant messenger in the matrix network.",
+  "@Welcome to the cutest instant messenger in the matrix network.": {
     "type": "text",
     "placeholders": {}
   },

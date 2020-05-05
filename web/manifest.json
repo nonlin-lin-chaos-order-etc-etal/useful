@@ -1,0 +1,17 @@
+{
+    "short_name": "FluffyChat",
+    "name": "FluffyChat",
+    "description": "Chat with your friends",
+    "icons": [
+        {
+            "src": "assets/assets/logo.png",
+            "type": "image/png",
+            "sizes": "181x182"
+        }
+    ],
+    "start_url": "https://christianpauly.gitlab.io/fluffychat-flutter",
+    "background_color": "#FFFFFF",
+    "display": "standalone",
+    "scope": "/",
+    "theme_color": "#5625BA"
+}

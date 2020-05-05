@@ -2,8 +2,8 @@ import 'package:famedlysdk/famedlysdk.dart';
 import 'package:fluffychat/views/chat.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:flutter_styled_toast/flutter_styled_toast.dart';
 import 'package:pedantic/pedantic.dart';
-import 'package:toast/toast.dart';
 
 import '../../i18n/i18n.dart';
 import '../../utils/app_route.dart';
@@ -26,14 +26,14 @@ class ChatListItem extends StatelessWidget {
   void clickAction(BuildContext context) async {
     if (!activeChat) {
       if (room.membership == Membership.invite &&
-          await Matrix.of(context).tryRequestWithLoadingDialog(room.join()) ==
+          await SimpleDialogs(context)
+                  .tryRequestWithLoadingDialog(room.join()) ==
               false) {
         return;
       }
 
       if (room.membership == Membership.ban) {
-        Toast.show(I18n.of(context).youHaveBeenBannedFromThisChat, context,
-            duration: 5);
+        showToast(I18n.of(context).youHaveBeenBannedFromThisChat);
         return;
       }
 
@@ -61,7 +61,7 @@ class ChatListItem extends StatelessWidget {
                 child: Text(I18n.of(context).rejoin.toUpperCase(),
                     style: TextStyle(color: Colors.blue)),
                 onPressed: () async {
-                  await Matrix.of(context)
+                  await SimpleDialogs(context)
                       .tryRequestWithLoadingDialog(room.join());
                   await Navigator.of(context).pop();
                 },
@@ -73,7 +73,16 @@ class ChatListItem extends StatelessWidget {
 
       if (room.membership == Membership.join) {
         if (Matrix.of(context).shareContent != null) {
-          unawaited(room.sendEvent(Matrix.of(context).shareContent));
+          if (Matrix.of(context).shareContent["msgtype"] ==
+              "chat.fluffy.shared_file") {
+            await SimpleDialogs(context).tryRequestWithErrorToast(
+              room.sendFileEvent(
+                Matrix.of(context).shareContent["file"],
+              ),
+            );
+          } else {
+            unawaited(room.sendEvent(Matrix.of(context).shareContent));
+          }
           Matrix.of(context).shareContent = null;
         }
         await Navigator.pushAndRemoveUntil(
@@ -88,8 +97,8 @@ class ChatListItem extends StatelessWidget {
   Future<bool> archiveAction(BuildContext context) async {
     {
       if ([Membership.leave, Membership.ban].contains(room.membership)) {
-        final success =
-            await Matrix.of(context).tryRequestWithLoadingDialog(room.forget());
+        final success = await SimpleDialogs(context)
+            .tryRequestWithLoadingDialog(room.forget());
         if (success != false) {
           if (this.onForget != null) this.onForget();
         }
@@ -99,8 +108,8 @@ class ChatListItem extends StatelessWidget {
       if (!confirmed) {
         return false;
       }
-      final success =
-          await Matrix.of(context).tryRequestWithLoadingDialog(room.leave());
+      final success = await SimpleDialogs(context)
+          .tryRequestWithLoadingDialog(room.leave());
       if (success == false) {
         return false;
       }
@@ -140,21 +149,25 @@ class ChatListItem extends StatelessWidget {
           title: Row(
             children: <Widget>[
               Expanded(
-                child: Text(
-                  room.getLocalizedDisplayname(context),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Text(
+                      room.getLocalizedDisplayname(I18n.of(context)),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    SizedBox(width: 4),
+                    room.pushRuleState == PushRuleState.notify
+                        ? Container()
+                        : Icon(
+                            Icons.notifications_off,
+                            color: Colors.grey[400],
+                            size: 16,
+                          ),
+                  ],
                 ),
               ),
-              SizedBox(width: 16),
-              room.pushRuleState == PushRuleState.notify
-                  ? Container()
-                  : Icon(
-                      Icons.notifications_off,
-                      color: Colors.grey[400],
-                      size: 16,
-                    ),
-              SizedBox(width: 4),
               Text(
                 room.timeCreated.localizedTimeShort(context),
                 style: TextStyle(
@@ -176,8 +189,8 @@ class ChatListItem extends StatelessWidget {
                         ),
                       )
                     : Text(
-                        room.lastEvent.getLocalizedBody(context,
-                            withSenderNamePrefix: true, hideQuotes: true),
+                        room.lastEvent.getLocalizedBody(I18n.of(context),
+                            withSenderNamePrefix: true, hideReply: true),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(

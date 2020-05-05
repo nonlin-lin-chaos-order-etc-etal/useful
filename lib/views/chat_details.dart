@@ -7,7 +7,6 @@ import 'package:fluffychat/components/chat_settings_popup_menu.dart';
 import 'package:fluffychat/components/content_banner.dart';
 import 'package:fluffychat/components/dialogs/simple_dialogs.dart';
 import 'package:fluffychat/components/list_items/participant_list_item.dart';
-import 'package:fluffychat/components/matrix.dart';
 import 'package:fluffychat/i18n/i18n.dart';
 import 'package:fluffychat/utils/app_route.dart';
 import 'package:fluffychat/utils/room_extension.dart';
@@ -17,9 +16,9 @@ import 'package:fluffychat/views/invitation_selection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_styled_toast/flutter_styled_toast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:link_text/link_text.dart';
-import 'package:toast/toast.dart';
 
 class ChatDetails extends StatefulWidget {
   final Room room;
@@ -36,19 +35,14 @@ class _ChatDetailsState extends State<ChatDetails> {
     final String displayname = await SimpleDialogs(context).enterText(
       titleText: I18n.of(context).changeTheNameOfTheGroup,
       labelText: I18n.of(context).changeTheNameOfTheGroup,
-      hintText: widget.room.getLocalizedDisplayname(context),
+      hintText: widget.room.getLocalizedDisplayname(I18n.of(context)),
     );
     if (displayname == null) return;
-    final MatrixState matrix = Matrix.of(context);
-    final success = await matrix.tryRequestWithLoadingDialog(
+    final success = await SimpleDialogs(context).tryRequestWithLoadingDialog(
       widget.room.setName(displayname),
     );
     if (success != false) {
-      Toast.show(
-        I18n.of(context).displaynameHasBeenChanged,
-        context,
-        duration: Toast.LENGTH_LONG,
-      );
+      showToast(I18n.of(context).displaynameHasBeenChanged);
     }
   }
 
@@ -69,14 +63,15 @@ class _ChatDetailsState extends State<ChatDetails> {
     if (aliases.indexWhere((s) => s == canonicalAlias) == -1) {
       List<String> newAliases = List.from(aliases);
       newAliases.add(canonicalAlias);
-      final response = await Matrix.of(context).tryRequestWithLoadingDialog(
+      final response = await SimpleDialogs(context).tryRequestWithLoadingDialog(
         widget.room.client.jsonRequest(
           type: HTTPType.GET,
           action: "/client/r0/directory/room/$canonicalAlias",
         ),
       );
       if (response == false) {
-        final success = await Matrix.of(context).tryRequestWithLoadingDialog(
+        final success =
+            await SimpleDialogs(context).tryRequestWithLoadingDialog(
           widget.room.client.jsonRequest(
               type: HTTPType.PUT,
               action: "/client/r0/directory/room/$canonicalAlias",
@@ -85,7 +80,7 @@ class _ChatDetailsState extends State<ChatDetails> {
         if (success == false) return;
       }
     }
-    await Matrix.of(context).tryRequestWithLoadingDialog(
+    await SimpleDialogs(context).tryRequestWithLoadingDialog(
       widget.room.client.jsonRequest(
           type: HTTPType.PUT,
           action:
@@ -104,16 +99,11 @@ class _ChatDetailsState extends State<ChatDetails> {
       multiLine: true,
     );
     if (displayname == null) return;
-    final MatrixState matrix = Matrix.of(context);
-    final success = await matrix.tryRequestWithLoadingDialog(
+    final success = await SimpleDialogs(context).tryRequestWithLoadingDialog(
       widget.room.setDescription(displayname),
     );
     if (success != false) {
-      Toast.show(
-        I18n.of(context).groupDescriptionHasBeenChanged,
-        context,
-        duration: Toast.LENGTH_LONG,
-      );
+      showToast(I18n.of(context).groupDescriptionHasBeenChanged);
     }
   }
 
@@ -124,8 +114,7 @@ class _ChatDetailsState extends State<ChatDetails> {
         maxWidth: 1600,
         maxHeight: 1600);
     if (tempFile == null) return;
-    final MatrixState matrix = Matrix.of(context);
-    final success = await matrix.tryRequestWithLoadingDialog(
+    final success = await SimpleDialogs(context).tryRequestWithLoadingDialog(
       widget.room.setAvatar(
         MatrixFile(
           bytes: await tempFile.readAsBytes(),
@@ -134,16 +123,12 @@ class _ChatDetailsState extends State<ChatDetails> {
       ),
     );
     if (success != false) {
-      Toast.show(
-        I18n.of(context).avatarHasBeenChanged,
-        context,
-        duration: Toast.LENGTH_LONG,
-      );
+      showToast(I18n.of(context).avatarHasBeenChanged);
     }
   }
 
   void requestMoreMembersAction(BuildContext context) async {
-    final List<User> participants = await Matrix.of(context)
+    final List<User> participants = await SimpleDialogs(context)
         .tryRequestWithLoadingDialog(widget.room.requestParticipants());
     if (participants != null) setState(() => members = participants);
   }
@@ -169,6 +154,7 @@ class _ChatDetailsState extends State<ChatDetails> {
       );
     }
     members ??= widget.room.getParticipants();
+    members.removeWhere((u) => u.membership == Membership.leave);
     final int actualMembersCount =
         widget.room.mInvitedMemberCount + widget.room.mJoinedMemberCount;
     final bool canRequestMoreMembers = members.length < actualMembersCount;
@@ -195,13 +181,12 @@ class _ChatDetailsState extends State<ChatDetails> {
                       Clipboard.setData(
                         ClipboardData(text: widget.room.canonicalAlias),
                       );
-                      Toast.show(I18n.of(context).copiedToClipboard, context,
-                          duration: 5);
+                      showToast(I18n.of(context).copiedToClipboard);
                     },
                   ),
                 ChatSettingsPopupMenu(widget.room, false)
               ],
-              title: Text(widget.room.getLocalizedDisplayname(context),
+              title: Text(widget.room.getLocalizedDisplayname(I18n.of(context)),
                   style: TextStyle(
                       color:
                           Theme.of(context).appBarTheme.textTheme.title.color)),
@@ -240,7 +225,7 @@ class _ChatDetailsState extends State<ChatDetails> {
                           linkStyle: TextStyle(color: Colors.blueAccent),
                           textStyle: TextStyle(
                             fontSize: 14,
-                            color: Theme.of(context).accentColor,
+                            color: Theme.of(context).textTheme.body1.color,
                           ),
                         ),
                         onTap: widget.room.canSendEvent("m.room.topic")
@@ -266,8 +251,8 @@ class _ChatDetailsState extends State<ChatDetails> {
                             child: Icon(Icons.people),
                           ),
                           title: Text(I18n.of(context).changeTheNameOfTheGroup),
-                          subtitle: Text(
-                              widget.room.getLocalizedDisplayname(context)),
+                          subtitle: Text(widget.room
+                              .getLocalizedDisplayname(I18n.of(context))),
                           onTap: () => setDisplaynameAction(context),
                         ),
                       if (widget.room.canSendEvent("m.room.canonical_alias") &&
@@ -296,11 +281,12 @@ class _ChatDetailsState extends State<ChatDetails> {
                           title: Text(
                               I18n.of(context).whoIsAllowedToJoinThisGroup),
                           subtitle: Text(
-                            widget.room.joinRules.getLocalizedString(context),
+                            widget.room.joinRules
+                                .getLocalizedString(I18n.of(context)),
                           ),
                         ),
                         onSelected: (JoinRules joinRule) =>
-                            Matrix.of(context).tryRequestWithLoadingDialog(
+                            SimpleDialogs(context).tryRequestWithLoadingDialog(
                           widget.room.setJoinRules(joinRule),
                         ),
                         itemBuilder: (BuildContext context) =>
@@ -308,14 +294,14 @@ class _ChatDetailsState extends State<ChatDetails> {
                           if (widget.room.canChangeJoinRules)
                             PopupMenuItem<JoinRules>(
                               value: JoinRules.public,
-                              child: Text(
-                                  JoinRules.public.getLocalizedString(context)),
+                              child: Text(JoinRules.public
+                                  .getLocalizedString(I18n.of(context))),
                             ),
                           if (widget.room.canChangeJoinRules)
                             PopupMenuItem<JoinRules>(
                               value: JoinRules.invite,
-                              child: Text(
-                                  JoinRules.invite.getLocalizedString(context)),
+                              child: Text(JoinRules.invite
+                                  .getLocalizedString(I18n.of(context))),
                             ),
                         ],
                       ),
@@ -331,11 +317,11 @@ class _ChatDetailsState extends State<ChatDetails> {
                               Text(I18n.of(context).visibilityOfTheChatHistory),
                           subtitle: Text(
                             widget.room.historyVisibility
-                                .getLocalizedString(context),
+                                .getLocalizedString(I18n.of(context)),
                           ),
                         ),
                         onSelected: (HistoryVisibility historyVisibility) =>
-                            Matrix.of(context).tryRequestWithLoadingDialog(
+                            SimpleDialogs(context).tryRequestWithLoadingDialog(
                           widget.room.setHistoryVisibility(historyVisibility),
                         ),
                         itemBuilder: (BuildContext context) =>
@@ -344,25 +330,25 @@ class _ChatDetailsState extends State<ChatDetails> {
                             PopupMenuItem<HistoryVisibility>(
                               value: HistoryVisibility.invited,
                               child: Text(HistoryVisibility.invited
-                                  .getLocalizedString(context)),
+                                  .getLocalizedString(I18n.of(context))),
                             ),
                           if (widget.room.canChangeHistoryVisibility)
                             PopupMenuItem<HistoryVisibility>(
                               value: HistoryVisibility.joined,
                               child: Text(HistoryVisibility.joined
-                                  .getLocalizedString(context)),
+                                  .getLocalizedString(I18n.of(context))),
                             ),
                           if (widget.room.canChangeHistoryVisibility)
                             PopupMenuItem<HistoryVisibility>(
                               value: HistoryVisibility.shared,
                               child: Text(HistoryVisibility.shared
-                                  .getLocalizedString(context)),
+                                  .getLocalizedString(I18n.of(context))),
                             ),
                           if (widget.room.canChangeHistoryVisibility)
                             PopupMenuItem<HistoryVisibility>(
                               value: HistoryVisibility.world_readable,
                               child: Text(HistoryVisibility.world_readable
-                                  .getLocalizedString(context)),
+                                  .getLocalizedString(I18n.of(context))),
                             ),
                         ],
                       ),
@@ -379,11 +365,12 @@ class _ChatDetailsState extends State<ChatDetails> {
                                 Text(I18n.of(context).areGuestsAllowedToJoin),
                             subtitle: Text(
                               widget.room.guestAccess
-                                  .getLocalizedString(context),
+                                  .getLocalizedString(I18n.of(context)),
                             ),
                           ),
                           onSelected: (GuestAccess guestAccess) =>
-                              Matrix.of(context).tryRequestWithLoadingDialog(
+                              SimpleDialogs(context)
+                                  .tryRequestWithLoadingDialog(
                             widget.room.setGuestAccess(guestAccess),
                           ),
                           itemBuilder: (BuildContext context) =>
@@ -393,7 +380,7 @@ class _ChatDetailsState extends State<ChatDetails> {
                                 value: GuestAccess.can_join,
                                 child: Text(
                                   GuestAccess.can_join
-                                      .getLocalizedString(context),
+                                      .getLocalizedString(I18n.of(context)),
                                 ),
                               ),
                             if (widget.room.canChangeGuestAccess)
@@ -401,7 +388,7 @@ class _ChatDetailsState extends State<ChatDetails> {
                                 value: GuestAccess.forbidden,
                                 child: Text(
                                   GuestAccess.forbidden
-                                      .getLocalizedString(context),
+                                      .getLocalizedString(I18n.of(context)),
                                 ),
                               ),
                           ],
@@ -419,7 +406,6 @@ class _ChatDetailsState extends State<ChatDetails> {
                           ),
                         ),
                       ),
-                      Divider(height: 1),
                       widget.room.canInvite
                           ? ListTile(
                               title: Text(I18n.of(context).inviteContact),

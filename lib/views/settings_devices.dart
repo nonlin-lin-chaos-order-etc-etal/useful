@@ -42,7 +42,7 @@ class DevicesSettingsState extends State<DevicesSettings> {
     for (UserDevice userDevice in devices) {
       deviceIds.add(userDevice.deviceId);
     }
-    final success = await matrix
+    final success = await SimpleDialogs(context)
         .tryRequestWithLoadingDialog(matrix.client.deleteDevices(deviceIds),
             onAdditionalAuth: (MatrixException exception) async {
       final String password = await SimpleDialogs(context).enterText(
@@ -87,6 +87,7 @@ class DevicesSettingsState extends State<DevicesSettings> {
           UserDevice thisDevice =
               devices.firstWhere(isOwnDevice, orElse: () => null);
           devices.removeWhere(isOwnDevice);
+          devices.sort((a, b) => b.lastSeenTs.compareTo(a.lastSeenTs));
           return Column(
             children: <Widget>[
               if (thisDevice != null)
@@ -159,10 +160,15 @@ class UserDeviceListItem extends StatelessWidget {
         contentPadding: EdgeInsets.all(16.0),
         title: Row(
           children: <Widget>[
-            Text((userDevice.displayName?.isNotEmpty ?? false)
-                ? userDevice.displayName
-                : I18n.of(context).unknownDevice),
-            Spacer(),
+            Expanded(
+              child: Text(
+                (userDevice.displayName?.isNotEmpty ?? false)
+                    ? userDevice.displayName
+                    : I18n.of(context).unknownDevice,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
             Text(userDevice.lastSeenTs.localizedTimeShort(context)),
           ],
         ),

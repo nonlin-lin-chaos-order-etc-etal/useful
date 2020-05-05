@@ -94,6 +94,14 @@ class I18n {
         args: [username, targetName],
       );
 
+  String byDefaultYouWillBeConnectedTo(String homeserver) => Intl.message(
+        'By default you will be connected to $homeserver',
+        name: 'byDefaultYouWillBeConnectedTo',
+        args: [homeserver],
+      );
+
+  String get cancel => Intl.message("Cancel");
+
   String changedTheChatAvatar(String username) => Intl.message(
         "$username changed the chat avatar",
         name: "changedTheChatAvatar",
@@ -125,6 +133,8 @@ class I18n {
         name: "changedTheDisplaynameTo",
         args: [username, displayname],
       );
+
+  String get changeTheHomeserver => Intl.message('Change the homeserver');
 
   String changedTheGuestAccessRules(String username) => Intl.message(
         "$username changed the guest access rules",
@@ -188,13 +198,24 @@ class I18n {
   String get changeTheNameOfTheGroup =>
       Intl.message("Change the name of the group");
 
+  String get changeWallpaper => Intl.message("Change wallpaper");
+
+  String get changeTheServer => Intl.message("Change the server");
+
+  String get channelCorruptedDecryptError =>
+      Intl.message("The encryption has been corrupted");
+
   String get chatDetails => Intl.message('Chat details');
+
+  String get chooseAStrongPassword => Intl.message("Choose a strong password");
 
   String get chooseAUsername => Intl.message("Choose a username");
 
   String get close => Intl.message("Close");
 
   String get confirm => Intl.message("Confirm");
+
+  String get connect => Intl.message('Connect');
 
   String get connectionAttemptFailed =>
       Intl.message("Connection attempt failed");
@@ -256,6 +277,10 @@ class I18n {
 
   String get deleteMessage => Intl.message("Delete message");
 
+  String get deny => Intl.message("Deny");
+
+  String get device => Intl.message("Device");
+
   String get devices => Intl.message("Devices");
 
   String get discardPicture => Intl.message("Discard picture");
@@ -263,11 +288,7 @@ class I18n {
   String get displaynameHasBeenChanged =>
       Intl.message("Displayname has been changed");
 
-  String download(String fileName) => Intl.message(
-        "Download $fileName",
-        name: "download",
-        args: [fileName],
-      );
+  String get downloadFile => Intl.message("Download file");
 
   String get editDisplayname => Intl.message("Edit displayname");
 
@@ -278,12 +299,20 @@ class I18n {
 
   String get encryptionAlgorithm => Intl.message("Encryption algorithm");
 
+  String get encryptionNotEnabled => Intl.message("Encryption is not enabled");
+
   String get end2endEncryptionSettings =>
       Intl.message("End-to-end encryption settings");
 
   String get enterAGroupName => Intl.message("Enter a group name");
 
   String get enterAUsername => Intl.message("Enter a username");
+
+  String get enterYourHomeserver => Intl.message('Enter your homeserver');
+
+  String get fileName => Intl.message("File name");
+
+  String get fileSize => Intl.message("File size");
 
   String get fluffychat => Intl.message("FluffyChat");
 
@@ -328,6 +357,8 @@ class I18n {
 
   String get id => Intl.message("ID");
 
+  String get identity => Intl.message("Identity");
+
   String get inviteContact => Intl.message("Invite contact");
 
   String inviteContactToGroup(String groupName) => Intl.message(
@@ -353,6 +384,8 @@ class I18n {
   String get invitedUsersOnly => Intl.message("Invited users only");
 
   String get isTyping => Intl.message("is typing...");
+
+  String get editJitsiInstance => Intl.message('Edit Jitsi instance');
 
   String joinedTheChat(String username) => Intl.message(
         "$username joined the chat",
@@ -400,6 +433,12 @@ class I18n {
 
   String get login => Intl.message("Login");
 
+  String logInTo(String homeserver) => Intl.message(
+        'Log in to $homeserver',
+        name: 'logInTo',
+        args: [homeserver],
+      );
+
   String get makeAModerator => Intl.message("Make a moderator");
 
   String get makeAnAdmin => Intl.message("Make an admin");
@@ -428,6 +467,8 @@ class I18n {
       "It seems that you have no google services on your phone. That's a good decision for your privacy! To receive push notifications in FluffyChat we recommend using microG: https://microg.org/");
 
   String get none => Intl.message("None");
+
+  String get noPermission => Intl.message("No permission");
 
   String get noRoomsFound => Intl.message("No rooms found...");
 
@@ -465,7 +506,11 @@ class I18n {
   String get pleaseEnterYourUsername =>
       Intl.message("Please enter your username");
 
+  String get publicRooms => Intl.message("Public Rooms");
+
   String get rejoin => Intl.message("Rejoin");
+
+  String get recording => Intl.message("Recording");
 
   String redactedAnEvent(String username) => Intl.message(
         "$username redacted an event",
@@ -499,6 +544,11 @@ class I18n {
 
   String get reply => Intl.message('Reply');
 
+  String get requestPermission => Intl.message('Request permission');
+
+  String get requestToReadOlderMessages =>
+      Intl.message("Request to read older messages");
+
   String get saturday => Intl.message("Saturday");
 
   String get share => Intl.message("Share");
@@ -510,9 +560,6 @@ class I18n {
       );
 
   String get searchForAChat => Intl.message("Search for a chat");
-
-  String get secureYourAccountWithAPassword =>
-      Intl.message("Secure your account with a password");
 
   String seenByUser(String username) => Intl.message(
         "Seen by $username",
@@ -532,6 +579,8 @@ class I18n {
         name: "seenByUserAndCountOthers",
         args: [username, count],
       );
+
+  String get send => Intl.message("Send");
 
   String get sendAMessage => Intl.message("Send a message");
 
@@ -575,6 +624,8 @@ class I18n {
 
   String get setInvitationLink => Intl.message("Set invitation link");
 
+  String get setStatus => Intl.message('Set status');
+
   String get settings => Intl.message("Settings");
 
   String get signUp => Intl.message("Sign up");
@@ -582,6 +633,8 @@ class I18n {
   String get changeTheme => Intl.message("Change your style");
 
   String get systemTheme => Intl.message("System");
+
+  String get statusExampleMessage => Intl.message("How are you today?");
 
   String get lightTheme => Intl.message("Light");
 
@@ -633,6 +686,9 @@ class I18n {
 
   String get unknownDevice => Intl.message("Unknown device");
 
+  String get unknownEncryptionAlgorithm =>
+      Intl.message("Unknown encryption algorithm");
+
   String unknownEvent(String type) => Intl.message(
         "Unknown event '$type'",
         name: "unknownEvent",
@@ -679,6 +735,10 @@ class I18n {
         args: [username, type],
       );
 
+  String get verify => Intl.message("Verify");
+
+  String get videoCall => Intl.message('Video call');
+
   String get visibleForAllParticipants =>
       Intl.message("Visible for all participants");
 
@@ -687,10 +747,17 @@ class I18n {
   String get visibilityOfTheChatHistory =>
       Intl.message("Visibility of the chat history");
 
+  String get voiceMessage => Intl.message("Voice message");
+
+  String get wallpaper => Intl.message("Wallpaper");
+
   String get warningEncryptionInBeta => Intl.message(
       "End to end encryption is currently in Beta! Use at your own risk!");
 
   String get wednesday => Intl.message("Wednesday");
+
+  String get welcomeText => Intl.message(
+      'Welcome to the cutest instant messenger in the matrix network.');
 
   String get whoIsAllowedToJoinThisGroup =>
       Intl.message("Who is allowed to join this group");

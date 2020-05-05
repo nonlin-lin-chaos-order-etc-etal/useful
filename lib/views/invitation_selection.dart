@@ -3,10 +3,11 @@ import 'dart:async';
 import 'package:famedlysdk/famedlysdk.dart';
 import 'package:fluffychat/components/adaptive_page_layout.dart';
 import 'package:fluffychat/components/avatar.dart';
+import 'package:fluffychat/components/dialogs/simple_dialogs.dart';
 import 'package:fluffychat/components/matrix.dart';
 import 'package:fluffychat/i18n/i18n.dart';
 import 'package:flutter/material.dart';
-import 'package:toast/toast.dart';
+import 'package:flutter_styled_toast/flutter_styled_toast.dart';
 
 import 'chat_list.dart';
 
@@ -28,10 +29,14 @@ class _InvitationSelectionState extends State<InvitationSelection> {
   Future<List<User>> getContacts(BuildContext context) async {
     final Client client = Matrix.of(context).client;
     List<User> participants = await widget.room.requestParticipants();
+    participants.removeWhere(
+      (u) => ![Membership.join, Membership.invite].contains(u.membership),
+    );
     List<User> contacts = [];
     Map<String, bool> userMap = {};
     for (int i = 0; i < client.rooms.length; i++) {
       List<User> roomUsers = client.rooms[i].getParticipants();
+
       for (int j = 0; j < roomUsers.length; j++) {
         if (userMap[roomUsers[j].id] != true &&
             participants.indexWhere((u) => u.id == roomUsers[j].id) == -1) {
@@ -40,23 +45,20 @@ class _InvitationSelectionState extends State<InvitationSelection> {
         userMap[roomUsers[j].id] = true;
       }
     }
-    contacts.sort((a, b) => a
-        .calcDisplayname()
-        .toLowerCase()
-        .compareTo(b.calcDisplayname().toLowerCase()));
+    contacts.sort(
+      (a, b) => a.calcDisplayname().toLowerCase().compareTo(
+            b.calcDisplayname().toLowerCase(),
+          ),
+    );
     return contacts;
   }
 
   void inviteAction(BuildContext context, String id) async {
-    final success = await Matrix.of(context).tryRequestWithLoadingDialog(
+    final success = await SimpleDialogs(context).tryRequestWithLoadingDialog(
       widget.room.invite(id),
     );
     if (success != false) {
-      Toast.show(
-        I18n.of(context).contactHasBeenInvitedToTheGroup,
-        context,
-        duration: Toast.LENGTH_LONG,
-      );
+      showToast(I18n.of(context).contactHasBeenInvitedToTheGroup);
     }
   }
 
@@ -80,7 +82,7 @@ class _InvitationSelectionState extends State<InvitationSelection> {
     if (loading) return;
     setState(() => loading = true);
     final MatrixState matrix = Matrix.of(context);
-    final response = await matrix.tryRequestWithErrorToast(
+    final response = await SimpleDialogs(context).tryRequestWithErrorToast(
       matrix.client.jsonRequest(
           type: HTTPType.POST,
           action: "/client/r0/user_directory/search",
@@ -123,7 +125,7 @@ class _InvitationSelectionState extends State<InvitationSelection> {
           appBar: AppBar(
             title: Text(I18n.of(context).inviteContact),
             bottom: PreferredSize(
-              preferredSize: Size.fromHeight(68),
+              preferredSize: Size.fromHeight(92),
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: TextField(
@@ -157,7 +159,9 @@ class _InvitationSelectionState extends State<InvitationSelection> {
                   itemCount: foundProfiles.length,
                   itemBuilder: (BuildContext context, int i) => ListTile(
                     leading: Avatar(
-                      MxContent(foundProfiles[i]["avatar_url"] ?? ""),
+                      foundProfiles[i]["avatar_url"] == null
+                          ? null
+                          : Uri.parse(foundProfiles[i]["avatar_url"]),
                       foundProfiles[i]["display_name"] ??
                           foundProfiles[i]["user_id"],
                     ),

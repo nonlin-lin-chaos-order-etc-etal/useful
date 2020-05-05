@@ -1,3 +1,61 @@
+# Version 0.13.0 - 2020-??-??
+### Features:
+- New status feature
+- Enhanced chat list design
+
+# Version 0.12.4 - 2020-04-17
+### Fixed
+- Login without google services
+
+# Version 0.12.2 - 2020-04-12
+### Changes:
+- New set homeserver UX
+### Fixed
+- Fix toasts when switching views
+- Fix image flickering
+- Fix login without google services
+- Fix toasts
+
+# Version 0.12.0 - 2020-04-10
+### Features:
+- Implement custom wallpapers
+- Lightweight Jitsi integration for video calls
+- Use SKIA for web
+### Fixes:
+- Fix image scaling
+- Minor bugfixes
+
+# Version 0.11.0 - 2020-04-02
+### Features:
+- Share content with FluffyChat
+### Fixes:
+- Minor bugfixes
+
+# Version 0.10.1 - 2020-03-29
+### Fixes:
+- Fix a lazy loading bug
+- Improve app icon
+
+# Version 0.10.0 - 2020-03-29
+### New features
+- Voice messages
+- New message bubble design
+### Changes:
+- Use SnackBars instead of Toasts
+### Fixes:
+- Minor fixes in the SDK
+- Loading dialog when sending files is displayed too long
+- Fixed device settings list
+
+# Version 0.9.0 - 2020-03-13
+### New features
+- Improved design
+- End2End encryption for normal messages (not yet files)
+- Key sharing
+- Device keys verification UI
+### Fixes
+- Minor bug fixes
+
 # Version 0.8.2 - 2020-02-17
 ### Fixes
 - SpeedDial labels not visible in light mode
@@ -19,7 +77,6 @@
 - Replies on replies fixed
 
 # Version 0.7.1 - 2020-02-10
-### Fixed
 - Replies with correct sender id
 
 # Version 0.7.0 - 2020-02-10

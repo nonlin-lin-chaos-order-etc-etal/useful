@@ -24,7 +24,7 @@ class AppInfo extends StatelessWidget {
     Client client = Matrix.of(context).client;
     return Scaffold(
       appBar: AppBar(
-        title: Text("About FluffyChat"),
+        title: Text(I18n.of(context).accountInformations),
       ),
       body: ListView(
         children: <Widget>[
@@ -39,10 +39,6 @@ class AppInfo extends StatelessWidget {
           ListTile(
             title: Text("Supported versions:"),
             subtitle: Text(client.matrixVersions.toString()),
-          ),
-          ListTile(
-            title: Text("Lazy Loading members enabled:"),
-            subtitle: Text(client.lazyLoadMembers.toString()),
           ),
           ListTile(
             title: Text("Device name:"),

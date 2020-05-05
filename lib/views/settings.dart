@@ -1,18 +1,18 @@
 import 'dart:io';
 
 import 'package:famedlysdk/famedlysdk.dart';
+import 'package:fluffychat/components/settings_themes.dart';
+import 'package:fluffychat/views/homeserver_picker.dart';
 import 'package:fluffychat/views/settings_devices.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:toast/toast.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'app_info.dart';
 import 'chat_list.dart';
-import 'settings_themes.dart';
-import 'sign_up.dart';
-import '../components/dialogs/simple_dialogs.dart';
 import '../components/adaptive_page_layout.dart';
+import '../components/dialogs/simple_dialogs.dart';
 import '../components/content_banner.dart';
 import '../components/matrix.dart';
 import '../i18n/i18n.dart';
@@ -43,10 +43,26 @@ class _SettingsState extends State<Settings> {
       return;
     }
     MatrixState matrix = Matrix.of(context);
-    await matrix.tryRequestWithLoadingDialog(matrix.client.logout());
+    await SimpleDialogs(context)
+        .tryRequestWithLoadingDialog(matrix.client.logout());
     matrix.clean();
     await Navigator.of(context).pushAndRemoveUntil(
-        AppRoute.defaultRoute(context, SignUp()), (r) => false);
+        AppRoute.defaultRoute(context, HomeserverPicker()), (r) => false);
+  }
+
+  void setJitsiInstanceAction(BuildContext context) async {
+    var jitsi = await SimpleDialogs(context).enterText(
+      titleText: I18n.of(context).editJitsiInstance,
+      hintText: Matrix.of(context).jitsiInstance,
+      labelText: I18n.of(context).editJitsiInstance,
+    );
+    if (jitsi == null) return;
+    if (!jitsi.endsWith('/')) {
+      jitsi += '/';
+    }
+    final MatrixState matrix = Matrix.of(context);
+    await matrix.client.storeAPI.setItem('chat.fluffy.jitsi_instance', jitsi);
+    matrix.jitsiInstance = jitsi;
   }
 
   void setDisplaynameAction(BuildContext context) async {
@@ -58,7 +74,7 @@ class _SettingsState extends State<Settings> {
     );
     if (displayname == null) return;
     final MatrixState matrix = Matrix.of(context);
-    final success = await matrix.tryRequestWithLoadingDialog(
+    final success = await SimpleDialogs(context).tryRequestWithLoadingDialog(
       matrix.client.setDisplayname(displayname),
     );
     if (success != false) {
@@ -77,7 +93,7 @@ class _SettingsState extends State<Settings> {
         maxHeight: 1600);
     if (tempFile == null) return;
     final MatrixState matrix = Matrix.of(context);
-    final success = await matrix.tryRequestWithLoadingDialog(
+    final success = await SimpleDialogs(context).tryRequestWithLoadingDialog(
       matrix.client.setAvatar(
         MatrixFile(
           bytes: await tempFile.readAsBytes(),
@@ -86,16 +102,31 @@ class _SettingsState extends State<Settings> {
       ),
     );
     if (success != false) {
-      Toast.show(
-        I18n.of(context).avatarHasBeenChanged,
-        context,
-        duration: Toast.LENGTH_LONG,
-      );
       setState(() {
         profileFuture = null;
         profile = null;
       });
     }
+  }
+
+  void setWallpaperAction(BuildContext context) async {
+    final wallpaper = await ImagePicker.pickImage(source: ImageSource.gallery);
+    if (wallpaper == null) return;
+    Matrix.of(context).wallpaper = wallpaper;
+    await Matrix.of(context)
+        .client
+        .storeAPI
+        .setItem("chat.fluffy.wallpaper", wallpaper.path);
+    setState(() => null);
+  }
+
+  void deleteWallpaperAction(BuildContext context) async {
+    Matrix.of(context).wallpaper = null;
+    await Matrix.of(context)
+        .client
+        .storeAPI
+        .setItem("chat.fluffy.wallpaper", null);
+    setState(() => null);
   }
 
   @override
@@ -121,7 +152,7 @@ class _SettingsState extends State<Settings> {
                     color: Theme.of(context).appBarTheme.textTheme.title.color),
               ),
               background: ContentBanner(
-                profile?.avatarUrl ?? MxContent(""),
+                profile?.avatarUrl,
                 height: 300,
                 defaultIcon: Icons.account_circle,
                 loading: profile == null,
@@ -132,6 +163,49 @@ class _SettingsState extends State<Settings> {
         ],
         body: ListView(
           children: <Widget>[
+            ListTile(
+              title: Text(
+                I18n.of(context).changeTheme,
+                style: TextStyle(
+                  color: Theme.of(context).primaryColor,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            ThemesSettings(),
+            if (!kIsWeb && client.storeAPI != null) Divider(thickness: 1),
+            if (!kIsWeb && client.storeAPI != null)
+              ListTile(
+                title: Text(
+                  I18n.of(context).wallpaper,
+                  style: TextStyle(
+                    color: Theme.of(context).primaryColor,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            if (Matrix.of(context).wallpaper != null)
+              ListTile(
+                title: Image.file(
+                  Matrix.of(context).wallpaper,
+                  height: 38,
+                  fit: BoxFit.cover,
+                ),
+                trailing: Icon(
+                  Icons.delete_forever,
+                  color: Colors.red,
+                ),
+                onTap: () => deleteWallpaperAction(context),
+              ),
+            if (!kIsWeb && client.storeAPI != null)
+              Builder(builder: (context) {
+                return ListTile(
+                  title: Text(I18n.of(context).changeWallpaper),
+                  trailing: Icon(Icons.wallpaper),
+                  onTap: () => setWallpaperAction(context),
+                );
+              }),
+            Divider(thickness: 1),
             ListTile(
               title: Text(
                 I18n.of(context).account,
@@ -148,14 +222,10 @@ class _SettingsState extends State<Settings> {
               onTap: () => setDisplaynameAction(context),
             ),
             ListTile(
-              trailing: Icon(Icons.color_lens),
-              title: Text(I18n.of(context).changeTheme),
-              onTap: () async => await Navigator.of(context).push(
-                AppRoute.defaultRoute(
-                  context,
-                  ThemesSettingsView(),
-                ),
-              ),
+              trailing: Icon(Icons.phone),
+              title: Text(I18n.of(context).editJitsiInstance),
+              subtitle: Text(Matrix.of(context).jitsiInstance),
+              onTap: () => setJitsiInstanceAction(context),
             ),
             ListTile(
               trailing: Icon(Icons.devices_other),
@@ -164,6 +234,16 @@ class _SettingsState extends State<Settings> {
                 AppRoute.defaultRoute(
                   context,
                   DevicesSettingsView(),
+                ),
+              ),
+            ),
+            ListTile(
+              trailing: Icon(Icons.account_circle),
+              title: Text(I18n.of(context).accountInformations),
+              onTap: () => Navigator.of(context).push(
+                AppRoute.defaultRoute(
+                  context,
+                  AppInfoView(),
                 ),
               ),
             ),
@@ -183,48 +263,19 @@ class _SettingsState extends State<Settings> {
               ),
             ),
             ListTile(
-              title: Container(
-                alignment: Alignment.centerLeft,
-                child: Image.asset("assets/kofi.png", width: 200),
-              ),
-              onTap: () => launch("https://ko-fi.com/V7V315112"),
-            ),
-            ListTile(
-              leading: Icon(Icons.donut_large),
-              title: Text("Liberapay " + I18n.of(context).donate),
-              onTap: () =>
-                  launch("https://liberapay.com/KrilleChritzelius/donate"),
-            ),
-            ListTile(
-              leading: Icon(Icons.help),
+              trailing: Icon(Icons.help),
               title: Text(I18n.of(context).help),
               onTap: () => launch(
                   "https://gitlab.com/ChristianPauly/fluffychat-flutter/issues"),
             ),
             ListTile(
-              leading: Icon(Icons.account_circle),
-              title: Text(I18n.of(context).accountInformations),
-              onTap: () => Navigator.of(context).push(
-                AppRoute.defaultRoute(
-                  context,
-                  AppInfoView(),
-                ),
-              ),
-            ),
-            ListTile(
-              leading: Icon(Icons.list),
-              title: Text(I18n.of(context).changelog),
-              onTap: () => launch(
-                  "https://gitlab.com/ChristianPauly/fluffychat-flutter/blob/master/CHANGELOG.md"),
-            ),
-            ListTile(
-              leading: Icon(Icons.link),
+              trailing: Icon(Icons.link),
               title: Text(I18n.of(context).license),
               onTap: () => launch(
                   "https://gitlab.com/ChristianPauly/fluffychat-flutter/raw/master/LICENSE"),
             ),
             ListTile(
-              leading: Icon(Icons.code),
+              trailing: Icon(Icons.code),
               title: Text(I18n.of(context).sourceCode),
               onTap: () => launch(
                   "https://gitlab.com/ChristianPauly/fluffychat-flutter"),

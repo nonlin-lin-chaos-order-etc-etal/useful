@@ -5,21 +5,20 @@ import 'package:famedlysdk/famedlysdk.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:fluffychat/components/adaptive_page_layout.dart';
 import 'package:fluffychat/components/chat_settings_popup_menu.dart';
+import 'package:fluffychat/components/dialogs/recording_dialog.dart';
 import 'package:fluffychat/components/dialogs/simple_dialogs.dart';
+import 'package:fluffychat/components/encryption_button.dart';
 import 'package:fluffychat/components/list_items/message.dart';
 import 'package:fluffychat/components/matrix.dart';
 import 'package:fluffychat/components/reply_content.dart';
 import 'package:fluffychat/i18n/i18n.dart';
-import 'package:fluffychat/utils/app_route.dart';
 import 'package:fluffychat/utils/event_extension.dart';
 import 'package:fluffychat/utils/room_extension.dart';
-import 'package:fluffychat/views/chat_encryption_settings.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_styled_toast/flutter_styled_toast.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:toast/toast.dart';
 import 'package:pedantic/pedantic.dart';
 
 import 'chat_list.dart';
@@ -68,7 +67,7 @@ class _ChatState extends State<_Chat> {
   Timer typingTimeout;
   bool currentlyTyping = false;
 
-  Set<Event> selectedEvents = {};
+  List<Event> selectedEvents = [];
 
   Event replyEvent;
 
@@ -80,11 +79,13 @@ class _ChatState extends State<_Chat> {
 
   final int _loadHistoryCount = 100;
 
+  String inputText = "";
+
   void requestHistory() async {
     if (timeline.events.last.type != EventTypes.RoomCreate) {
       setState(() => this._loadingHistory = true);
       await timeline.requestHistory(historyCount: _loadHistoryCount);
-      setState(() => this._loadingHistory = false);
+      if (mounted) setState(() => this._loadingHistory = false);
     }
   }
 
@@ -155,7 +156,7 @@ class _ChatState extends State<_Chat> {
 
   @override
   void dispose() {
-    timeline?.sub?.cancel();
+    timeline?.cancelSubscriptions();
     timeline = null;
     matrix.activeRoomId = "";
     super.dispose();
@@ -170,15 +171,18 @@ class _ChatState extends State<_Chat> {
     if (replyEvent != null) {
       setState(() => replyEvent = null);
     }
+
+    setState(() => inputText = "");
   }
 
   void sendFileAction(BuildContext context) async {
     if (kIsWeb) {
-      return Toast.show(I18n.of(context).notSupportedInWeb, context);
+      showToast(I18n.of(context).notSupportedInWeb);
+      return;
     }
     File file = await FilePicker.getFile();
     if (file == null) return;
-    await matrix.tryRequestWithLoadingDialog(
+    await SimpleDialogs(context).tryRequestWithLoadingDialog(
       room.sendFileEvent(
         MatrixFile(bytes: await file.readAsBytes(), path: file.path),
       ),
@@ -187,7 +191,8 @@ class _ChatState extends State<_Chat> {
 
   void sendImageAction(BuildContext context) async {
     if (kIsWeb) {
-      return Toast.show(I18n.of(context).notSupportedInWeb, context);
+      showToast(I18n.of(context).notSupportedInWeb);
+      return;
     }
     File file = await ImagePicker.pickImage(
         source: ImageSource.gallery,
@@ -195,7 +200,7 @@ class _ChatState extends State<_Chat> {
         maxWidth: 1600,
         maxHeight: 1600);
     if (file == null) return;
-    await matrix.tryRequestWithLoadingDialog(
+    await SimpleDialogs(context).tryRequestWithLoadingDialog(
       room.sendImageEvent(
         MatrixFile(bytes: await file.readAsBytes(), path: file.path),
       ),
@@ -204,7 +209,8 @@ class _ChatState extends State<_Chat> {
 
   void openCameraAction(BuildContext context) async {
     if (kIsWeb) {
-      return Toast.show(I18n.of(context).notSupportedInWeb, context);
+      showToast(I18n.of(context).notSupportedInWeb);
+      return;
     }
     File file = await ImagePicker.pickImage(
         source: ImageSource.camera,
@@ -212,18 +218,38 @@ class _ChatState extends State<_Chat> {
         maxWidth: 1600,
         maxHeight: 1600);
     if (file == null) return;
-    await matrix.tryRequestWithLoadingDialog(
+    await SimpleDialogs(context).tryRequestWithLoadingDialog(
       room.sendImageEvent(
         MatrixFile(bytes: await file.readAsBytes(), path: file.path),
       ),
     );
   }
 
+  void voiceMessageAction(BuildContext context) async {
+    String result;
+    await showDialog(
+        context: context,
+        builder: (context) => RecordingDialog(
+              onFinished: (r) => result = r,
+            ));
+    if (result == null) return;
+    final File audioFile = File(result);
+    await SimpleDialogs(context).tryRequestWithLoadingDialog(
+      room.sendAudioEvent(
+        MatrixFile(bytes: audioFile.readAsBytesSync(), path: audioFile.path),
+      ),
+    );
+  }
+
   String _getSelectedEventString(BuildContext context) {
     String copyString = "";
+    if (selectedEvents.length == 1) {
+      return selectedEvents.first.getLocalizedBody(I18n.of(context));
+    }
     for (Event event in selectedEvents) {
       if (copyString.isNotEmpty) copyString += "\n\n";
-      copyString += event.getLocalizedBody(context, withSenderNamePrefix: true);
+      copyString +=
+          event.getLocalizedBody(I18n.of(context), withSenderNamePrefix: true);
     }
     return copyString;
   }
@@ -240,7 +266,7 @@ class _ChatState extends State<_Chat> {
     );
     if (!confirmed) return;
     for (Event event in selectedEvents) {
-      await Matrix.of(context).tryRequestWithLoadingDialog(
+      await SimpleDialogs(context).tryRequestWithLoadingDialog(
           event.status > 0 ? event.redact() : event.remove());
     }
     setState(() => selectedEvents.clear());
@@ -297,7 +323,7 @@ class _ChatState extends State<_Chat> {
     matrix.activeRoomId = widget.id;
 
     if (room.membership == Membership.invite) {
-      matrix.tryRequestWithLoadingDialog(room.join());
+      SimpleDialogs(context).tryRequestWithLoadingDialog(room.join());
     }
 
     String typingText = "";
@@ -331,9 +357,11 @@ class _ChatState extends State<_Chat> {
         title: selectedEvents.isEmpty
             ? Column(
                 mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: !kIsWeb && Platform.isIOS
+                    ? CrossAxisAlignment.center
+                    : CrossAxisAlignment.start,
                 children: <Widget>[
-                  Text(room.getLocalizedDisplayname(context)),
+                  Text(room.getLocalizedDisplayname(I18n.of(context))),
                   AnimatedContainer(
                     duration: Duration(milliseconds: 500),
                     height: typingText.isEmpty ? 0 : 20,
@@ -389,11 +417,15 @@ class _ChatState extends State<_Chat> {
           : null,
       body: Stack(
         children: <Widget>[
-          if (!kIsWeb)
-            SvgPicture.asset(
-              "assets/chat.svg",
-              height: double.infinity,
-              color: Theme.of(context).primaryColor.withOpacity(0.2),
+          if (Matrix.of(context).wallpaper != null)
+            Opacity(
+              opacity: 0.66,
+              child: Image.file(
+                Matrix.of(context).wallpaper,
+                height: double.infinity,
+                width: double.infinity,
+                fit: BoxFit.cover,
+              ),
             ),
           SafeArea(
             child: Column(
@@ -448,13 +480,24 @@ class _ChatState extends State<_Chat> {
                                     ),
                                   )
                                 : Message(timeline.events[i - 1],
-                                    onSelect: (Event event) => event.redacted
-                                        ? null
-                                        : selectedEvents.contains(event)
-                                            ? setState(() =>
-                                                selectedEvents.remove(event))
-                                            : setState(() =>
-                                                selectedEvents.add(event)),
+                                    onAvatarTab: (Event event) {
+                                    sendController.text += ' ${event.senderId}';
+                                  }, onSelect: (Event event) {
+                                    if (!event.redacted) {
+                                      if (selectedEvents.contains(event)) {
+                                        setState(
+                                          () => selectedEvents.remove(event),
+                                        );
+                                      } else {
+                                        setState(
+                                          () => selectedEvents.add(event),
+                                        );
+                                      }
+                                      selectedEvents.sort(
+                                        (a, b) => a.time.compareTo(b.time),
+                                      );
+                                    }
+                                  },
                                     longPressSelect: selectedEvents.isEmpty,
                                     selected: selectedEvents
                                         .contains(timeline.events[i - 1]),
@@ -483,20 +526,18 @@ class _ChatState extends State<_Chat> {
                     ),
                   ),
                 ),
+                Divider(
+                  height: 1,
+                  color: Theme.of(context).secondaryHeaderColor,
+                  thickness: 1,
+                ),
                 room.canSendDefaultMessages &&
                         room.membership == Membership.join
                     ? Container(
                         decoration: BoxDecoration(
-                          color: Theme.of(context).backgroundColor,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.2),
-                              spreadRadius: 1,
-                              blurRadius: 2,
-                              offset:
-                                  Offset(0, -1), // changes position of shadow
-                            ),
-                          ],
+                          color: Theme.of(context)
+                              .backgroundColor
+                              .withOpacity(0.8),
                         ),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
@@ -550,67 +591,79 @@ class _ChatState extends State<_Chat> {
                                       : Container(),
                                 ]
                               : <Widget>[
-                                  kIsWeb
-                                      ? Container()
-                                      : PopupMenuButton<String>(
-                                          icon: Icon(Icons.add),
-                                          onSelected: (String choice) async {
-                                            if (choice == "file") {
-                                              sendFileAction(context);
-                                            } else if (choice == "image") {
-                                              sendImageAction(context);
-                                            }
-                                            if (choice == "camera") {
-                                              openCameraAction(context);
-                                            }
-                                          },
-                                          itemBuilder: (BuildContext context) =>
-                                              <PopupMenuEntry<String>>[
-                                            PopupMenuItem<String>(
-                                              value: "file",
-                                              child: ListTile(
-                                                leading: CircleAvatar(
-                                                  backgroundColor: Colors.green,
-                                                  foregroundColor: Colors.white,
-                                                  child: Icon(Icons.attachment),
-                                                ),
-                                                title: Text(
-                                                    I18n.of(context).sendFile),
-                                                contentPadding:
-                                                    EdgeInsets.all(0),
-                                              ),
+                                  if (!kIsWeb && inputText.isEmpty)
+                                    PopupMenuButton<String>(
+                                      icon: Icon(Icons.add),
+                                      onSelected: (String choice) async {
+                                        if (choice == "file") {
+                                          sendFileAction(context);
+                                        } else if (choice == "image") {
+                                          sendImageAction(context);
+                                        }
+                                        if (choice == "camera") {
+                                          openCameraAction(context);
+                                        }
+                                        if (choice == "voice") {
+                                          voiceMessageAction(context);
+                                        }
+                                      },
+                                      itemBuilder: (BuildContext context) =>
+                                          <PopupMenuEntry<String>>[
+                                        PopupMenuItem<String>(
+                                          value: "file",
+                                          child: ListTile(
+                                            leading: CircleAvatar(
+                                              backgroundColor: Colors.green,
+                                              foregroundColor: Colors.white,
+                                              child: Icon(Icons.attachment),
                                             ),
-                                            PopupMenuItem<String>(
-                                              value: "image",
-                                              child: ListTile(
-                                                leading: CircleAvatar(
-                                                  backgroundColor: Colors.blue,
-                                                  foregroundColor: Colors.white,
-                                                  child: Icon(Icons.image),
-                                                ),
-                                                title: Text(
-                                                    I18n.of(context).sendImage),
-                                                contentPadding:
-                                                    EdgeInsets.all(0),
-                                              ),
-                                            ),
-                                            PopupMenuItem<String>(
-                                              value: "camera",
-                                              child: ListTile(
-                                                leading: CircleAvatar(
-                                                  backgroundColor:
-                                                      Colors.purple,
-                                                  foregroundColor: Colors.white,
-                                                  child: Icon(Icons.camera_alt),
-                                                ),
-                                                title: Text(I18n.of(context)
-                                                    .openCamera),
-                                                contentPadding:
-                                                    EdgeInsets.all(0),
-                                              ),
-                                            ),
-                                          ],
+                                            title:
+                                                Text(I18n.of(context).sendFile),
+                                            contentPadding: EdgeInsets.all(0),
+                                          ),
                                         ),
+                                        PopupMenuItem<String>(
+                                          value: "image",
+                                          child: ListTile(
+                                            leading: CircleAvatar(
+                                              backgroundColor: Colors.blue,
+                                              foregroundColor: Colors.white,
+                                              child: Icon(Icons.image),
+                                            ),
+                                            title: Text(
+                                                I18n.of(context).sendImage),
+                                            contentPadding: EdgeInsets.all(0),
+                                          ),
+                                        ),
+                                        PopupMenuItem<String>(
+                                          value: "camera",
+                                          child: ListTile(
+                                            leading: CircleAvatar(
+                                              backgroundColor: Colors.purple,
+                                              foregroundColor: Colors.white,
+                                              child: Icon(Icons.camera_alt),
+                                            ),
+                                            title: Text(
+                                                I18n.of(context).openCamera),
+                                            contentPadding: EdgeInsets.all(0),
+                                          ),
+                                        ),
+                                        PopupMenuItem<String>(
+                                          value: "voice",
+                                          child: ListTile(
+                                            leading: CircleAvatar(
+                                              backgroundColor: Colors.red,
+                                              foregroundColor: Colors.white,
+                                              child: Icon(Icons.mic),
+                                            ),
+                                            title: Text(
+                                                I18n.of(context).voiceMessage),
+                                            contentPadding: EdgeInsets.all(0),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  EncryptionButton(room),
                                   Expanded(
                                     child: Padding(
                                       padding: const EdgeInsets.symmetric(
@@ -632,23 +685,6 @@ class _ChatState extends State<_Chat> {
                                           hintText:
                                               I18n.of(context).writeAMessage,
                                           border: InputBorder.none,
-                                          prefixIcon:
-                                              sendController.text.isEmpty
-                                                  ? InkWell(
-                                                      child: Icon(room.encrypted
-                                                          ? Icons.lock
-                                                          : Icons.lock_open),
-                                                      onTap: () =>
-                                                          Navigator.of(context)
-                                                              .push(
-                                                        AppRoute.defaultRoute(
-                                                          context,
-                                                          ChatEncryptionSettingsView(
-                                                              widget.id),
-                                                        ),
-                                                      ),
-                                                    )
-                                                  : null,
                                         ),
                                         onChanged: (String text) {
                                           this.typingCoolDown?.cancel();
@@ -669,14 +705,22 @@ class _ChatState extends State<_Chat> {
                                                 timeout: Duration(seconds: 30)
                                                     .inMilliseconds);
                                           }
+                                          setState(() => inputText = text);
                                         },
                                       ),
                                     ),
                                   ),
-                                  IconButton(
-                                    icon: Icon(Icons.send),
-                                    onPressed: () => send(),
-                                  ),
+                                  if (!kIsWeb && inputText.isEmpty)
+                                    IconButton(
+                                      icon: Icon(Icons.mic),
+                                      onPressed: () =>
+                                          voiceMessageAction(context),
+                                    ),
+                                  if (kIsWeb || inputText.isNotEmpty)
+                                    IconButton(
+                                      icon: Icon(Icons.send),
+                                      onPressed: () => send(),
+                                    ),
                                 ],
                         ),
                       )

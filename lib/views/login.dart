@@ -4,6 +4,7 @@ import 'package:famedlysdk/famedlysdk.dart';
 import 'package:fluffychat/components/matrix.dart';
 import 'package:fluffychat/i18n/i18n.dart';
 import 'package:fluffychat/utils/app_route.dart';
+import 'package:fluffychat/utils/firebase_controller.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -17,11 +18,8 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final TextEditingController serverController =
-      TextEditingController(text: "tchncs.de");
   String usernameError;
   String passwordError;
-  String serverError;
   bool loading = false;
   bool showPassword = false;
 
@@ -37,30 +35,12 @@ class _LoginState extends State<Login> {
     } else {
       setState(() => passwordError = null);
     }
-    serverError = null;
 
     if (usernameController.text.isEmpty || passwordController.text.isEmpty) {
       return;
     }
 
-    String homeserver = serverController.text;
-    if (homeserver.isEmpty) homeserver = "tchncs.de";
-    if (!homeserver.startsWith("https://")) {
-      homeserver = "https://" + homeserver;
-    }
-
-    try {
-      setState(() => loading = true);
-      if (!await matrix.client.checkServer(homeserver)) {
-        setState(
-            () => serverError = I18n.of(context).homeserverIsNotCompatible);
-
-        return setState(() => loading = false);
-      }
-    } catch (exception) {
-      setState(() => serverError = I18n.of(context).connectionAttemptFailed);
-      return setState(() => loading = false);
-    }
+    setState(() => loading = true);
     try {
       await matrix.client.login(
           usernameController.text, passwordController.text,
@@ -74,7 +54,10 @@ class _LoginState extends State<Login> {
     }
     if (!kIsWeb) {
       try {
-        await matrix.setupFirebase();
+        await FirebaseController.setupFirebase(
+          matrix.client,
+          matrix.widget.clientName,
+        );
       } catch (exception) {
         await matrix.client.logout();
         matrix.clean();
@@ -92,94 +75,88 @@ class _LoginState extends State<Login> {
     return Scaffold(
       appBar: AppBar(
         leading: loading ? Container() : null,
-        title: TextField(
-          autocorrect: false,
-          controller: serverController,
-          decoration: InputDecoration(
-              icon: Icon(Icons.domain),
-              hintText: "matrix-client.matrix.org",
-              errorText: serverError,
-              errorMaxLines: 1,
-              prefixText: "https://",
-              labelText: serverError == null ? "Homeserver" : serverError),
+        elevation: 0,
+        title: Text(
+          I18n.of(context).logInTo(Matrix.of(context)
+              .client
+              .homeserver
+              .replaceFirst('https://', '')),
         ),
       ),
-      body: ListView(
-        padding: EdgeInsets.symmetric(
-            horizontal: max((MediaQuery.of(context).size.width - 600) / 2, 0)),
-        children: <Widget>[
-          Container(
-            height: 150,
-            color: Theme.of(context).secondaryHeaderColor,
-            child: Center(
-              child: Icon(
-                Icons.vpn_key,
-                size: 60,
+      body: Builder(builder: (context) {
+        return ListView(
+          padding: EdgeInsets.symmetric(
+              horizontal:
+                  max((MediaQuery.of(context).size.width - 600) / 2, 0)),
+          children: <Widget>[
+            ListTile(
+              leading: CircleAvatar(
+                child: Icon(Icons.account_box,
+                    color: Theme.of(context).primaryColor),
+              ),
+              title: TextField(
+                readOnly: loading,
+                autocorrect: false,
+                autofocus: true,
+                controller: usernameController,
+                decoration: InputDecoration(
+                    hintText:
+                        "@${I18n.of(context).username.toLowerCase()}:domain",
+                    errorText: usernameError,
+                    labelText: I18n.of(context).username),
               ),
             ),
-          ),
-          ListTile(
-            leading: CircleAvatar(
-              child: Icon(Icons.account_box,
-                  color: Theme.of(context).primaryColor),
-            ),
-            title: TextField(
-              readOnly: loading,
-              autocorrect: false,
-              controller: usernameController,
-              decoration: InputDecoration(
-                  hintText:
-                      "@${I18n.of(context).username.toLowerCase()}:domain",
-                  errorText: usernameError,
-                  labelText: I18n.of(context).username),
-            ),
-          ),
-          ListTile(
-            leading: CircleAvatar(
-              backgroundColor: Theme.of(context).brightness == Brightness.dark
-                  ? Color(0xff121212)
-                  : Colors.white,
-              child: Icon(Icons.lock, color: Theme.of(context).primaryColor),
-            ),
-            title: TextField(
-              readOnly: loading,
-              autocorrect: false,
-              controller: passwordController,
-              obscureText: !showPassword,
-              onSubmitted: (t) => login(context),
-              decoration: InputDecoration(
-                  hintText: "****",
-                  errorText: passwordError,
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                        showPassword ? Icons.visibility_off : Icons.visibility),
-                    onPressed: () =>
-                        setState(() => showPassword = !showPassword),
-                  ),
-                  labelText: I18n.of(context).password),
-            ),
-          ),
-          SizedBox(height: 20),
-          Container(
-            height: 50,
-            padding: EdgeInsets.symmetric(horizontal: 12),
-            child: RaisedButton(
-              elevation: 7,
-              color: Theme.of(context).primaryColor,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(6),
+            ListTile(
+              leading: CircleAvatar(
+                backgroundColor: Theme.of(context).brightness == Brightness.dark
+                    ? Color(0xff121212)
+                    : Colors.white,
+                child: Icon(Icons.lock, color: Theme.of(context).primaryColor),
               ),
-              child: loading
-                  ? CircularProgressIndicator()
-                  : Text(
-                      I18n.of(context).login.toUpperCase(),
-                      style: TextStyle(color: Colors.white, fontSize: 16),
+              title: TextField(
+                readOnly: loading,
+                autocorrect: false,
+                controller: passwordController,
+                obscureText: !showPassword,
+                onSubmitted: (t) => login(context),
+                decoration: InputDecoration(
+                    hintText: "****",
+                    errorText: passwordError,
+                    suffixIcon: IconButton(
+                      icon: Icon(showPassword
+                          ? Icons.visibility_off
+                          : Icons.visibility),
+                      onPressed: () =>
+                          setState(() => showPassword = !showPassword),
                     ),
-              onPressed: () => loading ? null : login(context),
+                    labelText: I18n.of(context).password),
+              ),
             ),
-          ),
-        ],
-      ),
+            SizedBox(height: 20),
+            Hero(
+              tag: 'loginButton',
+              child: Container(
+                height: 50,
+                padding: EdgeInsets.symmetric(horizontal: 12),
+                child: RaisedButton(
+                  elevation: 7,
+                  color: Theme.of(context).primaryColor,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: loading
+                      ? CircularProgressIndicator()
+                      : Text(
+                          I18n.of(context).login.toUpperCase(),
+                          style: TextStyle(color: Colors.white, fontSize: 16),
+                        ),
+                  onPressed: () => loading ? null : login(context),
+                ),
+              ),
+            ),
+          ],
+        );
+      }),
     );
   }
 }

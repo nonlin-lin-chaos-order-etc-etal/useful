@@ -1,11 +1,12 @@
 import 'package:bubble/bubble.dart';
 import 'package:famedlysdk/famedlysdk.dart';
+import 'package:fluffychat/components/dialogs/simple_dialogs.dart';
 import 'package:fluffychat/components/message_content.dart';
 import 'package:fluffychat/components/reply_content.dart';
 import 'package:fluffychat/i18n/i18n.dart';
 import 'package:fluffychat/utils/date_time_extension.dart';
+import 'package:fluffychat/utils/event_extension.dart';
 import 'package:fluffychat/utils/string_color.dart';
-import 'package:fluffychat/views/image_viewer.dart';
 import 'package:flutter/material.dart';
 
 import '../avatar.dart';
@@ -16,6 +17,7 @@ class Message extends StatelessWidget {
   final Event event;
   final Event nextEvent;
   final Function(Event) onSelect;
+  final Function(Event) onAvatarTab;
   final bool longPressSelect;
   final bool selected;
   final Timeline timeline;
@@ -24,12 +26,14 @@ class Message extends StatelessWidget {
       {this.nextEvent,
       this.longPressSelect,
       this.onSelect,
+      this.onAvatarTab,
       this.selected,
       this.timeline});
 
   @override
   Widget build(BuildContext context) {
-    if (![EventTypes.Message, EventTypes.Sticker].contains(event.type)) {
+    if (![EventTypes.Message, EventTypes.Sticker, EventTypes.Encrypted]
+        .contains(event.type)) {
       return StateMessage(event);
     }
 
@@ -44,7 +48,7 @@ class Message extends StatelessWidget {
     BubbleNip nip = sameSender
         ? BubbleNip.no
         : ownMessage ? BubbleNip.rightBottom : BubbleNip.leftBottom;
-    final Color textColor = ownMessage
+    Color textColor = ownMessage
         ? Colors.white
         : Theme.of(context).brightness == Brightness.dark
             ? Colors.white
@@ -52,7 +56,10 @@ class Message extends StatelessWidget {
     MainAxisAlignment rowMainAxisAlignment =
         ownMessage ? MainAxisAlignment.end : MainAxisAlignment.start;
 
-    if (ownMessage) {
+    if (event.messageType == MessageTypes.Image) {
+      color = Theme.of(context).scaffoldBackgroundColor.withOpacity(0.66);
+      textColor = Theme.of(context).textTheme.body1.color;
+    } else if (ownMessage) {
       color = event.status == -1
           ? Colors.redAccent
           : Theme.of(context).primaryColor;
@@ -60,82 +67,91 @@ class Message extends StatelessWidget {
 
     List<Widget> rowChildren = [
       Expanded(
-        child: AnimatedOpacity(
-          duration: Duration(milliseconds: 500),
-          opacity: (event.status == 0 || event.redacted) ? 0.5 : 1,
-          child: Bubble(
-            elevation: 0,
-            radius: Radius.circular(8),
-            alignment: alignment,
-            margin: BubbleEdges.symmetric(horizontal: 4),
-            color: color,
-            nip: nip,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    Text(
-                      ownMessage
-                          ? I18n.of(context).you
-                          : event.sender.calcDisplayname(),
-                      style: TextStyle(
-                        color: ownMessage
-                            ? textColor
-                            : event.sender.calcDisplayname().color,
-                        fontWeight: FontWeight.bold,
-                      ),
+        child: Bubble(
+          elevation: 0,
+          radius: Radius.circular(8),
+          alignment: alignment,
+          margin: BubbleEdges.symmetric(horizontal: 4),
+          color: color,
+          nip: nip,
+          child: Stack(
+            children: <Widget>[
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  if (event.isReply)
+                    FutureBuilder<Event>(
+                      future: event.getReplyEvent(timeline),
+                      builder: (BuildContext context, snapshot) {
+                        final Event replyEvent = snapshot.hasData
+                            ? snapshot.data
+                            : Event(
+                                eventId: event.content['m.relates_to']
+                                    ['m.in_reply_to']['event_id'],
+                                content: {"msgtype": "m.text", "body": "..."},
+                                senderId: event.senderId,
+                                typeKey: "m.room.message",
+                                room: event.room,
+                                roomId: event.roomId,
+                                status: 1,
+                                time: DateTime.now(),
+                              );
+                        return Container(
+                          margin: EdgeInsets.symmetric(vertical: 4.0),
+                          child:
+                              ReplyContent(replyEvent, lightText: ownMessage),
+                        );
+                      },
                     ),
-                    SizedBox(width: 4),
-                    Text(
-                      event.time.localizedTime(context),
-                      style: TextStyle(
-                        color: textColor.withAlpha(180),
-                      ),
-                    ),
-                  ],
-                ),
-                if (event.isReply)
-                  FutureBuilder<Event>(
-                    future: event.getReplyEvent(timeline),
-                    builder: (BuildContext context, snapshot) {
-                      final Event replyEvent = snapshot.hasData
-                          ? snapshot.data
-                          : Event(
-                              eventId: event.content['m.relates_to']
-                                  ['m.in_reply_to']['event_id'],
-                              content: {"msgtype": "m.text", "body": "..."},
-                              senderId: event.senderId,
-                              typeKey: "m.room.message",
-                              room: event.room,
-                              roomId: event.roomId,
-                              status: 1,
-                              time: DateTime.now(),
-                            );
-                      return Container(
-                        margin: EdgeInsets.symmetric(vertical: 4.0),
-                        child: ReplyContent(replyEvent, lightText: ownMessage),
-                      );
-                    },
+                  MessageContent(
+                    event,
+                    textColor: textColor,
                   ),
-                MessageContent(
+                  if (event.type == EventTypes.Encrypted &&
+                      event.messageType == MessageTypes.BadEncrypted &&
+                      event.content["body"] == DecryptError.UNKNOWN_SESSION)
+                    RaisedButton(
+                      color: color.withAlpha(100),
+                      child: Text(
+                        I18n.of(context).requestPermission,
+                        style: TextStyle(color: textColor),
+                      ),
+                      onPressed: () => SimpleDialogs(context)
+                          .tryRequestWithLoadingDialog(event.requestKey()),
+                    ),
+                  SizedBox(height: 4),
+                  Opacity(
+                    opacity: 0,
+                    child: _MetaRow(
+                      event,
+                      ownMessage,
+                      textColor,
+                    ),
+                  ),
+                ],
+              ),
+              Positioned(
+                bottom: 0,
+                right: ownMessage ? 0 : null,
+                left: !ownMessage ? 0 : null,
+                child: _MetaRow(
                   event,
-                  textColor: textColor,
+                  ownMessage,
+                  textColor,
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
     ];
     final Widget avatarOrSizedBox = sameSender
-        ? SizedBox(width: 40)
+        ? SizedBox(width: Avatar.defaultSize)
         : Avatar(
             event.sender.avatarUrl,
             event.sender.calcDisplayname(),
-            onTap: () => ImageViewer.show(context, event.sender.avatarUrl),
+            onTap: () => onAvatarTab(event),
           );
     if (ownMessage) {
       rowChildren.add(avatarOrSizedBox);
@@ -163,6 +179,51 @@ class Message extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class _MetaRow extends StatelessWidget {
+  final Event event;
+  final bool ownMessage;
+  final Color color;
+
+  const _MetaRow(this.event, this.ownMessage, this.color, {Key key})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final String displayname = event.sender.calcDisplayname();
+    final bool showDisplayname =
+        !ownMessage && event.senderId != event.room.directChatMatrixID;
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        if (showDisplayname)
+          Text(
+            displayname,
+            style: TextStyle(
+              fontSize: 11,
+              fontWeight: FontWeight.bold,
+              color: displayname.color,
+            ),
+          ),
+        if (showDisplayname) SizedBox(width: 4),
+        Text(
+          event.time.localizedTime(context),
+          style: TextStyle(
+            color: color,
+            fontSize: 11,
+          ),
+        ),
+        if (ownMessage) SizedBox(width: 2),
+        if (ownMessage)
+          Icon(
+            event.statusIcon,
+            size: 12,
+            color: color,
+          ),
+      ],
     );
   }
 }

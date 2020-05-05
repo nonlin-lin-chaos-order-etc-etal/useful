@@ -6,6 +6,7 @@ import 'package:fluffychat/utils/app_route.dart';
 import 'package:fluffychat/views/chat_details.dart';
 import 'package:fluffychat/views/chat_list.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'dialogs/simple_dialogs.dart';
 import 'matrix.dart';
@@ -29,6 +30,18 @@ class _ChatSettingsPopupMenuState extends State<ChatSettingsPopupMenu> {
     super.dispose();
   }
 
+  void startCallAction(BuildContext context) async {
+    final url =
+        '${Matrix.of(context).jitsiInstance}${Uri.encodeComponent(widget.room.id.localpart)}';
+    final success = await SimpleDialogs(context)
+        .tryRequestWithLoadingDialog(widget.room.sendEvent({
+      'msgtype': Matrix.callNamespace,
+      'body': url,
+    }));
+    if (success == false) return;
+    await launch(url);
+  }
+
   @override
   Widget build(BuildContext context) {
     notificationChangeSub ??= Matrix.of(context)
@@ -50,6 +63,10 @@ class _ChatSettingsPopupMenuState extends State<ChatSettingsPopupMenu> {
               child: Text(I18n.of(context).unmuteChat),
             ),
       PopupMenuItem<String>(
+        value: "call",
+        child: Text(I18n.of(context).videoCall),
+      ),
+      PopupMenuItem<String>(
         value: "leave",
         child: Text(I18n.of(context).leave),
       ),
@@ -69,7 +86,7 @@ class _ChatSettingsPopupMenuState extends State<ChatSettingsPopupMenu> {
           case "leave":
             bool confirmed = await SimpleDialogs(context).askConfirmation();
             if (confirmed) {
-              final success = await Matrix.of(context)
+              final success = await SimpleDialogs(context)
                   .tryRequestWithLoadingDialog(widget.room.leave());
               if (success != false) {
                 await Navigator.of(context).pushAndRemoveUntil(
@@ -79,12 +96,15 @@ class _ChatSettingsPopupMenuState extends State<ChatSettingsPopupMenu> {
             }
             break;
           case "mute":
-            await Matrix.of(context).tryRequestWithLoadingDialog(
+            await SimpleDialogs(context).tryRequestWithLoadingDialog(
                 widget.room.setPushRuleState(PushRuleState.mentions_only));
             break;
           case "unmute":
-            await Matrix.of(context).tryRequestWithLoadingDialog(
+            await SimpleDialogs(context).tryRequestWithLoadingDialog(
                 widget.room.setPushRuleState(PushRuleState.notify));
+            break;
+          case "call":
+            startCallAction(context);
             break;
           case "details":
             await Navigator.of(context).push(

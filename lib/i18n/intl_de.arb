@@ -102,6 +102,18 @@
       "targetName": {}
     }
   },
+  "byDefaultYouWillBeConnectedTo": "Standardmäßig wirst Du mit {Homeserver} verbunden",
+  "@byDefaultYouWillBeConnectedTo": {
+    "type": "text",
+    "placeholders": {
+      "homeserver": {}
+    }
+  },
+  "Cancel": "Abbrechen",
+  "@Cancel": {
+    "type": "text",
+    "placeholders": {}
+  },
   "changedTheChatAvatar": "{username} hat den Chat-Avatar geändert",
   "@changedTheChatAvatar": {
     "type": "text",
@@ -139,6 +151,11 @@
       "username": {},
       "displayname": {}
     }
+  },
+  "Change the homeserver": "Anderen Homeserver verwenden",
+  "@Change the homeserver": {
+    "type": "text",
+    "placeholders": {}
   },
   "changedTheGuestAccessRules": "{username} hat Gast-Zugangsregeln geändert",
   "@changedTheGuestAccessRules": {
@@ -216,8 +233,28 @@
     "type": "text",
     "placeholders": {}
   },
+  "Change wallpaper": "Hintergrund ändern",
+  "@Change wallpaper": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "Change the server": "Ändere den Server",
+  "@Change the server": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "The encryption has been corrupted": "Die Verschlüsselung wurde korrumpiert",
+  "@The encryption has been corrupted": {
+    "type": "text",
+    "placeholders": {}
+  },
   "Chat details": "Gruppeninfo",
   "@Chat details": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "Choose a strong password": "Wähle ein sicheres Passwort",
+  "@Choose a strong password": {
     "type": "text",
     "placeholders": {}
   },
@@ -233,6 +270,11 @@
   },
   "Confirm": "Bestätigen",
   "@Confirm": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "Connect": "Verbinden",
+  "@Connect": {
     "type": "text",
     "placeholders": {}
   },
@@ -340,6 +382,16 @@
     "type": "text",
     "placeholders": {}
   },
+  "Deny": "Ablehnen",
+  "@Deny": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "Device": "Gerät",
+  "@Device": {
+    "type": "text",
+    "placeholders": {}
+  },
   "Devices": "Geräte",
   "@Devices": {
     "type": "text",
@@ -355,12 +407,10 @@
     "type": "text",
     "placeholders": {}
   },
-  "download": "Download {fileName}",
-  "@download": {
+  "Download file": "Datei herunterladen",
+  "@Download file": {
     "type": "text",
-    "placeholders": {
-      "fileName": {}
-    }
+    "placeholders": {}
   },
   "Edit displayname": "Anzeigename ändern",
   "@Edit displayname": {
@@ -382,6 +432,11 @@
     "type": "text",
     "placeholders": {}
   },
+  "Encryption is not enabled": "Verschlüsselung ist nicht aktiviert",
+  "@Encryption is not enabled": {
+    "type": "text",
+    "placeholders": {}
+  },
   "End-to-end encryption settings": "Ende-zu-Ende-Verschlüsselung",
   "@End-to-end encryption settings": {
     "type": "text",
@@ -397,8 +452,23 @@
     "type": "text",
     "placeholders": {}
   },
+  "Enter your homeserver": "Gib Deinen Homeserver ein",
+  "@Enter your homeserver": {
+    "type": "text",
+    "placeholders": {}
+  },
   "FluffyChat": "FluffyChat",
   "@FluffyChat": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "File name": "Dateiname",
+  "@File name": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "File size": "Dateigröße",
+  "@File size": {
     "type": "text",
     "placeholders": {}
   },
@@ -482,6 +552,11 @@
     "type": "text",
     "placeholders": {}
   },
+  "Identity": "Identität",
+  "@Identity": {
+    "type": "text",
+    "placeholders": {}
+  },
   "Invite contact": "Kontakt einladen",
   "@Invite contact": {
     "type": "text",
@@ -522,6 +597,11 @@
   },
   "is typing...": "schreibt...",
   "@is typing...": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "Edit Jitsi instance": "Jitsi Instanz ändern",
+  "@Edit Jitsi instance": {
     "type": "text",
     "placeholders": {}
   },
@@ -602,6 +682,13 @@
     "type": "text",
     "placeholders": {}
   },
+  "logInTo": "Bei {homeserver} anmelden",
+  "@logInTo": {
+    "type": "text",
+    "placeholders": {
+      "homeserver": {}
+    }
+  },
   "Make an admin": "Zum Admin ernennen",
   "@Make an admin": {
     "type": "text",
@@ -659,6 +746,11 @@
   },
   "None": "Keiner",
   "@None": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "No permission": "Keine Berechtigung",
+  "@No permission": {
     "type": "text",
     "placeholders": {}
   },
@@ -731,6 +823,11 @@
     "type": "text",
     "placeholders": {}
   },
+  "Public Rooms": "Öffentliche Räume",
+  "@Public Rooms": {
+    "type": "text",
+    "placeholders": {}
+  },
   "Rejoin": "Wieder beitreten",
   "@Rejoin": {
     "type": "text",
@@ -742,6 +839,11 @@
     "placeholders": {
       "username": {}
     }
+  },
+  "Recording": "Aufnahme",
+  "@Recording": {
+    "type": "text",
+    "placeholders": {}
   },
   "rejectedTheInvitation": "{username} hat die Einladung abgelehnt",
   "@rejectedTheInvitation": {
@@ -792,6 +894,16 @@
     "type": "text",
     "placeholders": {}
   },
+  "Request permission": "Berechtigung anfragen",
+  "@Request permission": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "Request to read older messages": "Anfrage um ältere Nachrichten zu lesen",
+  "@Request to read older messages": {
+    "type": "text",
+    "placeholders": {}
+  },
   "Saturday": "Samstag",
   "@Saturday": {
     "type": "text",
@@ -811,11 +923,6 @@
   },
   "Search for a chat": "Durchsuche die Chats",
   "@Search for a chat": {
-    "type": "text",
-    "placeholders": {}
-  },
-  "Secure your account with a password": "Sichere deinen Account mit einem Passwort ab",
-  "@Secure your account with a password": {
     "type": "text",
     "placeholders": {}
   },
@@ -844,6 +951,11 @@
   },
   "Send a message": "Nachricht schreiben",
   "@Send a message": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "Send": "Senden",
+  "@Send": {
     "type": "text",
     "placeholders": {}
   },
@@ -917,7 +1029,7 @@
     "type": "text",
     "placeholders": {}
   },
-  "Change your style": "Change your style",
+  "Change your style": "Ändere Deinen Style",
   "@Change your style": {
     "type": "text",
     "placeholders": {}
@@ -998,7 +1110,7 @@
     "type": "text",
     "placeholders": {}
   },
-  "Tuesday": "Tuesday",
+  "Tuesday": "Dienstag",
   "@Tuesday": {
     "type": "text",
     "placeholders": {}
@@ -1018,6 +1130,11 @@
   },
   "Unknown device": "Unbekanntes Gerät",
   "@Unknown device": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "Unknown encryption algorithm": "Unbekannter Verschlüsselungsalgorithmus",
+  "@Unknown encryption algorithm": {
     "type": "text",
     "placeholders": {}
   },
@@ -1079,6 +1196,16 @@
       "type": {}
     }
   },
+  "Verify": "Bestätigen",
+  "@Verify": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "Video call": "Videoanruf",
+  "@Video call": {
+    "type": "text",
+    "placeholders": {}
+  },
   "Visible for all participants": "Sichtbar für alle Teilnehmer",
   "@Visible for all participants": {
     "type": "text",
@@ -1099,8 +1226,23 @@
     "type": "text",
     "placeholders": {}
   },
+  "Wallpaper": "Hintergrund",
+  "@Wallpaper": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "Voice message": "Sprachnachricht",
+  "@Voice message": {
+    "type": "text",
+    "placeholders": {}
+  },
   "End to end encryption is currently in Beta! Use at your own risk!": "Ende-zu-Ende-Verschlüsselung ist im Beta-Status. Benutzung auf eigene Gefahr!",
   "@End to end encryption is currently in Beta! Use at your own risk!": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "Welcome to the cutest instant messenger in the matrix network.": "Herzlich willkommen beim knuffigsten Instant Messenger im Matrix-Netwerk.",
+  "@Welcome to the cutest instant messenger in the matrix network.": {
     "type": "text",
     "placeholders": {}
   },

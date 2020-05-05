@@ -50,13 +50,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.1.9+1"
-  cached_network_image:
-    dependency: "direct main"
-    description:
-      name: cached_network_image
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "2.0.0"
   canonical_json:
     dependency: transitive
     description:
@@ -124,8 +117,8 @@ packages:
     dependency: "direct main"
     description:
       path: "."
-      ref: "6dd3b879b6cfcf1c7da9dedfa62626237afa6d9a"
-      resolved-ref: "6dd3b879b6cfcf1c7da9dedfa62626237afa6d9a"
+      ref: "1265ebf7da56440ead152bbf44502b941436dc1b"
+      resolved-ref: "1265ebf7da56440ead152bbf44502b941436dc1b"
       url: "https://gitlab.com/famedly/famedlysdk.git"
     source: git
     version: "0.0.1"
@@ -149,19 +142,19 @@ packages:
       name: firebase_messaging
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "6.0.9"
+    version: "6.0.13"
   flutter:
     dependency: "direct main"
     description: flutter
     source: sdk
     version: "0.0.0"
-  flutter_cache_manager:
-    dependency: transitive
+  flutter_advanced_networkimage:
+    dependency: "direct main"
     description:
-      name: flutter_cache_manager
+      name: flutter_advanced_networkimage
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.1.3"
+    version: "0.6.4"
   flutter_launcher_icons:
     dependency: "direct dev"
     description:
@@ -175,7 +168,14 @@ packages:
       name: flutter_local_notifications
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.9.1+2"
+    version: "1.4.3"
+  flutter_local_notifications_platform_interface:
+    dependency: transitive
+    description:
+      name: flutter_local_notifications_platform_interface
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.1"
   flutter_localizations:
     dependency: "direct main"
     description: flutter
@@ -195,6 +195,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.5.4"
+  flutter_sound:
+    dependency: "direct main"
+    description:
+      name: flutter_sound
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.1.1"
   flutter_speed_dial:
     dependency: "direct main"
     description:
@@ -202,13 +209,20 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.2.5"
-  flutter_svg:
+  flutter_styled_toast:
     dependency: "direct main"
+    description:
+      name: flutter_styled_toast
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.2.1"
+  flutter_svg:
+    dependency: transitive
     description:
       name: flutter_svg
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.17.1"
+    version: "0.17.4"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -274,7 +288,7 @@ packages:
       name: intl
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.16.1"
+    version: "0.16.0"
   intl_translation:
     dependency: "direct main"
     description:
@@ -324,6 +338,15 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.12.6"
+  matrix_file_e2ee:
+    dependency: transitive
+    description:
+      path: "."
+      ref: HEAD
+      resolved-ref: b043fcc29031979dc65e5b08e10ebb9b8d2fae30
+      url: "https://gitlab.com/famedly/libraries/matrix_file_e2ee.git"
+    source: git
+    version: "1.0.2"
   meta:
     dependency: transitive
     description:
@@ -339,12 +362,12 @@ packages:
     source: hosted
     version: "0.9.6+3"
   mime_type:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: mime_type
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.2.4"
+    version: "0.2.7"
   multi_server_socket:
     dependency: transitive
     description:
@@ -377,11 +400,18 @@ packages:
     dependency: transitive
     description:
       path: "."
-      ref: "307dc133867eb5bf80d4f5c7412e58621dfca3cf"
-      resolved-ref: "307dc133867eb5bf80d4f5c7412e58621dfca3cf"
+      ref: "1.x.y"
+      resolved-ref: "79868b06b3ea156f90b73abafb3bbf3ac4114cc6"
       url: "https://gitlab.com/famedly/libraries/dart-olm.git"
     source: git
-    version: "0.0.0"
+    version: "1.0.0"
+  open_file:
+    dependency: "direct main"
+    description:
+      name: open_file
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "3.0.1"
   package_config:
     dependency: transitive
     description:
@@ -459,6 +489,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.1"
+  pointycastle:
+    dependency: transitive
+    description:
+      name: pointycastle
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.2"
   pool:
     dependency: transitive
     description:
@@ -480,6 +517,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.5"
+  receive_sharing_intent:
+    dependency: "direct main"
+    description:
+      name: receive_sharing_intent
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.3.3"
   share:
     dependency: "direct main"
     description:
@@ -604,13 +648,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.2.15"
-  toast:
-    dependency: "direct main"
-    description:
-      name: toast
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.1.5"
   typed_data:
     dependency: transitive
     description:
@@ -618,13 +655,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.1.6"
-  uni_links:
-    dependency: "direct main"
-    description:
-      name: uni_links
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.2.0"
   universal_html:
     dependency: "direct main"
     description:
@@ -674,13 +704,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.1.0+2"
-  uuid:
-    dependency: transitive
-    description:
-      name: uuid
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "2.0.4"
   vector_math:
     dependency: transitive
     description:
@@ -715,7 +738,7 @@ packages:
       name: webview_flutter
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.3.19+4"
+    version: "0.3.19+9"
   xml:
     dependency: transitive
     description:

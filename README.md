@@ -1,20 +1,60 @@
-# fluffychat
+![](https://i.imgur.com/wi7RlVt.png)
 
-Chat with your friends.
+<p align="center">
+<a target="new" href="https://play.google.com/store/apps/details?id=chat.fluffy.fluffychat">
+  <img height="66px" src="https://christianpauly.gitlab.io/fluffychat-website/assets/images/google-play-badge.png" />
+  </a>
+  <a target="new" href="https://mtrnord.gitlab.io/fluffychat-flutter-fdroid/fdroid/repo/">
+  <img height="66px" src="https://christianpauly.gitlab.io/fluffychat-website/assets/images/fdroid_button.png " />
+  </a>
+  <br>
+  <a href="https://christianpauly.gitlab.io/fluffychat-flutter" target="new">Open FluffyChat in the browser</a> - <a href="https://matrix.to/#/#fluffychat:matrix.org" target="new">Join the community</a> - <a href="https://metalhead.club/@krille" target="new">Follow me on Mastodon</a> - <a href="https://gitlab.com/ChristianPauly/fluffychat-website" target="new">Translate the website</a> - <a href="https://christianpauly.gitlab.io/fluffychat-website/faq.html" target="new">FAQ</a> - <a href="https://christianpauly.gitlab.io/fluffychat-website/" target="new">Website</a>
+ </p>
+<br>
+<br>
 
-[Install using F-Droid](https://mtrnord.gitlab.io/fluffychat-flutter-fdroid/fdroid/repo/)
-
-Community: [#fluffychat:matrix.org](https://matrix.to/#/#fluffychat:matrix.org)
+# Features
+ * Single and group chats
+ * Send images and files
+ * Offline chat history
+ * Push Notifications
+ * Account settings
+ * Display user avatars
+ * Themes, chat wallpapers and dark mode
+ * Device management
+ * Edit chat settings and permissions
+ * Kick, ban and unban users
+ * Display and edit chat topics
+ * Change chat & user avatars
+ * Archived chats
+ * Discover public chats on the user's homeserver
+ * Registration
 
 ## How to build
 
 1. [Install flutter](https://flutter.dev)
 
-2. Clone the repo
+2. Clone the repo:
+```
+git clone --recurse-submodules https://gitlab.com/ChristianPauly/fluffychat-flutter
+cd fluffychat-flutter
+```
 
 ### Android / iOS
 
-3. `flutter run`
+3. For Android install CMake from the SDK Manager
+
+4. Install ninja:
+```
+sudo apt install ninja-build
+```
+
+5. Outcomment the Google Services plugin at the end of the file `android/app/build.gradle`:
+```
+// apply plugin: "com.google.gms.google-services"
+```
+
+6. `flutter run`
 
 ### Web
 
@@ -48,7 +88,20 @@ flutter pub run intl_translation:extract_to_arb --output-dir=lib/i18n lib/i18n/i
 
 4. Update the translations with this command:
 ```
-flutter pub pub run intl_translation:generate_from_arb --output-dir=lib/i18n --no-use-deferred-loading lib/i18n/I18n.dart lib/i18n/intl_*.arb
+flutter pub pub run intl_translation:generate_from_arb --output-dir=lib/i18n --no-use-deferred-loading lib/i18n/i18n.dart lib/i18n/intl_*.arb
 ```
 
 5. Make sure your language is in `supportedLocales` in `/lib/main.dart`.
+
+
+# Special thanks to
+
+* <a href="https://github.com/fabiyamada">Fabiyamada</a> is a graphics designer from Brasil and has made the fluffychat logo and the banner. Big thanks for her great designs.
+
+* <a href="https://github.com/advocatux">Advocatux</a> has made the Spanish translation with great love and care. He always stands by my side and supports my work with great commitment.
+
+* Thanks to MTRNord and Sorunome for developing.
+
+* Thanks to Mark for all his support and the chat background.
+
+* Also thanks to all translators and testers! With your help, fluffychat is now available in more than 12 languages.
