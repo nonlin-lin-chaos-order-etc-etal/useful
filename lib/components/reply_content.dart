@@ -2,6 +2,8 @@ import 'package:famedlysdk/famedlysdk.dart';
 import 'package:fluffychat/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 
+import 'html_message.dart';
+
 class ReplyContent extends StatelessWidget {
   final Event replyEvent;
   final bool lightText;
@@ -11,6 +13,43 @@ class ReplyContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Widget replyBody;
+    if (
+      [EventTypes.Message, EventTypes.Encrypted].contains(replyEvent.type) &&
+      [MessageTypes.Text, MessageTypes.Notice, MessageTypes.Emote].contains(replyEvent.messageType) &&
+      !replyEvent.redacted && replyEvent.content['format'] == 'org.matrix.custom.html' && replyEvent.content['formatted_body'] is String
+    ) {
+      String html = replyEvent.content['formatted_body'];
+      if (replyEvent.messageType == MessageTypes.Emote) {
+        html = "* $html";
+      }
+      replyBody = ConstrainedBox(
+        constraints: BoxConstraints(
+          maxHeight: 18,
+        ),
+        child: HtmlMessage(
+          html: html,
+          textColor: lightText
+              ? Colors.white
+              : Theme.of(context).textTheme.bodyText2.color,
+        ),
+      );
+    } else {
+      replyBody = Text(
+        replyEvent?.getLocalizedBody(
+              L10n.of(context),
+              withSenderNamePrefix: false,
+              hideReply: true,
+            ) ??
+            "",
+        overflow: TextOverflow.ellipsis,
+        maxLines: 1,
+        style: TextStyle(
+            color: lightText
+                ? Colors.white
+                : Theme.of(context).textTheme.bodyText2.color),
+      );
+    }
     return Row(
       children: <Widget>[
         Container(
@@ -34,20 +73,7 @@ class ReplyContent extends StatelessWidget {
                       lightText ? Colors.white : Theme.of(context).primaryColor,
                 ),
               ),
-              Text(
-                replyEvent?.getLocalizedBody(
-                      L10n.of(context),
-                      withSenderNamePrefix: false,
-                      hideReply: true,
-                    ) ??
-                    "",
-                overflow: TextOverflow.ellipsis,
-                maxLines: 1,
-                style: TextStyle(
-                    color: lightText
-                        ? Colors.white
-                        : Theme.of(context).textTheme.bodyText2.color),
-              ),
+              replyBody,
             ],
           ),
         ),
