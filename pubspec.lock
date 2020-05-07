@@ -155,13 +155,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.6.4"
-  flutter_html:
-    dependency: "direct main"
-    description:
-      name: flutter_html
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.11.1"
   flutter_launcher_icons:
     dependency: "direct dev"
     description:
@@ -188,6 +181,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_matrix_html:
+    dependency: "direct main"
+    description:
+      path: "/home/sorunome/repos/flutter_matrix_html"
+      relative: false
+    source: path
+    version: "0.11.1"
   flutter_secure_storage:
     dependency: "direct main"
     description:
