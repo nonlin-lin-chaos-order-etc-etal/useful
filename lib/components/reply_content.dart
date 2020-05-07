@@ -1,5 +1,5 @@
 import 'package:famedlysdk/famedlysdk.dart';
-import 'package:fluffychat/i18n/i18n.dart';
+import 'package:fluffychat/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 
 import 'html_message.dart';
@@ -37,7 +37,7 @@ class ReplyContent extends StatelessWidget {
     } else {
       replyBody = Text(
         replyEvent?.getLocalizedBody(
-              I18n.of(context),
+              L10n.of(context),
               withSenderNamePrefix: false,
               hideReply: true,
             ) ??
@@ -48,7 +48,7 @@ class ReplyContent extends StatelessWidget {
             color: lightText
                 ? Colors.white
                 : Theme.of(context).textTheme.bodyText2.color),
-      );
+      ),
     }
     return Row(
       children: <Widget>[
