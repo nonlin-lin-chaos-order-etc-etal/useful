@@ -169,7 +169,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "Content viewer" : MessageLookupByLibrary.simpleMessage("Tartalom nézegető"),
     "Copied to clipboard" : MessageLookupByLibrary.simpleMessage("Vágólapra másolva"),
     "Copy" : MessageLookupByLibrary.simpleMessage("Másolás"),
-    "Could not decrypt message" : MessageLookupByLibrary.simpleMessage("Nem sikerült az üzenet titkosítását feloldani"),
     "Could not set avatar" : MessageLookupByLibrary.simpleMessage("Nem sikerült beállítani a képet"),
     "Could not set displayname" : MessageLookupByLibrary.simpleMessage("Nem sikerült beállítani a megjelenítési nevet"),
     "Create" : MessageLookupByLibrary.simpleMessage("Létrehozás"),
