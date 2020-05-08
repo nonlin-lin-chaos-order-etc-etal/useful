@@ -1,11 +1,6 @@
 import 'package:markdown/markdown.dart';
 import 'dart:convert';
 
-bool isRightFlanking(InlineParser parser, int runStart, int runEnd) {
-  final String whitespace = ' \t\r\n';
-  bool rightFlanking = false;
-}
-
 class LinebreakSyntax extends InlineSyntax {
   LinebreakSyntax() : super(r"\n");
 
@@ -44,16 +39,10 @@ class SpoilerSyntax extends TagSyntax {
 
 
 String markdown(String text) {
-  String ret;
-  try {
-    ret = markdownToHtml(text,
-      extensionSet: ExtensionSet.commonMark,
-      inlineSyntaxes: [StrikethroughSyntax(), LinebreakSyntax(), SpoilerSyntax()],
-    );
-  } catch (err, stacktrace) {
-    print(stacktrace.toString());
-    throw err;
-  }
+  String ret = markdownToHtml(text,
+    extensionSet: ExtensionSet.commonMark,
+    inlineSyntaxes: [StrikethroughSyntax(), LinebreakSyntax(), SpoilerSyntax()],
+  );
     
   bool stripPTags = "<p>".allMatches(ret).length <= 1;
   if (stripPTags) {
@@ -68,5 +57,5 @@ String markdown(String text) {
   if (stripPTags) {
     ret = ret.replaceAll("<p>", "").replaceAll("</p>", "");
   }
-  return ret.trim().replaceAll(new RegExp(r"(<br />)+$"), "");
+  return ret.trim().replaceAll(RegExp(r"(<br />)+$"), "");
 }
