@@ -52,7 +52,6 @@ class ChatList extends StatefulWidget {
 
 class _ChatListState extends State<ChatList> {
   bool get searchMode => searchController.text?.isNotEmpty ?? false;
-  StreamSubscription sub;
   final TextEditingController searchController = TextEditingController();
   SelectMode selectMode = SelectMode.normal;
   Timer coolDown;
@@ -60,13 +59,11 @@ class _ChatListState extends State<ChatList> {
   bool loadingPublicRooms = false;
   String searchServer;
 
-  Future<bool> waitForFirstSync(BuildContext context) async {
+  Future<void> waitForFirstSync(BuildContext context) async {
     Client client = Matrix.of(context).client;
     if (client.prevBatch?.isEmpty ?? true) {
       await client.onFirstSync.stream.first;
     }
-    sub ??= client.onSync.stream
-        .listen((s) => mounted ? setState(() => null) : null);
     return true;
   }
 
@@ -205,7 +202,6 @@ class _ChatListState extends State<ChatList> {
 
   @override
   void dispose() {
-    sub?.cancel();
     searchController.removeListener(
       () => setState(() => null),
     );
@@ -352,83 +348,94 @@ class _ChatListState extends State<ChatList> {
                 ),
               ],
             ),
-      body: FutureBuilder<bool>(
-        future: waitForFirstSync(context),
-        builder: (BuildContext context, snapshot) {
-          if (snapshot.hasData) {
-            List<Room> rooms = List<Room>.from(Matrix.of(context).client.rooms);
-            rooms.removeWhere((Room room) =>
-                searchMode &&
-                !room.displayname
-                    .toLowerCase()
-                    .contains(searchController.text.toLowerCase() ?? ""));
-            if (rooms.isEmpty && (!searchMode || publicRoomsResponse == null)) {
-              return Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    Icon(
-                      searchMode ? Icons.search : Icons.chat_bubble_outline,
-                      size: 80,
-                      color: Colors.grey,
-                    ),
-                    Text(searchMode
-                        ? L10n.of(context).noRoomsFound
-                        : L10n.of(context).startYourFirstChat),
-                  ],
-                ),
-              );
-            }
-            final int publicRoomsCount =
-                (publicRoomsResponse?.publicRooms?.length ?? 0);
-            final int totalCount = rooms.length + publicRoomsCount;
-            return ListView.separated(
-                separatorBuilder: (BuildContext context, int i) =>
-                    i == totalCount - publicRoomsCount
-                        ? Material(
-                            elevation: 2,
-                            child: ListTile(
-                              title: Text(L10n.of(context).publicRooms),
-                            ),
-                          )
-                        : Container(),
-                itemCount: totalCount + 1,
-                itemBuilder: (BuildContext context, int i) {
-                  if (i == 0) {
-                    return Matrix.of(context).client.statusList.isEmpty
-                        ? Container()
-                        : PreferredSize(
-                            preferredSize: Size.fromHeight(89),
-                            child: Container(
-                              height: 81,
-                              child: ListView.builder(
-                                scrollDirection: Axis.horizontal,
-                                itemCount:
-                                    Matrix.of(context).client.statusList.length,
-                                itemBuilder: (BuildContext context, int i) =>
-                                    PresenceListItem(Matrix.of(context)
-                                        .client
-                                        .statusList[i]),
-                              ),
-                            ),
-                          );
+      body: StreamBuilder(
+          stream: Matrix.of(context).client.onSync.stream,
+          builder: (context, snapshot) {
+            return FutureBuilder<void>(
+              future: waitForFirstSync(context),
+              builder: (BuildContext context, snapshot) {
+                if (snapshot.hasData) {
+                  List<Room> rooms =
+                      List<Room>.from(Matrix.of(context).client.rooms);
+                  rooms.removeWhere((Room room) =>
+                      searchMode &&
+                      !room.displayname
+                          .toLowerCase()
+                          .contains(searchController.text.toLowerCase() ?? ""));
+                  if (rooms.isEmpty &&
+                      (!searchMode || publicRoomsResponse == null)) {
+                    return Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Icon(
+                            searchMode
+                                ? Icons.search
+                                : Icons.chat_bubble_outline,
+                            size: 80,
+                            color: Colors.grey,
+                          ),
+                          Text(searchMode
+                              ? L10n.of(context).noRoomsFound
+                              : L10n.of(context).startYourFirstChat),
+                        ],
+                      ),
+                    );
                   }
-                  i--;
-                  return i < rooms.length
-                      ? ChatListItem(
-                          rooms[i],
-                          activeChat: widget.activeChat == rooms[i].id,
-                        )
-                      : PublicRoomListItem(
-                          publicRoomsResponse.publicRooms[i - rooms.length]);
-                });
-          } else {
-            return Center(
-              child: CircularProgressIndicator(),
+                  final int publicRoomsCount =
+                      (publicRoomsResponse?.publicRooms?.length ?? 0);
+                  final int totalCount = rooms.length + publicRoomsCount;
+                  return ListView.separated(
+                      separatorBuilder: (BuildContext context, int i) =>
+                          i == totalCount - publicRoomsCount
+                              ? Material(
+                                  elevation: 2,
+                                  child: ListTile(
+                                    title: Text(L10n.of(context).publicRooms),
+                                  ),
+                                )
+                              : Container(),
+                      itemCount: totalCount + 1,
+                      itemBuilder: (BuildContext context, int i) {
+                        if (i == 0) {
+                          return Matrix.of(context).client.statusList.isEmpty
+                              ? Container()
+                              : PreferredSize(
+                                  preferredSize: Size.fromHeight(89),
+                                  child: Container(
+                                    height: 81,
+                                    child: ListView.builder(
+                                      scrollDirection: Axis.horizontal,
+                                      itemCount: Matrix.of(context)
+                                          .client
+                                          .statusList
+                                          .length,
+                                      itemBuilder: (BuildContext context,
+                                              int i) =>
+                                          PresenceListItem(Matrix.of(context)
+                                              .client
+                                              .statusList[i]),
+                                    ),
+                                  ),
+                                );
+                        }
+                        i--;
+                        return i < rooms.length
+                            ? ChatListItem(
+                                rooms[i],
+                                activeChat: widget.activeChat == rooms[i].id,
+                              )
+                            : PublicRoomListItem(publicRoomsResponse
+                                .publicRooms[i - rooms.length]);
+                      });
+                } else {
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+              },
             );
-          }
-        },
-      ),
+          }),
     );
   }
 }
