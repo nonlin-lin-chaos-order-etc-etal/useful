@@ -18,6 +18,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_styled_toast/flutter_styled_toast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:pedantic/pedantic.dart';
+import 'package:html_unescape/html_unescape.dart';
+import '../utils/markdown.dart';
 
 import 'chat_list.dart';
 
@@ -164,7 +166,22 @@ class _ChatState extends State<_Chat> {
 
   void send() {
     if (sendController.text.isEmpty) return;
-    room.sendTextEvent(sendController.text, inReplyTo: replyEvent);
+    String text = sendController.text;
+    Map<String, dynamic> event = {
+      "msgtype": "m.text",
+      "body": text,
+    };
+    if (text.startsWith("/me ")) {
+      event["body"] = text.substring(4);
+      event["msgtype"] = "m.emote";
+    }
+    final html = markdown(event["body"]);
+    // if the decoded html is the same as the body, there is no need in sending a formatted message
+    if (HtmlUnescape().convert(html) != event["body"]) {
+      event["format"] = "org.matrix.custom.html";
+      event["formatted_body"] = html;
+    }
+    room.sendEvent(event, inReplyTo: replyEvent);
     sendController.text = "";
     if (replyEvent != null) {
       setState(() => replyEvent = null);
