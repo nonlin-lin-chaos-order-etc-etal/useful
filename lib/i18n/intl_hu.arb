@@ -22,7 +22,7 @@
     "type": "text",
     "placeholders": {}
   },
-  "activatedEndToEndEncryption": "{username} aktiválta a végpontól-végpontig titkosítást,
+  "activatedEndToEndEncryption": "{username} aktiválta a végpontól-végpontig titkosítást",
   "@activatedEndToEndEncryption": {
     "type": "text",
     "placeholders": {
