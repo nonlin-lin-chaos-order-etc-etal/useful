@@ -33,7 +33,7 @@ final ThemeData lightTheme = ThemeData(
     brightness: Brightness.light,
     color: Colors.white,
     textTheme: TextTheme(
-      title: TextStyle(
+      headline6: TextStyle(
         color: Colors.black,
         fontSize: 20,
       ),
@@ -43,13 +43,14 @@ final ThemeData lightTheme = ThemeData(
 );
 
 final ThemeData darkTheme = ThemeData.dark().copyWith(
-  primaryColorDark: Color(0xff121212),
+  primaryColorDark: Color(0xff1B1B1B),
   primaryColorLight: Colors.white,
-  primaryColor: Color(0xFF5625BA),
+  primaryColor: Color(0xFF8966CF),
+  errorColor: Color(0xFFCF6679),
   backgroundColor: Color(0xff121212),
-  scaffoldBackgroundColor: Color(0xff121212),
+  scaffoldBackgroundColor: Color(0xff1B1B1B),
   accentColor: Color(0xFFF5B4D2),
-  secondaryHeaderColor: Color(0xff1D1D1D),
+  secondaryHeaderColor: Color(0xff202020),
   snackBarTheme: SnackBarThemeData(
     behavior: kIsWeb ? SnackBarBehavior.floating : SnackBarBehavior.fixed,
   ),
@@ -67,7 +68,7 @@ final ThemeData darkTheme = ThemeData.dark().copyWith(
     brightness: Brightness.dark,
     color: Color(0xff1D1D1D),
     textTheme: TextTheme(
-      title: TextStyle(
+      headline6: TextStyle(
         color: Colors.white,
         fontSize: 20,
       ),
@@ -79,7 +80,8 @@ final ThemeData darkTheme = ThemeData.dark().copyWith(
 final ThemeData amoledTheme = ThemeData.dark().copyWith(
   primaryColorDark: Color(0xff121212),
   primaryColorLight: Colors.white,
-  primaryColor: Color(0xFF5625BA),
+  primaryColor: Color(0xFF8966CF),
+  errorColor: Color(0xFFCF6679),
   backgroundColor: Colors.black,
   scaffoldBackgroundColor: Colors.black,
   accentColor: Color(0xFFF5B4D2),
@@ -101,7 +103,7 @@ final ThemeData amoledTheme = ThemeData.dark().copyWith(
     brightness: Brightness.dark,
     color: Color(0xff1D1D1D),
     textTheme: TextTheme(
-      title: TextStyle(
+      headline6: TextStyle(
         color: Colors.white,
         fontSize: 20,
       ),

@@ -1,23 +1,13 @@
 import 'package:famedlysdk/famedlysdk.dart';
-import 'package:fluffychat/i18n/i18n.dart';
+import 'package:fluffychat/l10n/l10n.dart';
 import 'package:flutter/material.dart';
+import 'date_time_extension.dart';
 
 extension PresenceExtension on Presence {
-  bool get isStatus =>
-      (statusMsg?.isNotEmpty ?? false) || this.displayname != null;
-
   String getLocalizedStatusMessage(BuildContext context) {
-    if (!isStatus) return null;
     if (statusMsg?.isNotEmpty ?? false) {
       return statusMsg;
     }
-    if (displayname != null) {
-      return I18n.of(context)
-          .changedTheDisplaynameTo(sender.localpart, displayname);
-    }
-    if (avatarUrl != null) {
-      return I18n.of(context).changedTheProfileAvatar(sender.localpart);
-    }
-    return null;
+    return L10n.of(context).lastActiveAgo(time.localizedTimeShort(context));
   }
 }

@@ -7,10 +7,8 @@ import 'package:fluffychat/components/chat_settings_popup_menu.dart';
 import 'package:fluffychat/components/content_banner.dart';
 import 'package:fluffychat/components/dialogs/simple_dialogs.dart';
 import 'package:fluffychat/components/list_items/participant_list_item.dart';
-import 'package:fluffychat/i18n/i18n.dart';
+import 'package:fluffychat/l10n/l10n.dart';
 import 'package:fluffychat/utils/app_route.dart';
-import 'package:fluffychat/utils/room_extension.dart';
-import 'package:fluffychat/utils/room_state_enums_extensions.dart';
 import 'package:fluffychat/views/chat_list.dart';
 import 'package:fluffychat/views/invitation_selection.dart';
 import 'package:flutter/foundation.dart';
@@ -33,24 +31,24 @@ class _ChatDetailsState extends State<ChatDetails> {
   List<User> members;
   void setDisplaynameAction(BuildContext context) async {
     final String displayname = await SimpleDialogs(context).enterText(
-      titleText: I18n.of(context).changeTheNameOfTheGroup,
-      labelText: I18n.of(context).changeTheNameOfTheGroup,
-      hintText: widget.room.getLocalizedDisplayname(context),
+      titleText: L10n.of(context).changeTheNameOfTheGroup,
+      labelText: L10n.of(context).changeTheNameOfTheGroup,
+      hintText: widget.room.getLocalizedDisplayname(L10n.of(context)),
     );
     if (displayname == null) return;
     final success = await SimpleDialogs(context).tryRequestWithLoadingDialog(
       widget.room.setName(displayname),
     );
     if (success != false) {
-      showToast(I18n.of(context).displaynameHasBeenChanged);
+      showToast(L10n.of(context).displaynameHasBeenChanged);
     }
   }
 
   void setCanonicalAliasAction(context) async {
     final String s = await SimpleDialogs(context).enterText(
-      titleText: I18n.of(context).setInvitationLink,
-      labelText: I18n.of(context).setInvitationLink,
-      hintText: I18n.of(context).alias.toLowerCase(),
+      titleText: L10n.of(context).setInvitationLink,
+      labelText: L10n.of(context).setInvitationLink,
+      hintText: L10n.of(context).alias.toLowerCase(),
       prefixText: "#",
       suffixText: ":" + widget.room.client.userID.domain,
     );
@@ -91,11 +89,11 @@ class _ChatDetailsState extends State<ChatDetails> {
 
   void setTopicAction(BuildContext context) async {
     final String displayname = await SimpleDialogs(context).enterText(
-      titleText: I18n.of(context).setGroupDescription,
-      labelText: I18n.of(context).setGroupDescription,
+      titleText: L10n.of(context).setGroupDescription,
+      labelText: L10n.of(context).setGroupDescription,
       hintText: (widget.room.topic?.isNotEmpty ?? false)
           ? widget.room.topic
-          : I18n.of(context).addGroupDescription,
+          : L10n.of(context).addGroupDescription,
       multiLine: true,
     );
     if (displayname == null) return;
@@ -103,7 +101,7 @@ class _ChatDetailsState extends State<ChatDetails> {
       widget.room.setDescription(displayname),
     );
     if (success != false) {
-      showToast(I18n.of(context).groupDescriptionHasBeenChanged);
+      showToast(L10n.of(context).groupDescriptionHasBeenChanged);
     }
   }
 
@@ -123,7 +121,7 @@ class _ChatDetailsState extends State<ChatDetails> {
       ),
     );
     if (success != false) {
-      showToast(I18n.of(context).avatarHasBeenChanged);
+      showToast(L10n.of(context).avatarHasBeenChanged);
     }
   }
 
@@ -146,10 +144,10 @@ class _ChatDetailsState extends State<ChatDetails> {
     if (widget.room == null) {
       return Scaffold(
         appBar: AppBar(
-          title: Text(I18n.of(context).oopsSomethingWentWrong),
+          title: Text(L10n.of(context).oopsSomethingWentWrong),
         ),
         body: Center(
-          child: Text(I18n.of(context).youAreNoLongerParticipatingInThisChat),
+          child: Text(L10n.of(context).youAreNoLongerParticipatingInThisChat),
         ),
       );
     }
@@ -181,15 +179,18 @@ class _ChatDetailsState extends State<ChatDetails> {
                       Clipboard.setData(
                         ClipboardData(text: widget.room.canonicalAlias),
                       );
-                      showToast(I18n.of(context).copiedToClipboard);
+                      showToast(L10n.of(context).copiedToClipboard);
                     },
                   ),
                 ChatSettingsPopupMenu(widget.room, false)
               ],
-              title: Text(widget.room.getLocalizedDisplayname(context),
+              title: Text(widget.room.getLocalizedDisplayname(L10n.of(context)),
                   style: TextStyle(
-                      color:
-                          Theme.of(context).appBarTheme.textTheme.title.color)),
+                      color: Theme.of(context)
+                          .appBarTheme
+                          .textTheme
+                          .headline6
+                          .color)),
               backgroundColor: Theme.of(context).appBarTheme.color,
               flexibleSpace: FlexibleSpaceBar(
                 background: ContentBanner(widget.room.avatar,
@@ -214,18 +215,18 @@ class _ChatDetailsState extends State<ChatDetails> {
                                 child: Icon(Icons.edit),
                               )
                             : null,
-                        title: Text("${I18n.of(context).groupDescription}:",
+                        title: Text("${L10n.of(context).groupDescription}:",
                             style: TextStyle(
                                 color: Theme.of(context).primaryColor,
                                 fontWeight: FontWeight.bold)),
                         subtitle: LinkText(
                           text: widget.room.topic?.isEmpty ?? true
-                              ? I18n.of(context).addGroupDescription
+                              ? L10n.of(context).addGroupDescription
                               : widget.room.topic,
                           linkStyle: TextStyle(color: Colors.blueAccent),
                           textStyle: TextStyle(
                             fontSize: 14,
-                            color: Theme.of(context).textTheme.body1.color,
+                            color: Theme.of(context).textTheme.bodyText2.color,
                           ),
                         ),
                         onTap: widget.room.canSendEvent("m.room.topic")
@@ -235,7 +236,7 @@ class _ChatDetailsState extends State<ChatDetails> {
                       Divider(thickness: 1),
                       ListTile(
                         title: Text(
-                          I18n.of(context).settings,
+                          L10n.of(context).settings,
                           style: TextStyle(
                             color: Theme.of(context).primaryColor,
                             fontWeight: FontWeight.bold,
@@ -250,9 +251,9 @@ class _ChatDetailsState extends State<ChatDetails> {
                             foregroundColor: Colors.grey,
                             child: Icon(Icons.people),
                           ),
-                          title: Text(I18n.of(context).changeTheNameOfTheGroup),
-                          subtitle: Text(
-                              widget.room.getLocalizedDisplayname(context)),
+                          title: Text(L10n.of(context).changeTheNameOfTheGroup),
+                          subtitle: Text(widget.room
+                              .getLocalizedDisplayname(L10n.of(context))),
                           onTap: () => setDisplaynameAction(context),
                         ),
                       if (widget.room.canSendEvent("m.room.canonical_alias") &&
@@ -265,11 +266,11 @@ class _ChatDetailsState extends State<ChatDetails> {
                             child: Icon(Icons.link),
                           ),
                           onTap: () => setCanonicalAliasAction(context),
-                          title: Text(I18n.of(context).setInvitationLink),
+                          title: Text(L10n.of(context).setInvitationLink),
                           subtitle: Text(
                               (widget.room.canonicalAlias?.isNotEmpty ?? false)
                                   ? widget.room.canonicalAlias
-                                  : I18n.of(context).none),
+                                  : L10n.of(context).none),
                         ),
                       PopupMenuButton(
                         child: ListTile(
@@ -279,9 +280,10 @@ class _ChatDetailsState extends State<ChatDetails> {
                               foregroundColor: Colors.grey,
                               child: Icon(Icons.public)),
                           title: Text(
-                              I18n.of(context).whoIsAllowedToJoinThisGroup),
+                              L10n.of(context).whoIsAllowedToJoinThisGroup),
                           subtitle: Text(
-                            widget.room.joinRules.getLocalizedString(context),
+                            widget.room.joinRules
+                                .getLocalizedString(L10n.of(context)),
                           ),
                         ),
                         onSelected: (JoinRules joinRule) =>
@@ -293,14 +295,14 @@ class _ChatDetailsState extends State<ChatDetails> {
                           if (widget.room.canChangeJoinRules)
                             PopupMenuItem<JoinRules>(
                               value: JoinRules.public,
-                              child: Text(
-                                  JoinRules.public.getLocalizedString(context)),
+                              child: Text(JoinRules.public
+                                  .getLocalizedString(L10n.of(context))),
                             ),
                           if (widget.room.canChangeJoinRules)
                             PopupMenuItem<JoinRules>(
                               value: JoinRules.invite,
-                              child: Text(
-                                  JoinRules.invite.getLocalizedString(context)),
+                              child: Text(JoinRules.invite
+                                  .getLocalizedString(L10n.of(context))),
                             ),
                         ],
                       ),
@@ -313,10 +315,10 @@ class _ChatDetailsState extends State<ChatDetails> {
                             child: Icon(Icons.visibility),
                           ),
                           title:
-                              Text(I18n.of(context).visibilityOfTheChatHistory),
+                              Text(L10n.of(context).visibilityOfTheChatHistory),
                           subtitle: Text(
                             widget.room.historyVisibility
-                                .getLocalizedString(context),
+                                .getLocalizedString(L10n.of(context)),
                           ),
                         ),
                         onSelected: (HistoryVisibility historyVisibility) =>
@@ -329,25 +331,25 @@ class _ChatDetailsState extends State<ChatDetails> {
                             PopupMenuItem<HistoryVisibility>(
                               value: HistoryVisibility.invited,
                               child: Text(HistoryVisibility.invited
-                                  .getLocalizedString(context)),
+                                  .getLocalizedString(L10n.of(context))),
                             ),
                           if (widget.room.canChangeHistoryVisibility)
                             PopupMenuItem<HistoryVisibility>(
                               value: HistoryVisibility.joined,
                               child: Text(HistoryVisibility.joined
-                                  .getLocalizedString(context)),
+                                  .getLocalizedString(L10n.of(context))),
                             ),
                           if (widget.room.canChangeHistoryVisibility)
                             PopupMenuItem<HistoryVisibility>(
                               value: HistoryVisibility.shared,
                               child: Text(HistoryVisibility.shared
-                                  .getLocalizedString(context)),
+                                  .getLocalizedString(L10n.of(context))),
                             ),
                           if (widget.room.canChangeHistoryVisibility)
                             PopupMenuItem<HistoryVisibility>(
                               value: HistoryVisibility.world_readable,
                               child: Text(HistoryVisibility.world_readable
-                                  .getLocalizedString(context)),
+                                  .getLocalizedString(L10n.of(context))),
                             ),
                         ],
                       ),
@@ -361,10 +363,10 @@ class _ChatDetailsState extends State<ChatDetails> {
                               child: Icon(Icons.info_outline),
                             ),
                             title:
-                                Text(I18n.of(context).areGuestsAllowedToJoin),
+                                Text(L10n.of(context).areGuestsAllowedToJoin),
                             subtitle: Text(
                               widget.room.guestAccess
-                                  .getLocalizedString(context),
+                                  .getLocalizedString(L10n.of(context)),
                             ),
                           ),
                           onSelected: (GuestAccess guestAccess) =>
@@ -379,7 +381,7 @@ class _ChatDetailsState extends State<ChatDetails> {
                                 value: GuestAccess.can_join,
                                 child: Text(
                                   GuestAccess.can_join
-                                      .getLocalizedString(context),
+                                      .getLocalizedString(L10n.of(context)),
                                 ),
                               ),
                             if (widget.room.canChangeGuestAccess)
@@ -387,7 +389,7 @@ class _ChatDetailsState extends State<ChatDetails> {
                                 value: GuestAccess.forbidden,
                                 child: Text(
                                   GuestAccess.forbidden
-                                      .getLocalizedString(context),
+                                      .getLocalizedString(L10n.of(context)),
                                 ),
                               ),
                           ],
@@ -396,9 +398,9 @@ class _ChatDetailsState extends State<ChatDetails> {
                       ListTile(
                         title: Text(
                           actualMembersCount > 1
-                              ? I18n.of(context).countParticipants(
+                              ? L10n.of(context).countParticipants(
                                   actualMembersCount.toString())
-                              : I18n.of(context).emptyChat,
+                              : L10n.of(context).emptyChat,
                           style: TextStyle(
                             color: Theme.of(context).primaryColor,
                             fontWeight: FontWeight.bold,
@@ -407,7 +409,7 @@ class _ChatDetailsState extends State<ChatDetails> {
                       ),
                       widget.room.canInvite
                           ? ListTile(
-                              title: Text(I18n.of(context).inviteContact),
+                              title: Text(L10n.of(context).inviteContact),
                               leading: CircleAvatar(
                                 child: Icon(Icons.add),
                                 backgroundColor: Theme.of(context).primaryColor,
@@ -426,7 +428,7 @@ class _ChatDetailsState extends State<ChatDetails> {
                 : i < members.length + 1
                     ? ParticipantListItem(members[i - 1])
                     : ListTile(
-                        title: Text(I18n.of(context).loadCountMoreParticipants(
+                        title: Text(L10n.of(context).loadCountMoreParticipants(
                             (actualMembersCount - members.length).toString())),
                         leading: CircleAvatar(
                           backgroundColor:

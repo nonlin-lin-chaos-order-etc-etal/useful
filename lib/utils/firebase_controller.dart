@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:fluffychat/components/matrix.dart';
-import 'package:fluffychat/i18n/i18n.dart';
+import 'package:fluffychat/l10n/l10n.dart';
 import 'package:fluffychat/utils/app_route.dart';
 import 'package:fluffychat/views/chat.dart';
 import 'package:flutter/foundation.dart';
@@ -12,14 +12,16 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_styled_toast/flutter_styled_toast.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:famedlysdk/famedlysdk.dart';
-import '../utils/event_extension.dart';
-import '../utils/room_extension.dart';
+import 'famedlysdk_store.dart';
 
 abstract class FirebaseController {
   static FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
   static FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
   static BuildContext context;
+  static const String CHANNEL_ID = 'fluffychat_push';
+  static const String CHANNEL_NAME = 'FluffyChat push channel';
+  static const String CHANNEL_DESCRIPTION = 'Push notifications for FluffyChat';
 
   static Future<void> setupFirebase(Client client, String clientName) async {
     if (Platform.isIOS) iOS_Permission();
@@ -32,7 +34,7 @@ abstract class FirebaseController {
     }
     if (token?.isEmpty ?? true) {
       showToast(
-        I18n.of(context).noGoogleServicesWarning,
+        L10n.of(context).noGoogleServicesWarning,
         duration: Duration(seconds: 15),
       );
       return;
@@ -44,7 +46,7 @@ abstract class FirebaseController {
       clientName,
       client.deviceName,
       "en",
-      "https://janian.de:7023/",
+      "https://janian.de:7022/",
       append: false,
       format: "event_id_only",
     );
@@ -83,113 +85,177 @@ abstract class FirebaseController {
         onSelectNotification: goToRoom);
 
     _firebaseMessaging.configure(
-      onMessage: (Map<String, dynamic> message) async {
-        try {
-          print(message);
-          final data = message['data'] ?? message;
-          final String roomId = data["room_id"];
-          final String eventId = data["event_id"];
-          final int unread = json.decode(data["counts"])["unread"];
-          if ((roomId?.isEmpty ?? true) ||
-              (eventId?.isEmpty ?? true) ||
-              unread == 0) {
-            await _flutterLocalNotificationsPlugin.cancelAll();
-            return null;
-          }
-          if (Matrix.of(context).activeRoomId == roomId) return null;
-
-          // Get the room
-          Room room = client.getRoomById(roomId);
-          if (room == null) {
-            await client.onRoomUpdate.stream
-                .where((u) => u.id == roomId)
-                .first
-                .timeout(Duration(seconds: 10));
-            room = client.getRoomById(roomId);
-            if (room == null) return null;
-          }
-
-          // Get the event
-          Event event = await client.store.getEventById(eventId, room);
-          if (event == null) {
-            final EventUpdate eventUpdate = await client.onEvent.stream
-                .where((u) => u.content["event_id"] == eventId)
-                .first
-                .timeout(Duration(seconds: 10));
-            event = Event.fromJson(eventUpdate.content, room);
-            if (room == null) return null;
-          }
-
-          // Count all unread events
-          int unreadEvents = 0;
-          client.rooms
-              .forEach((Room room) => unreadEvents += room.notificationCount);
-
-          // Calculate title
-          final String title = unread > 1
-              ? I18n.of(context).unreadMessagesInChats(
-                  unreadEvents.toString(), unread.toString())
-              : I18n.of(context).unreadMessages(unreadEvents.toString());
-
-          // Calculate the body
-          final String body = event.getLocalizedBody(context,
-              withSenderNamePrefix: true, hideReply: true);
-
-          // The person object for the android message style notification
-          final person = Person(
-            name: room.getLocalizedDisplayname(context),
-            icon: room.avatar == null
-                ? null
-                : await downloadAndSaveAvatar(
-                    room.avatar,
-                    client,
-                    width: 126,
-                    height: 126,
-                  ),
-            iconSource: IconSource.FilePath,
-          );
-
-          // Show notification
-          var androidPlatformChannelSpecifics = AndroidNotificationDetails(
-              'fluffychat_push',
-              'FluffyChat push channel',
-              'Push notifications for FluffyChat',
-              style: AndroidNotificationStyle.Messaging,
-              styleInformation: MessagingStyleInformation(
-                person,
-                conversationTitle: title,
-                messages: [
-                  Message(
-                    body,
-                    event.time,
-                    person,
-                  )
-                ],
-              ),
-              importance: Importance.Max,
-              priority: Priority.High,
-              ticker: I18n.of(context).newMessageInFluffyChat);
-          var iOSPlatformChannelSpecifics = IOSNotificationDetails();
-          var platformChannelSpecifics = NotificationDetails(
-              androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
-          await _flutterLocalNotificationsPlugin.show(
-              0,
-              room.getLocalizedDisplayname(context),
-              body,
-              platformChannelSpecifics,
-              payload: roomId);
-        } catch (exception) {
-          debugPrint("[Push] Error while processing notification: " +
-              exception.toString());
-        }
-        return null;
-      },
+      onMessage: _onMessage,
+      onBackgroundMessage: _showDefaultNotification,
       onResume: goToRoom,
-      // Currently fires unexpectetly... https://github.com/FirebaseExtended/flutterfire/issues/1060
-      //onLaunch: goToRoom,
+      onLaunch: goToRoom,
     );
     debugPrint("[Push] Firebase initialized");
     return;
+  }
+
+  static Future<dynamic> _onMessage(Map<String, dynamic> message) async {
+    try {
+      final data = message['data'] ?? message;
+      final String roomId = data["room_id"];
+      final String eventId = data["event_id"];
+      final int unread = json.decode(data["counts"])["unread"];
+      if ((roomId?.isEmpty ?? true) ||
+          (eventId?.isEmpty ?? true) ||
+          unread == 0) {
+        await _flutterLocalNotificationsPlugin.cancelAll();
+        return null;
+      }
+      if (context != null && Matrix.of(context).activeRoomId == roomId) {
+        return null;
+      }
+      final i18n =
+          context == null ? L10n(Platform.localeName) : L10n.of(context);
+
+      // Get the client
+      Client client;
+      if (context != null) {
+        client = Matrix.of(context).client;
+      } else {
+        final platform = kIsWeb ? "Web" : Platform.operatingSystem;
+        final clientName = "FluffyChat $platform";
+        client = Client(clientName, debug: false);
+        client.storeAPI = ExtendedStore(client);
+        await client.onLoginStateChanged.stream
+            .firstWhere((l) => l == LoginState.logged)
+            .timeout(
+              Duration(seconds: 5),
+            );
+      }
+
+      // Get the room
+      Room room = client.getRoomById(roomId);
+      if (room == null) {
+        await client.onRoomUpdate.stream
+            .where((u) => u.id == roomId)
+            .first
+            .timeout(Duration(seconds: 5));
+        room = client.getRoomById(roomId);
+        if (room == null) return null;
+      }
+
+      // Get the event
+      Event event = await client.store.getEventById(eventId, room);
+      if (event == null) {
+        final EventUpdate eventUpdate = await client.onEvent.stream
+            .where((u) => u.content["event_id"] == eventId)
+            .first
+            .timeout(Duration(seconds: 5));
+        event = Event.fromJson(eventUpdate.content, room);
+        if (room == null) return null;
+      }
+
+      // Count all unread events
+      int unreadEvents = 0;
+      client.rooms
+          .forEach((Room room) => unreadEvents += room.notificationCount);
+
+      // Calculate title
+      final String title = unread > 1
+          ? i18n.unreadMessagesInChats(
+              unreadEvents.toString(), unread.toString())
+          : i18n.unreadMessages(unreadEvents.toString());
+
+      // Calculate the body
+      final String body = event.getLocalizedBody(
+        i18n,
+        withSenderNamePrefix: true,
+        hideReply: true,
+      );
+
+      // The person object for the android message style notification
+      final person = Person(
+        name: room.getLocalizedDisplayname(i18n),
+        icon: room.avatar == null
+            ? null
+            : BitmapFilePathAndroidIcon(
+                await downloadAndSaveAvatar(
+                  room.avatar,
+                  client,
+                  width: 126,
+                  height: 126,
+                ),
+              ),
+      );
+
+      // Show notification
+      var androidPlatformChannelSpecifics = AndroidNotificationDetails(
+          CHANNEL_ID, CHANNEL_NAME, CHANNEL_DESCRIPTION,
+          styleInformation: MessagingStyleInformation(
+            person,
+            conversationTitle: title,
+            messages: [
+              Message(
+                body,
+                event.time,
+                person,
+              )
+            ],
+          ),
+          importance: Importance.Max,
+          priority: Priority.High,
+          ticker: i18n.newMessageInFluffyChat);
+      var iOSPlatformChannelSpecifics = IOSNotificationDetails();
+      var platformChannelSpecifics = NotificationDetails(
+          androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+      await _flutterLocalNotificationsPlugin.show(
+          0, room.getLocalizedDisplayname(i18n), body, platformChannelSpecifics,
+          payload: roomId);
+    } catch (exception) {
+      debugPrint("[Push] Error while processing notification: " +
+          exception.toString());
+      await _showDefaultNotification(message);
+    }
+    return null;
+  }
+
+  static Future<dynamic> _showDefaultNotification(
+      Map<String, dynamic> message) async {
+    try {
+      FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+          FlutterLocalNotificationsPlugin();
+      // Init notifications framework
+      var initializationSettingsAndroid =
+          AndroidInitializationSettings('notifications_icon');
+      var initializationSettingsIOS = IOSInitializationSettings();
+      var initializationSettings = InitializationSettings(
+          initializationSettingsAndroid, initializationSettingsIOS);
+      await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+      final l10n = L10n(Platform.localeName);
+
+      // Notification data and matrix data
+      Map<dynamic, dynamic> data = message['data'] ?? message;
+      String eventID = data["event_id"];
+      String roomID = data["room_id"];
+      final int unread = data.containsKey("counts")
+          ? json.decode(data["counts"])["unread"]
+          : 1;
+      await flutterLocalNotificationsPlugin.cancelAll();
+      if (unread == 0 || roomID == null || eventID == null) {
+        return;
+      }
+
+      // Display notification
+      var androidPlatformChannelSpecifics = AndroidNotificationDetails(
+          CHANNEL_ID, CHANNEL_NAME, CHANNEL_DESCRIPTION,
+          importance: Importance.Max, priority: Priority.High);
+      var iOSPlatformChannelSpecifics = IOSNotificationDetails();
+      var platformChannelSpecifics = NotificationDetails(
+          androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+      final String title = l10n.unreadChats(unread.toString());
+      await flutterLocalNotificationsPlugin.show(
+          1, title, l10n.openAppToReadMessages, platformChannelSpecifics,
+          payload: roomID);
+    } catch (exception) {
+      debugPrint("[Push] Error while processing background notification: " +
+          exception.toString());
+    }
+    return Future<void>.value();
   }
 
   static Future<String> downloadAndSaveAvatar(Uri content, Client client,

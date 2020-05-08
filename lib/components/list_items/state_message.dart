@@ -1,7 +1,7 @@
 import 'package:bubble/bubble.dart';
 import 'package:famedlysdk/famedlysdk.dart';
+import 'package:fluffychat/l10n/l10n.dart';
 import 'package:flutter/material.dart';
-import 'package:fluffychat/utils/event_extension.dart';
 
 class StateMessage extends StatelessWidget {
   final Event event;
@@ -21,10 +21,10 @@ class StateMessage extends StatelessWidget {
         color: Theme.of(context).backgroundColor.withOpacity(0.66),
         alignment: Alignment.center,
         child: Text(
-          event.getLocalizedBody(context),
+          event.getLocalizedBody(L10n.of(context)),
           textAlign: TextAlign.center,
           style: TextStyle(
-            color: Theme.of(context).textTheme.body1.color,
+            color: Theme.of(context).textTheme.bodyText2.color,
             decoration: event.redacted ? TextDecoration.lineThrough : null,
           ),
         ),

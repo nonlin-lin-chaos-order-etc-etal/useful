@@ -1,7 +1,6 @@
 import 'package:famedlysdk/famedlysdk.dart';
-import 'package:fluffychat/i18n/i18n.dart';
+import 'package:fluffychat/l10n/l10n.dart';
 import 'package:fluffychat/utils/app_route.dart';
-import 'package:fluffychat/utils/date_time_extension.dart';
 import 'package:fluffychat/views/chat.dart';
 import 'package:flutter/material.dart';
 
@@ -14,11 +13,20 @@ class PresenceListItem extends StatelessWidget {
 
   const PresenceListItem(this.presence);
 
+  static Map<String, Profile> _presences = {};
+
+  Future<Profile> _requestProfile(BuildContext context) async {
+    _presences[presence.sender] ??=
+        await Matrix.of(context).client.getProfileFromUserId(presence.sender);
+    return _presences[presence.sender];
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<Profile>(
-        future: Matrix.of(context).client.getProfileFromUserId(presence.sender),
+        future: _requestProfile(context),
         builder: (context, snapshot) {
+          if (!snapshot.hasData) return Container();
           Uri avatarUrl;
           String displayname = presence.sender.localpart;
           if (snapshot.hasData) {
@@ -40,16 +48,21 @@ class PresenceListItem extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(presence.getLocalizedStatusMessage(context)),
-                    Text(
-                      presence.time.localizedTime(context),
-                      style: TextStyle(fontSize: 12),
-                    ),
+                    if (presence.presence != null)
+                      Text(
+                        presence.presence.toString().split('.').last,
+                        style: TextStyle(
+                          color: presence.currentlyActive == true
+                              ? Colors.green
+                              : Theme.of(context).primaryColor,
+                        ),
+                      )
                   ],
                 ),
                 actions: <Widget>[
                   if (presence.sender != Matrix.of(context).client.userID)
                     FlatButton(
-                      child: Text(I18n.of(context).sendAMessage),
+                      child: Text(L10n.of(context).sendAMessage),
                       onPressed: () async {
                         final String roomId = await User(
                           presence.sender,
@@ -64,7 +77,7 @@ class PresenceListItem extends StatelessWidget {
                       },
                     ),
                   FlatButton(
-                    child: Text(I18n.of(context).close),
+                    child: Text(L10n.of(context).close),
                     onPressed: () => Navigator.of(context).pop(),
                   ),
                 ],

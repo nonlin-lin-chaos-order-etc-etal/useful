@@ -1,8 +1,9 @@
+import 'package:famedlysdk/famedlysdk.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'messages_all.dart';
 
-class AppLocalizationsDelegate extends LocalizationsDelegate<I18n> {
+class AppLocalizationsDelegate extends LocalizationsDelegate<L10n> {
   const AppLocalizationsDelegate();
 
   @override
@@ -11,32 +12,32 @@ class AppLocalizationsDelegate extends LocalizationsDelegate<I18n> {
   }
 
   @override
-  Future<I18n> load(Locale locale) {
-    return I18n.load(locale);
+  Future<L10n> load(Locale locale) {
+    return L10n.load(locale);
   }
 
   @override
-  bool shouldReload(LocalizationsDelegate<I18n> old) {
+  bool shouldReload(LocalizationsDelegate<L10n> old) {
     return false;
   }
 }
 
-class I18n {
-  I18n(this.localeName);
+class L10n extends MatrixLocalizations {
+  L10n(this.localeName);
 
-  static Future<I18n> load(Locale locale) {
+  static Future<L10n> load(Locale locale) {
     final String name =
         locale.countryCode == null ? locale.languageCode : locale.toString();
     final String localeName = Intl.canonicalizedLocale(name);
 
     return initializeMessages(localeName).then((bool _) {
       Intl.defaultLocale = localeName;
-      return I18n(localeName);
+      return L10n(localeName);
     });
   }
 
-  static I18n of(BuildContext context) {
-    return Localizations.of<I18n>(context, I18n);
+  static L10n of(BuildContext context) {
+    return Localizations.of<L10n>(context, L10n);
   }
 
   final String localeName;
@@ -229,8 +230,11 @@ class I18n {
 
   String get copy => Intl.message("Copy");
 
-  String get couldNotDecryptMessage =>
-      Intl.message("Could not decrypt message");
+  String couldNotDecryptMessage(String error) => Intl.message(
+        "Could not decrypt message: $error",
+        name: "couldNotDecryptMessage",
+        args: [error],
+      );
 
   String get couldNotSetAvatar => Intl.message("Could not set avatar");
 
@@ -419,6 +423,12 @@ class I18n {
         args: [username],
       );
 
+  String lastActiveAgo(String localizedTimeShort) => Intl.message(
+        "Last active: $localizedTimeShort",
+        name: "lastActiveAgo",
+        args: [localizedTimeShort],
+      );
+
   String get lastSeenIp => Intl.message("Last seen IP");
 
   String get license => Intl.message("License");
@@ -479,6 +489,8 @@ class I18n {
 
   String get oopsSomethingWentWrong =>
       Intl.message("Oops something went wrong...");
+
+  String get openAppToReadMessages => Intl.message('Open app to read messages');
 
   String get openCamera => Intl.message('Open camera');
 
@@ -693,6 +705,12 @@ class I18n {
         "Unknown event '$type'",
         name: "unknownEvent",
         args: [type],
+      );
+
+  String unreadChats(String unreadCount) => Intl.message(
+        "$unreadCount unread chats",
+        name: "unreadChats",
+        args: [unreadCount],
       );
 
   String unreadMessages(String unreadEvents) => Intl.message(

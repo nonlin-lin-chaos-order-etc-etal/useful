@@ -1,5 +1,5 @@
 import 'package:famedlysdk/famedlysdk.dart';
-import 'package:fluffychat/utils/event_extension.dart';
+import 'package:fluffychat/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 
 class ReplyContent extends StatelessWidget {
@@ -35,15 +35,18 @@ class ReplyContent extends StatelessWidget {
                 ),
               ),
               Text(
-                replyEvent?.getLocalizedBody(context,
-                        withSenderNamePrefix: false, hideReply: true) ??
+                replyEvent?.getLocalizedBody(
+                      L10n.of(context),
+                      withSenderNamePrefix: false,
+                      hideReply: true,
+                    ) ??
                     "",
                 overflow: TextOverflow.ellipsis,
                 maxLines: 1,
                 style: TextStyle(
                     color: lightText
                         ? Colors.white
-                        : Theme.of(context).textTheme.body1.color),
+                        : Theme.of(context).textTheme.bodyText2.color),
               ),
             ],
           ),
