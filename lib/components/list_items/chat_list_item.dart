@@ -147,25 +147,21 @@ class ChatListItem extends StatelessWidget {
           title: Row(
             children: <Widget>[
               Expanded(
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    Text(
-                      room.getLocalizedDisplayname(L10n.of(context)),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    SizedBox(width: 4),
-                    room.pushRuleState == PushRuleState.notify
-                        ? Container()
-                        : Icon(
-                            Icons.notifications_off,
-                            color: Colors.grey[400],
-                            size: 16,
-                          ),
-                  ],
+                child: Text(
+                  room.getLocalizedDisplayname(L10n.of(context)),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  softWrap: false,
                 ),
               ),
+              SizedBox(width: 4),
+              room.pushRuleState == PushRuleState.notify
+                  ? Container()
+                  : Icon(
+                      Icons.notifications_off,
+                      color: Colors.grey[400],
+                      size: 16,
+                    ),
               Text(
                 room.timeCreated.localizedTimeShort(context),
                 style: TextStyle(
@@ -185,10 +181,15 @@ class ChatListItem extends StatelessWidget {
                         style: TextStyle(
                           color: Theme.of(context).primaryColor,
                         ),
+                        softWrap: false,
                       )
                     : Text(
-                        room.lastEvent.getLocalizedBody(L10n.of(context),
-                            withSenderNamePrefix: true, hideReply: true),
+                        room.lastEvent.getLocalizedBody(
+                          L10n.of(context),
+                          withSenderNamePrefix: !room.isDirectChat,
+                          hideReply: true,
+                        ),
+                        softWrap: false,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(

@@ -684,6 +684,11 @@
     "type": "text",
     "placeholders": {}
   },
+  "Load more...": "Load more...",
+  "@Load more...": {
+    "type": "text",
+    "placeholders": {}
+  },
   "loadCountMoreParticipants": "Load {count} more participants",
   "@loadCountMoreParticipants": {
     "type": "text",
@@ -787,6 +792,11 @@
   },
   "Oops something went wrong...": "Oops something went wrong...",
   "@Oops something went wrong...": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "Open app to read messages": "Open app to read messages",
+  "@Open app to read messages": {
     "type": "text",
     "placeholders": {}
   },
@@ -1172,6 +1182,13 @@
     "type": "text",
     "placeholders": {
       "type": {}
+    }
+  },
+  "unreadChats": "{unreadCount} unread chats",
+  "@unreadChats": {
+    "type": "text",
+    "placeholders": {
+      "unreadCount": {}
     }
   },
   "unreadMessages": "{unreadEvents} unread messages",

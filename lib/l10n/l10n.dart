@@ -437,6 +437,8 @@ class L10n extends MatrixLocalizations {
 
   String get loadingPleaseWait => Intl.message("Loading... Please wait");
 
+  String get loadMore => Intl.message('Load more...');
+
   String loadCountMoreParticipants(String count) => Intl.message(
         "Load $count more participants",
         name: "loadCountMoreParticipants",
@@ -491,6 +493,8 @@ class L10n extends MatrixLocalizations {
 
   String get oopsSomethingWentWrong =>
       Intl.message("Oops something went wrong...");
+
+  String get openAppToReadMessages => Intl.message('Open app to read messages');
 
   String get openCamera => Intl.message('Open camera');
 
@@ -707,6 +711,12 @@ class L10n extends MatrixLocalizations {
         "Unknown event '$type'",
         name: "unknownEvent",
         args: [type],
+      );
+
+  String unreadChats(String unreadCount) => Intl.message(
+        "$unreadCount unread chats",
+        name: "unreadChats",
+        args: [unreadCount],
       );
 
   String unreadMessages(String unreadEvents) => Intl.message(

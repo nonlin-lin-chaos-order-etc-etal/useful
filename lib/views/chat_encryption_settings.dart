@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:famedlysdk/famedlysdk.dart';
 import 'package:fluffychat/components/adaptive_page_layout.dart';
 import 'package:fluffychat/components/avatar.dart';
@@ -35,43 +33,32 @@ class ChatEncryptionSettings extends StatefulWidget {
 }
 
 class _ChatEncryptionSettingsState extends State<ChatEncryptionSettings> {
-  Room room;
-
-  StreamSubscription roomUpdate;
-
-  @override
-  void dispose() {
-    roomUpdate?.cancel();
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
-    room ??= Matrix.of(context).client.getRoomById(widget.id);
-    roomUpdate ??= room.onUpdate.stream.listen((s) => setState(() => null));
+    final room = Matrix.of(context).client.getRoomById(widget.id);
 
     return Scaffold(
       appBar: AppBar(
         title: Text(L10n.of(context).participatingUserDevices),
       ),
-      body: Column(
-        children: <Widget>[
-          FutureBuilder<List<DeviceKeys>>(
-            future: room.getUserDeviceKeys(),
-            builder: (BuildContext context, snapshot) {
-              if (snapshot.hasError) {
-                return Center(
-                  child: Text(L10n.of(context).oopsSomethingWentWrong +
-                      ": " +
-                      snapshot.error.toString()),
-                );
-              }
-              if (!snapshot.hasData) {
-                return Center(child: CircularProgressIndicator());
-              }
-              final List<DeviceKeys> deviceKeys = snapshot.data;
-              return Expanded(
-                child: ListView.separated(
+      body: StreamBuilder(
+          stream: room.onUpdate.stream,
+          builder: (context, snapshot) {
+            return FutureBuilder<List<DeviceKeys>>(
+              future: room.getUserDeviceKeys(),
+              builder: (BuildContext context, snapshot) {
+                if (snapshot.hasError) {
+                  return Center(
+                    child: Text(L10n.of(context).oopsSomethingWentWrong +
+                        ": " +
+                        snapshot.error.toString()),
+                  );
+                }
+                if (!snapshot.hasData) {
+                  return Center(child: CircularProgressIndicator());
+                }
+                final List<DeviceKeys> deviceKeys = snapshot.data;
+                return ListView.separated(
                   separatorBuilder: (BuildContext context, int i) =>
                       Divider(height: 1),
                   itemCount: deviceKeys.length,
@@ -137,18 +124,10 @@ class _ChatEncryptionSettingsState extends State<ChatEncryptionSettings> {
                       ),
                     ],
                   ),
-                ),
-              );
-            },
-          ),
-          Divider(thickness: 1, height: 1),
-          ListTile(
-            title: Text("Outbound MegOlm session ID:"),
-            subtitle: Text(
-                room.outboundGroupSession?.session_id()?.beautified ?? "None"),
-          ),
-        ],
-      ),
+                );
+              },
+            );
+          }),
     );
   }
 }
