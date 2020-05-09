@@ -3,6 +3,7 @@ import 'package:fluffychat/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 
 import 'html_message.dart';
+import 'matrix.dart';
 
 class ReplyContent extends StatelessWidget {
   final Event replyEvent;
@@ -15,7 +16,7 @@ class ReplyContent extends StatelessWidget {
   Widget build(BuildContext context) {
     Widget replyBody;
     if (
-      replyEvent != null &&
+      replyEvent != null && Matrix.of(context).renderHtml &&
       [EventTypes.Message, EventTypes.Encrypted].contains(replyEvent.type) &&
       [MessageTypes.Text, MessageTypes.Notice, MessageTypes.Emote].contains(replyEvent.messageType) &&
       !replyEvent.redacted && replyEvent.content['format'] == 'org.matrix.custom.html' && replyEvent.content['formatted_body'] is String
