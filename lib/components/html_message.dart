@@ -8,8 +8,9 @@ import 'matrix.dart';
 class HtmlMessage extends StatelessWidget {
   final String html;
   final Color textColor;
+  final int maxLines;
 
-  const HtmlMessage({this.html, this.textColor});
+  const HtmlMessage({this.html, this.textColor, this.maxLines});
 
   @override
   Widget build(BuildContext context) {
@@ -19,6 +20,7 @@ class HtmlMessage extends StatelessWidget {
       data: html,
       defaultTextStyle: TextStyle(color: textColor),
       shrinkToFit: true,
+      maxLines: maxLines,
       onLinkTap: (String url) {
         if (url == null || url.isEmpty) {
           return;

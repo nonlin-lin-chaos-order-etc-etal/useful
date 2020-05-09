@@ -15,6 +15,7 @@ class ReplyContent extends StatelessWidget {
   Widget build(BuildContext context) {
     Widget replyBody;
     if (
+      replyEvent != null &&
       [EventTypes.Message, EventTypes.Encrypted].contains(replyEvent.type) &&
       [MessageTypes.Text, MessageTypes.Notice, MessageTypes.Emote].contains(replyEvent.messageType) &&
       !replyEvent.redacted && replyEvent.content['format'] == 'org.matrix.custom.html' && replyEvent.content['formatted_body'] is String
@@ -23,16 +24,12 @@ class ReplyContent extends StatelessWidget {
       if (replyEvent.messageType == MessageTypes.Emote) {
         html = "* $html";
       }
-      replyBody = ConstrainedBox(
-        constraints: BoxConstraints(
-          maxHeight: 18,
-        ),
-        child: HtmlMessage(
-          html: html,
-          textColor: lightText
-              ? Colors.white
-              : Theme.of(context).textTheme.bodyText2.color,
-        ),
+      replyBody = HtmlMessage(
+        html: html,
+        textColor: lightText
+            ? Colors.white
+            : Theme.of(context).textTheme.bodyText2.color,
+        maxLines: 1,
       );
     } else {
       replyBody = Text(
