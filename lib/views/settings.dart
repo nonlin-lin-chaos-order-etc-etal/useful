@@ -17,6 +17,7 @@ import '../components/content_banner.dart';
 import '../components/matrix.dart';
 import '../l10n/l10n.dart';
 import '../utils/app_route.dart';
+import 'settings_emotes.dart';
 
 class SettingsView extends StatelessWidget {
   @override
@@ -229,6 +230,15 @@ class _SettingsState extends State<Settings> {
                   await client.storeAPI.setItem("chat.fluffy.renderHtml", newValue ? "1" : "0");
                   setState(() => null);
                 },
+              ),
+            ),
+            ListTile(
+              title: Text("Emote settings"),
+              onTap: () async => await Navigator.of(context).push(
+                AppRoute.defaultRoute(
+                  context,
+                  EmotesSettingsView(),
+                ),
               ),
             ),
             Divider(thickness: 1),
