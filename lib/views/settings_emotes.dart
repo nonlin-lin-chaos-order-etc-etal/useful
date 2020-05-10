@@ -145,7 +145,7 @@ class _EmotesSettingsState extends State<EmotesSettings> {
                     dialog(context, 'Emote already exists!');
                     return;
                   }
-                  await _save();
+                  await _save(context);
                   setState(() {
                     emotes.add(_EmoteEntry(emote: emoteCode, mxc: mxc));
                     newEmoteController.text = '';
@@ -248,7 +248,7 @@ class _EmoteImage extends StatelessWidget {
 }
 
 class _EmoteImagePicker extends StatefulWidget {
-  TextEditingController controller;
+  final TextEditingController controller;
 
   _EmoteImagePicker(this.controller);
 
