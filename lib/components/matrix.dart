@@ -70,6 +70,7 @@ class MatrixState extends State<Matrix> {
   void _initWithStore() async {
     Future<LoginState> initLoginState = client.onLoginStateChanged.stream.first;
     client.storeAPI = kIsWeb ? Store(client) : ExtendedStore(client);
+    client.database = getDatabase(client);
     debugPrint(
         "[Store] Store is extended: ${client.storeAPI.extended.toString()}");
     if (await initLoginState == LoginState.logged && !kIsWeb) {

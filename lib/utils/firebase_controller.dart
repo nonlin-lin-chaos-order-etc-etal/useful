@@ -121,6 +121,7 @@ abstract class FirebaseController {
         final clientName = "FluffyChat $platform";
         client = Client(clientName, debug: false);
         client.storeAPI = ExtendedStore(client);
+        client.database = getDatabase(client);
         await client.onLoginStateChanged.stream
             .firstWhere((l) => l == LoginState.logged)
             .timeout(
