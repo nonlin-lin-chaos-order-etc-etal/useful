@@ -233,13 +233,14 @@ class _SettingsState extends State<Settings> {
               ),
             ),
             ListTile(
-              title: Text("Emote settings"),
+              title: Text(L10n.of(context).emoteSettings),
               onTap: () async => await Navigator.of(context).push(
                 AppRoute.defaultRoute(
                   context,
-                  EmotesSettingsView(),
+                  EmotesSettingsView(readonly: false),
                 ),
               ),
+              trailing: Icon(Icons.insert_emoticon),
             ),
             Divider(thickness: 1),
             ListTile(

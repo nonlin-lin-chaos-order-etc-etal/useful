@@ -424,6 +424,31 @@
     "type": "text",
     "placeholders": {}
   },
+  "Emote Settings": "Emote Einstellungen",
+  "@Emote Settings": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "Emote shortcode": "Emote kürzel",
+  "@Emote shortcode": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "emoteWarnNeedToPick": "Wähle ein Emote-kürzel und ein Bild!",
+  "@emoteWarnNeedToPick": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "emoteExists": "Emote existiert bereits!",
+  "@emoteExists": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "emoteInvalid": "Ungültiges Emote-kürzel!",
+  "@emoteInvalid": {
+    "type": "text",
+    "placeholders": {}
+  },
   "Empty chat": "Leerer Chat",
   "@Empty chat": {
     "type": "text",
@@ -790,6 +815,11 @@
       "number": {}
     }
   },
+  "ok": "ok",
+  "@ok": {
+    "type": "text",
+    "placeholders": {}
+  },
   "Oops something went wrong...": "Hoppla! Da ist etwas schief gelaufen ...",
   "@Oops something went wrong...": {
     "type": "text",
@@ -812,6 +842,11 @@
   },
   "Password": "Passwort",
   "@Password": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "Pick image": "Wähle Bild",
+  "@Pick image": {
     "type": "text",
     "placeholders": {}
   },
