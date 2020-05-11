@@ -8,11 +8,14 @@ import 'package:localstorage/localstorage.dart';
 import 'dart:async';
 import 'dart:core';
 import 'package:path/path.dart' as p;
-import 'package:moor/moor.dart';
-import 'package:moor/moor_web.dart';
+import './database/shared.dart';
 
 Future<Database> getDatabase(Client client, Store store) async {
-  final db = Database(WebDatabase.withStorage(MoorWebStorage.indexedDbIfSupported('foxies'), logStatements: true));
+  final db = constructDb(
+    logStatements: true,
+    filename: 'foxies.sqlite',
+    password: 'superfoxies',
+  );
   return db;
 }
 
