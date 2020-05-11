@@ -170,12 +170,12 @@ class ThemeSwitcherWidgetState extends State<ThemeSwitcherWidget> {
   BuildContext context;
 
   Future loadSelection(MatrixState matrix) async {
-    String item = await matrix.client.storeAPI.getItem("theme") ?? "light";
+    String item = await matrix.store.getItem("theme") ?? "light";
     selectedTheme =
         Themes.values.firstWhere((e) => e.toString() == 'Themes.' + item);
 
     amoledEnabled =
-        (await matrix.client.storeAPI.getItem("amoled_enabled") ?? "false")
+        (await matrix.store.getItem("amoled_enabled") ?? "false")
                 .toLowerCase() ==
             'true';
 
@@ -224,12 +224,12 @@ class ThemeSwitcherWidgetState extends State<ThemeSwitcherWidget> {
   }
 
   Future saveThemeValue(MatrixState matrix, Themes value) async {
-    await matrix.client.storeAPI
+    await matrix.store
         .setItem("theme", value.toString().split('.').last);
   }
 
   Future saveAmoledEnabledValue(MatrixState matrix, bool value) async {
-    await matrix.client.storeAPI.setItem("amoled_enabled", value.toString());
+    await matrix.store.setItem("amoled_enabled", value.toString());
   }
 
   void setup() async {

@@ -120,8 +120,9 @@ abstract class FirebaseController {
         final platform = kIsWeb ? "Web" : Platform.operatingSystem;
         final clientName = "FluffyChat $platform";
         client = Client(clientName, debug: false);
-        client.storeAPI = ExtendedStore(client);
-        client.database = getDatabase(client);
+        final store = Store();
+        client.database = await getDatabase(client, store);
+        client.connect();
         await client.onLoginStateChanged.stream
             .firstWhere((l) => l == LoginState.logged)
             .timeout(
@@ -141,7 +142,7 @@ abstract class FirebaseController {
       }
 
       // Get the event
-      Event event = await client.store.getEventById(eventId, room);
+      Event event = await client.database.getEventById(client.id, eventId, room);
       if (event == null) {
         final EventUpdate eventUpdate = await client.onEvent.stream
             .where((u) => u.content["event_id"] == eventId)

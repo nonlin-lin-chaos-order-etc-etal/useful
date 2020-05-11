@@ -24,7 +24,9 @@ class Matrix extends StatefulWidget {
 
   final Client client;
 
-  Matrix({this.child, this.clientName, this.client, Key key}) : super(key: key);
+  final Store store;
+
+  Matrix({this.child, this.clientName, this.client, this.store, Key key}) : super(key: key);
 
   @override
   MatrixState createState() => MatrixState();
@@ -40,6 +42,7 @@ class Matrix extends StatefulWidget {
 
 class MatrixState extends State<Matrix> {
   Client client;
+  Store store;
   BuildContext context;
 
   Map<String, dynamic> get shareContent => _shareContent;
@@ -69,10 +72,8 @@ class MatrixState extends State<Matrix> {
 
   void _initWithStore() async {
     Future<LoginState> initLoginState = client.onLoginStateChanged.stream.first;
-    client.storeAPI = kIsWeb ? Store(client) : ExtendedStore(client);
-    client.database = getDatabase(client);
-    debugPrint(
-        "[Store] Store is extended: ${client.storeAPI.extended.toString()}");
+    client.database = await getDatabase(client, store);
+    client.connect();
     if (await initLoginState == LoginState.logged && !kIsWeb) {
       await FirebaseController.setupFirebase(
         client,
@@ -152,9 +153,10 @@ class MatrixState extends State<Matrix> {
 
   @override
   void initState() {
+    store = widget.store ?? Store();
     if (widget.client == null) {
       debugPrint("[Matrix] Init matrix client");
-      client = Client(widget.clientName, debug: false);
+      client = Client(widget.clientName, debug: true);
       onJitsiCallSub ??= client.onEvent.stream
           .where((e) =>
               e.type == 'timeline' &&
@@ -179,19 +181,20 @@ class MatrixState extends State<Matrix> {
       _initWithStore();
     } else {
       client = widget.client;
+      client.connect();
     }
-    if (client.storeAPI != null) {
-      client.storeAPI
+    if (store != null) {
+      store
           .getItem("chat.fluffy.jitsi_instance")
           .then((final instance) => jitsiInstance = instance ?? jitsiInstance);
-      client.storeAPI.getItem("chat.fluffy.wallpaper").then((final path) async {
+      store.getItem("chat.fluffy.wallpaper").then((final path) async {
         if (path == null) return;
         final file = File(path);
         if (await file.exists()) {
           wallpaper = file;
         }
       });
-      client.storeAPI.getItem("chat.fluffy.renderHtml").then((final render) async {
+      store.getItem("chat.fluffy.renderHtml").then((final render) async {
         renderHtml = render == "1";
       });
     }

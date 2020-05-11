@@ -8,16 +8,52 @@ import 'package:localstorage/localstorage.dart';
 import 'dart:async';
 import 'dart:core';
 import 'package:path/path.dart' as p;
-import 'package:sqflite/sqflite.dart' as sqlite;
 import 'package:moor/moor.dart';
-import 'package:encrypted_moor/encrypted_moor.dart';
+import 'package:moor/moor_web.dart';
 
-Database getDatabase(Client client) {
-  final db = Database(EncryptedExecutor.inDatabaseFolder(path: 'db.sqlite', password: 'foxies', logStatements: true));
-  db.client = client;
+Future<Database> getDatabase(Client client, Store store) async {
+  final db = Database(WebDatabase.withStorage(MoorWebStorage.indexedDbIfSupported('foxies'), logStatements: true));
   return db;
 }
 
+class Store {
+  final LocalStorage storage;
+  final FlutterSecureStorage secureStorage;
+
+  Store() :
+    storage = LocalStorage('LocalStorage'),
+    secureStorage = kIsWeb ? null : FlutterSecureStorage();
+
+  Future<dynamic> getItem(String key) async {
+    if (kIsWeb) {
+      await storage.ready;
+      try {
+        return await storage.getItem(key);
+      } catch (_) {
+        return null;
+      }
+    }
+    try {
+      return await secureStorage.read(key: key);
+    } catch (_) {
+      return null;
+    }
+  }
+
+  Future<void> setItem(String key, String value) async {
+    if (kIsWeb) {
+      await storage.ready;
+      return await storage.setItem(key, value);
+    }
+    if (value == null) {
+      return await secureStorage.delete(key: key);
+    } else {
+      return await secureStorage.write(key: key, value: value);
+    }
+  }
+}
+
+/*
 class Store extends StoreAPI {
   final Client client;
   final LocalStorage storage;
@@ -390,3 +426,4 @@ class ExtendedStore extends Store implements ExtendedStoreAPI {
   @override
   int get maxFileSize => 1 * 1024 * 1024;
 }
+*/

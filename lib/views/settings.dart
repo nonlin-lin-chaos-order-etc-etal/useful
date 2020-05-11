@@ -61,7 +61,7 @@ class _SettingsState extends State<Settings> {
       jitsi += '/';
     }
     final MatrixState matrix = Matrix.of(context);
-    await matrix.client.storeAPI.setItem('chat.fluffy.jitsi_instance', jitsi);
+    await matrix.store.setItem('chat.fluffy.jitsi_instance', jitsi);
     matrix.jitsiInstance = jitsi;
   }
 
@@ -114,8 +114,7 @@ class _SettingsState extends State<Settings> {
     if (wallpaper == null) return;
     Matrix.of(context).wallpaper = wallpaper;
     await Matrix.of(context)
-        .client
-        .storeAPI
+        .store
         .setItem("chat.fluffy.wallpaper", wallpaper.path);
     setState(() => null);
   }
@@ -123,8 +122,7 @@ class _SettingsState extends State<Settings> {
   void deleteWallpaperAction(BuildContext context) async {
     Matrix.of(context).wallpaper = null;
     await Matrix.of(context)
-        .client
-        .storeAPI
+        .store
         .setItem("chat.fluffy.wallpaper", null);
     setState(() => null);
   }
@@ -177,8 +175,8 @@ class _SettingsState extends State<Settings> {
               ),
             ),
             ThemesSettings(),
-            if (!kIsWeb && client.storeAPI != null) Divider(thickness: 1),
-            if (!kIsWeb && client.storeAPI != null)
+            if (!kIsWeb && Matrix.of(context).store != null) Divider(thickness: 1),
+            if (!kIsWeb && Matrix.of(context).store != null)
               ListTile(
                 title: Text(
                   L10n.of(context).wallpaper,
@@ -201,7 +199,7 @@ class _SettingsState extends State<Settings> {
                 ),
                 onTap: () => deleteWallpaperAction(context),
               ),
-            if (!kIsWeb && client.storeAPI != null)
+            if (!kIsWeb && Matrix.of(context).store != null)
               Builder(builder: (context) {
                 return ListTile(
                   title: Text(L10n.of(context).changeWallpaper),
@@ -226,7 +224,7 @@ class _SettingsState extends State<Settings> {
                 activeColor: Theme.of(context).primaryColor,
                 onChanged: (bool newValue) async {
                   Matrix.of(context).renderHtml = newValue;
-                  await client.storeAPI.setItem("chat.fluffy.renderHtml", newValue ? "1" : "0");
+                  await Matrix.of(context).store.setItem("chat.fluffy.renderHtml", newValue ? "1" : "0");
                   setState(() => null);
                 },
               ),
