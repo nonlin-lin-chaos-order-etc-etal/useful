@@ -275,26 +275,22 @@ class _ChatDetailsState extends State<ChatDetails> {
                                         ? widget.room.canonicalAlias
                                         : L10n.of(context).none),
                               ),
-                              ListTile(
-                                leading: CircleAvatar(
-                                  backgroundColor:
-                                      Theme.of(context).scaffoldBackgroundColor,
-                                  foregroundColor: Colors.grey,
-                                  child: Icon(Icons.insert_emoticon),
-                                ),
-                                title: Text(L10n.of(context).emoteSettings),
-                                onTap: () async => await Navigator.of(context).push(
-                                  AppRoute.defaultRoute(
-                                    context,
-                                    EmotesSettingsView(
-                                      room: widget.room,
-                                      readonly: !(widget.room
-                                              .canSendEvent('im.ponies.room_emotes') &&
-                                          widget.room.joinRules == JoinRules.public),
-                                    ),
-                                  ),
+                            ListTile(
+                              leading: CircleAvatar(
+                                backgroundColor:
+                                    Theme.of(context).scaffoldBackgroundColor,
+                                foregroundColor: Colors.grey,
+                                child: Icon(Icons.insert_emoticon),
+                              ),
+                              title: Text(L10n.of(context).emoteSettings),
+                              onTap: () async =>
+                                  await Navigator.of(context).push(
+                                AppRoute.defaultRoute(
+                                  context,
+                                  EmotesSettingsView(room: widget.room),
                                 ),
                               ),
+                            ),
                             PopupMenuButton(
                               child: ListTile(
                                 leading: CircleAvatar(

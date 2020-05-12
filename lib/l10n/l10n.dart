@@ -302,11 +302,15 @@ class L10n extends MatrixLocalizations {
 
   String get emoteShortcode => Intl.message('Emote shortcode');
 
-  String get emoteWarnNeedToPick => Intl.message('You need to pick an emote shortcode and an image!', name: 'emoteWarnNeedToPick');
+  String get emoteWarnNeedToPick =>
+      Intl.message('You need to pick an emote shortcode and an image!',
+          name: 'emoteWarnNeedToPick');
 
-  String get emoteExists => Intl.message('Emote already exists!', name: 'emoteExists');
+  String get emoteExists =>
+      Intl.message('Emote already exists!', name: 'emoteExists');
 
-  String get emoteInvalid => Intl.message('Invalid emote shortcode!', name: 'emoteInvalid');
+  String get emoteInvalid =>
+      Intl.message('Invalid emote shortcode!', name: 'emoteInvalid');
 
   String get emptyChat => Intl.message("Empty chat");
 
@@ -491,6 +495,8 @@ class L10n extends MatrixLocalizations {
       "It seems that you have no google services on your phone. That's a good decision for your privacy! To receive push notifications in FluffyChat we recommend using microG: https://microg.org/");
 
   String get none => Intl.message("None");
+
+  String get noEmotesFound => Intl.message('No emotes found. 😕');
 
   String get noPermission => Intl.message("No permission");
 

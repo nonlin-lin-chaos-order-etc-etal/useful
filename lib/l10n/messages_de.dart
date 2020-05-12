@@ -243,6 +243,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "Mute chat" : MessageLookupByLibrary.simpleMessage("Stummschalten"),
     "New message in FluffyChat" : MessageLookupByLibrary.simpleMessage("Neue Nachricht in FluffyChat"),
     "New private chat" : MessageLookupByLibrary.simpleMessage("Neuer privater Chat"),
+    "No emotes found. 😕" : MessageLookupByLibrary.simpleMessage("Keine Emotes gefunden. 😕"),
     "No permission" : MessageLookupByLibrary.simpleMessage("Keine Berechtigung"),
     "No rooms found..." : MessageLookupByLibrary.simpleMessage("Keine Räume gefunden ..."),
     "None" : MessageLookupByLibrary.simpleMessage("Keiner"),

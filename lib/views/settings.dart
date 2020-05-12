@@ -227,7 +227,8 @@ class _SettingsState extends State<Settings> {
                 activeColor: Theme.of(context).primaryColor,
                 onChanged: (bool newValue) async {
                   Matrix.of(context).renderHtml = newValue;
-                  await client.storeAPI.setItem("chat.fluffy.renderHtml", newValue ? "1" : "0");
+                  await client.storeAPI
+                      .setItem("chat.fluffy.renderHtml", newValue ? "1" : "0");
                   setState(() => null);
                 },
               ),
@@ -237,7 +238,7 @@ class _SettingsState extends State<Settings> {
               onTap: () async => await Navigator.of(context).push(
                 AppRoute.defaultRoute(
                   context,
-                  EmotesSettingsView(readonly: false),
+                  EmotesSettingsView(),
                 ),
               ),
               trailing: Icon(Icons.insert_emoticon),
