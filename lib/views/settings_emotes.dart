@@ -377,8 +377,8 @@ class _EmoteImagePickerState extends State<_EmoteImagePicker> {
           File file = await ImagePicker.pickImage(
               source: ImageSource.gallery,
               imageQuality: 50,
-              maxWidth: 64,
-              maxHeight: 64);
+              maxWidth: 128,
+              maxHeight: 128);
           if (file == null) return;
           final uploadResp =
               await SimpleDialogs(context).tryRequestWithLoadingDialog(
