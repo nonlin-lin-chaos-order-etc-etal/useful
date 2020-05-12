@@ -156,7 +156,7 @@ class MatrixState extends State<Matrix> {
     store = widget.store ?? Store();
     if (widget.client == null) {
       debugPrint("[Matrix] Init matrix client");
-      client = Client(widget.clientName, debug: true);
+      client = Client(widget.clientName, debug: false);
       onJitsiCallSub ??= client.onEvent.stream
           .where((e) =>
               e.type == 'timeline' &&

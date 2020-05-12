@@ -82,16 +82,7 @@ class _ChatState extends State<_Chat> {
   bool get _canLoadMore => timeline.events.last.type != EventTypes.RoomCreate;
 
   void requestHistory() async {
-    debugPrint("=============");
-    debugPrint("Hopefully requesting history....");
-    try {
-      debugPrint(timeline.events.toString());
-      debugPrint(timeline.events.last.toString());
-    } catch (e) {
-      debugPrint("Error fetching events alst event: " + e.toString());
-    }
     if (_canLoadMore) {
-      debugPrint("Yes! Requesting hitory!");
       setState(() => this._loadingHistory = true);
       try {
         await timeline.requestHistory(historyCount: _loadHistoryCount);
