@@ -33,6 +33,7 @@ class ReplyContent extends StatelessWidget {
             ? Colors.white
             : Theme.of(context).textTheme.bodyText2.color,
         maxLines: 1,
+        room: replyEvent.room,
       );
     } else {
       replyBody = Text(

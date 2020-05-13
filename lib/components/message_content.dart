@@ -51,6 +51,7 @@ class MessageContent extends StatelessWidget {
               return HtmlMessage(
                 html: html,
                 textColor: textColor,
+                room: event.room,
               );
             }
             // else we fall through to the normal message rendering
