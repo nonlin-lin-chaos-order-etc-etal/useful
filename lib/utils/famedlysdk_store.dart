@@ -43,7 +43,9 @@ Future<void> migrate(String clientName, Database db, Store store) async {
     return; // no credentials
   }
   final Map<String, dynamic> credentials = json.decode(credentialsStr);
-  if (!credentials.containsKey('homeserver') || !credentials.containsKey('token') || !credentials.containsKey('userID')) {
+  if (!credentials.containsKey('homeserver') ||
+      !credentials.containsKey('token') ||
+      !credentials.containsKey('userID')) {
     debugPrint('[Store] invalid credentials!');
     return; // invalid old store, we are done, too!
   }
@@ -51,16 +53,26 @@ Future<void> migrate(String clientName, Database db, Store store) async {
   final oldClient = await db.getClient(clientName);
   if (oldClient == null) {
     clientId = await db.insertClient(
-      clientName, credentials['homeserver'], credentials['token'], credentials['userID'], credentials['deviceID'],
+      clientName,
+      credentials['homeserver'],
+      credentials['token'],
+      credentials['userID'],
+      credentials['deviceID'],
       credentials['deviceName'],
-      null, credentials['olmAccount'],
+      null,
+      credentials['olmAccount'],
     );
   } else {
     clientId = oldClient.clientId;
     await db.updateClient(
-      credentials['homeserver'], credentials['token'], credentials['userID'], credentials['deviceID'],
+      credentials['homeserver'],
+      credentials['token'],
+      credentials['userID'],
+      credentials['deviceID'],
       credentials['deviceName'],
-      null, credentials['olmAccount'], clientId,
+      null,
+      credentials['olmAccount'],
+      clientId,
     );
   }
   await db.clearCache(clientId);
@@ -69,15 +81,23 @@ Future<void> migrate(String clientName, Database db, Store store) async {
     // alright, we stored / updated the client and have the account ID, time to import everything else!
     // user_device_keys and user_device_keys_key
     debugPrint('[Store] Migrating user device keys...');
-    final deviceKeysListString = oldKeys["${clientName}.user_device_keys"];
+    final deviceKeysListString = oldKeys['${clientName}.user_device_keys'];
     if (deviceKeysListString != null && deviceKeysListString.isNotEmpty) {
-      Map<String, dynamic> rawUserDeviceKeys = json.decode(deviceKeysListString);
+      Map<String, dynamic> rawUserDeviceKeys =
+          json.decode(deviceKeysListString);
       for (final entry in rawUserDeviceKeys.entries) {
         final map = entry.value;
-        await db.storeUserDeviceKeysInfo(clientId, map['user_id'], map['outdated']);
+        await db.storeUserDeviceKeysInfo(
+            clientId, map['user_id'], map['outdated']);
         for (final rawKey in map['device_keys'].entries) {
           final jsonVaue = rawKey.value;
-          await db.storeUserDeviceKey(clientId, jsonVaue['user_id'], jsonVaue['device_id'], json.encode(jsonVaue), jsonVaue['verified'], jsonVaue['blocked']);
+          await db.storeUserDeviceKey(
+              clientId,
+              jsonVaue['user_id'],
+              jsonVaue['device_id'],
+              json.encode(jsonVaue),
+              jsonVaue['verified'],
+              jsonVaue['blocked']);
         }
       }
     }
@@ -88,7 +108,8 @@ Future<void> migrate(String clientName, Database db, Store store) async {
         continue;
       }
       // olm_sessions
-      final olmSessionsMatch = RegExp(r'^\/clients\/([^\/]+)\/olm-sessions$').firstMatch(key);
+      final olmSessionsMatch =
+          RegExp(r'^\/clients\/([^\/]+)\/olm-sessions$').firstMatch(key);
       if (olmSessionsMatch != null) {
         if (olmSessionsMatch[1] != credentials['deviceID']) {
           continue;
@@ -101,29 +122,37 @@ Future<void> migrate(String clientName, Database db, Store store) async {
           for (final pickle in sessions) {
             var sess = olm.Session();
             sess.unpickle(credentials['userID'], pickle);
-            await db.storeOlmSession(clientId, identKey, sess.session_id(), pickle);
+            await db.storeOlmSession(
+                clientId, identKey, sess.session_id(), pickle);
             sess?.free();
           }
         }
       }
       // outbound_group_sessions
-      final outboundGroupSessionsMatch = RegExp(r'^\/clients\/([^\/]+)\/rooms\/([^\/]+)\/outbound_group_session$').firstMatch(key);
+      final outboundGroupSessionsMatch = RegExp(
+              r'^\/clients\/([^\/]+)\/rooms\/([^\/]+)\/outbound_group_session$')
+          .firstMatch(key);
       if (outboundGroupSessionsMatch != null) {
         if (outboundGroupSessionsMatch[1] != credentials['deviceID']) {
           continue;
         }
         final pickle = value;
         final roomId = outboundGroupSessionsMatch[2];
-        debugPrint('[Store] Migrating outbound group sessions for room ${roomId}...');
-        final devicesString = oldKeys['/clients/${outboundGroupSessionsMatch[1]}/rooms/${roomId}/outbound_group_session_devices'];
+        debugPrint(
+            '[Store] Migrating outbound group sessions for room ${roomId}...');
+        final devicesString = oldKeys[
+            '/clients/${outboundGroupSessionsMatch[1]}/rooms/${roomId}/outbound_group_session_devices'];
         var devices = <String>[];
         if (devicesString != null) {
           devices = List<String>.from(json.decode(devicesString));
         }
-        await db.storeOutboundGroupSession(clientId, roomId, pickle, json.encode(devices));
+        await db.storeOutboundGroupSession(
+            clientId, roomId, pickle, json.encode(devices));
       }
       // session_keys
-      final sessionKeysMatch = RegExp(r'^\/clients\/([^\/]+)\/rooms\/([^\/]+)\/session_keys$').firstMatch(key);
+      final sessionKeysMatch =
+          RegExp(r'^\/clients\/([^\/]+)\/rooms\/([^\/]+)\/session_keys$')
+              .firstMatch(key);
       if (sessionKeysMatch != null) {
         if (sessionKeysMatch[1] != credentials['deviceID']) {
           continue;
@@ -132,9 +161,13 @@ Future<void> migrate(String clientName, Database db, Store store) async {
         debugPrint('[Store] Migrating session keys for room ${roomId}...');
         final map = json.decode(value);
         for (final entry in map.entries) {
-          await db.storeInboundGroupSession(clientId, roomId, entry.key,
-            entry.value['inboundGroupSession'],
-            json.encode(entry.value['content']), json.encode(entry.value['indexes']));
+          await db.storeInboundGroupSession(
+              clientId,
+              roomId,
+              entry.key,
+              entry.value['inboundGroupSession'],
+              json.encode(entry.value['content']),
+              json.encode(entry.value['indexes']));
         }
       }
     }
@@ -145,9 +178,9 @@ class Store {
   final LocalStorage storage;
   final FlutterSecureStorage secureStorage;
 
-  Store() :
-    storage = LocalStorage('LocalStorage'),
-    secureStorage = kIsWeb ? null : FlutterSecureStorage();
+  Store()
+      : storage = LocalStorage('LocalStorage'),
+        secureStorage = kIsWeb ? null : FlutterSecureStorage();
 
   Future<dynamic> getItem(String key) async {
     if (kIsWeb) {

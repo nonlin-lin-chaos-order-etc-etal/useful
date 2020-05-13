@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:famedlysdk/famedlysdk.dart';
 import 'package:fluffychat/components/settings_themes.dart';
 import 'package:fluffychat/views/settings_devices.dart';
@@ -42,7 +40,7 @@ class _SettingsState extends State<Settings> {
     if (await SimpleDialogs(context).askConfirmation() == false) {
       return;
     }
-    MatrixState matrix = Matrix.of(context);
+    var matrix = Matrix.of(context);
     await SimpleDialogs(context)
         .tryRequestWithLoadingDialog(matrix.client.logout());
   }
@@ -57,20 +55,20 @@ class _SettingsState extends State<Settings> {
     if (!jitsi.endsWith('/')) {
       jitsi += '/';
     }
-    final MatrixState matrix = Matrix.of(context);
+    final matrix = Matrix.of(context);
     await matrix.store.setItem('chat.fluffy.jitsi_instance', jitsi);
     matrix.jitsiInstance = jitsi;
   }
 
   void setDisplaynameAction(BuildContext context) async {
-    final String displayname = await SimpleDialogs(context).enterText(
+    final displayname = await SimpleDialogs(context).enterText(
       titleText: L10n.of(context).editDisplayname,
       hintText:
           profile?.displayname ?? Matrix.of(context).client.userID.localpart,
       labelText: L10n.of(context).enterAUsername,
     );
     if (displayname == null) return;
-    final MatrixState matrix = Matrix.of(context);
+    final matrix = Matrix.of(context);
     final success = await SimpleDialogs(context).tryRequestWithLoadingDialog(
       matrix.client.setDisplayname(displayname),
     );
@@ -83,13 +81,13 @@ class _SettingsState extends State<Settings> {
   }
 
   void setAvatarAction(BuildContext context) async {
-    final File tempFile = await ImagePicker.pickImage(
+    final tempFile = await ImagePicker.pickImage(
         source: ImageSource.gallery,
         imageQuality: 50,
         maxWidth: 1600,
         maxHeight: 1600);
     if (tempFile == null) return;
-    final MatrixState matrix = Matrix.of(context);
+    final matrix = Matrix.of(context);
     final success = await SimpleDialogs(context).tryRequestWithLoadingDialog(
       matrix.client.setAvatar(
         MatrixFile(
@@ -112,21 +110,19 @@ class _SettingsState extends State<Settings> {
     Matrix.of(context).wallpaper = wallpaper;
     await Matrix.of(context)
         .store
-        .setItem("chat.fluffy.wallpaper", wallpaper.path);
+        .setItem('chat.fluffy.wallpaper', wallpaper.path);
     setState(() => null);
   }
 
   void deleteWallpaperAction(BuildContext context) async {
     Matrix.of(context).wallpaper = null;
-    await Matrix.of(context)
-        .store
-        .setItem("chat.fluffy.wallpaper", null);
+    await Matrix.of(context).store.setItem('chat.fluffy.wallpaper', null);
     setState(() => null);
   }
 
   @override
   Widget build(BuildContext context) {
-    final Client client = Matrix.of(context).client;
+    final client = Matrix.of(context).client;
     profileFuture ??= client.ownProfile;
     profileFuture.then((p) {
       if (mounted) setState(() => profile = p);
@@ -172,7 +168,8 @@ class _SettingsState extends State<Settings> {
               ),
             ),
             ThemesSettings(),
-            if (!kIsWeb && Matrix.of(context).store != null) Divider(thickness: 1),
+            if (!kIsWeb && Matrix.of(context).store != null)
+              Divider(thickness: 1),
             if (!kIsWeb && Matrix.of(context).store != null)
               ListTile(
                 title: Text(
@@ -221,8 +218,9 @@ class _SettingsState extends State<Settings> {
                 activeColor: Theme.of(context).primaryColor,
                 onChanged: (bool newValue) async {
                   Matrix.of(context).renderHtml = newValue;
-                  await Matrix.of(context).store
-                      .setItem("chat.fluffy.renderHtml", newValue ? "1" : "0");
+                  await Matrix.of(context)
+                      .store
+                      .setItem('chat.fluffy.renderHtml', newValue ? '1' : '0');
                   setState(() => null);
                 },
               ),
@@ -298,19 +296,19 @@ class _SettingsState extends State<Settings> {
               trailing: Icon(Icons.help),
               title: Text(L10n.of(context).help),
               onTap: () => launch(
-                  "https://gitlab.com/ChristianPauly/fluffychat-flutter/issues"),
+                  'https://gitlab.com/ChristianPauly/fluffychat-flutter/issues'),
             ),
             ListTile(
               trailing: Icon(Icons.link),
               title: Text(L10n.of(context).license),
               onTap: () => launch(
-                  "https://gitlab.com/ChristianPauly/fluffychat-flutter/raw/master/LICENSE"),
+                  'https://gitlab.com/ChristianPauly/fluffychat-flutter/raw/master/LICENSE'),
             ),
             ListTile(
               trailing: Icon(Icons.code),
               title: Text(L10n.of(context).sourceCode),
               onTap: () => launch(
-                  "https://gitlab.com/ChristianPauly/fluffychat-flutter"),
+                  'https://gitlab.com/ChristianPauly/fluffychat-flutter'),
             ),
           ],
         ),

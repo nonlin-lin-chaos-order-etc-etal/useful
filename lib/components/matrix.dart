@@ -26,14 +26,15 @@ class Matrix extends StatefulWidget {
 
   final Store store;
 
-  Matrix({this.child, this.clientName, this.client, this.store, Key key}) : super(key: key);
+  Matrix({this.child, this.clientName, this.client, this.store, Key key})
+      : super(key: key);
 
   @override
   MatrixState createState() => MatrixState();
 
   /// Returns the (nearest) Client instance of your application.
   static MatrixState of(BuildContext context) {
-    MatrixState newState =
+    var newState =
         (context.dependOnInheritedWidgetOfExactType<_InheritedMatrix>()).data;
     newState.context = FirebaseController.context = context;
     return newState;
@@ -43,6 +44,7 @@ class Matrix extends StatefulWidget {
 class MatrixState extends State<Matrix> {
   Client client;
   Store store;
+  @override
   BuildContext context;
 
   Map<String, dynamic> get shareContent => _shareContent;
@@ -65,13 +67,13 @@ class MatrixState extends State<Matrix> {
   void clean() async {
     if (!kIsWeb) return;
 
-    final LocalStorage storage = LocalStorage('LocalStorage');
+    final storage = LocalStorage('LocalStorage');
     await storage.ready;
     await storage.deleteItem(widget.clientName);
   }
 
   void _initWithStore() async {
-    Future<LoginState> initLoginState = client.onLoginStateChanged.stream.first;
+    var initLoginState = client.onLoginStateChanged.stream.first;
     client.database = await getDatabase(client, store);
     client.connect();
     if (await initLoginState == LoginState.logged && !kIsWeb) {
@@ -83,14 +85,14 @@ class MatrixState extends State<Matrix> {
   }
 
   Map<String, dynamic> getAuthByPassword(String password, String session) => {
-        "type": "m.login.password",
-        "identifier": {
-          "type": "m.id.user",
-          "user": client.userID,
+        'type': 'm.login.password',
+        'identifier': {
+          'type': 'm.id.user',
+          'user': client.userID,
         },
-        "user": client.userID,
-        "password": password,
-        "session": session,
+        'user': client.userID,
+        'password': password,
+        'session': session,
       };
 
   StreamSubscription onRoomKeyRequestSub;
@@ -155,7 +157,7 @@ class MatrixState extends State<Matrix> {
   void initState() {
     store = widget.store ?? Store();
     if (widget.client == null) {
-      debugPrint("[Matrix] Init matrix client");
+      debugPrint('[Matrix] Init matrix client');
       client = Client(widget.clientName, debug: false);
       onJitsiCallSub ??= client.onEvent.stream
           .where((e) =>
@@ -166,12 +168,12 @@ class MatrixState extends State<Matrix> {
           .listen(onJitsiCall);
       onRoomKeyRequestSub ??=
           client.onRoomKeyRequest.stream.listen((RoomKeyRequest request) async {
-        final Room room = request.room;
-        final User sender = room.getUserByMXIDSync(request.sender);
+        final room = request.room;
+        final sender = room.getUserByMXIDSync(request.sender);
         if (await SimpleDialogs(context).askConfirmation(
           titleText: L10n.of(context).requestToReadOlderMessages,
           contentText:
-              "${sender.id}\n\n${L10n.of(context).device}:\n${request.requestingDevice.deviceId}\n\n${L10n.of(context).identity}:\n${request.requestingDevice.curve25519Key.beautified}",
+              '${sender.id}\n\n${L10n.of(context).device}:\n${request.requestingDevice.deviceId}\n\n${L10n.of(context).identity}:\n${request.requestingDevice.curve25519Key.beautified}',
           confirmText: L10n.of(context).verify,
           cancelText: L10n.of(context).deny,
         )) {
@@ -185,17 +187,17 @@ class MatrixState extends State<Matrix> {
     }
     if (store != null) {
       store
-          .getItem("chat.fluffy.jitsi_instance")
+          .getItem('chat.fluffy.jitsi_instance')
           .then((final instance) => jitsiInstance = instance ?? jitsiInstance);
-      store.getItem("chat.fluffy.wallpaper").then((final path) async {
+      store.getItem('chat.fluffy.wallpaper').then((final path) async {
         if (path == null) return;
         final file = File(path);
         if (await file.exists()) {
           wallpaper = file;
         }
       });
-      store.getItem("chat.fluffy.renderHtml").then((final render) async {
-        renderHtml = render == "1";
+      store.getItem('chat.fluffy.renderHtml').then((final render) async {
+        renderHtml = render == '1';
       });
     }
     super.initState();
@@ -225,11 +227,11 @@ class _InheritedMatrix extends InheritedWidget {
 
   @override
   bool updateShouldNotify(_InheritedMatrix old) {
-    bool update = old.data.client.accessToken != this.data.client.accessToken ||
-        old.data.client.userID != this.data.client.userID ||
-        old.data.client.deviceID != this.data.client.deviceID ||
-        old.data.client.deviceName != this.data.client.deviceName ||
-        old.data.client.homeserver != this.data.client.homeserver;
+    var update = old.data.client.accessToken != data.client.accessToken ||
+        old.data.client.userID != data.client.userID ||
+        old.data.client.deviceID != data.client.deviceID ||
+        old.data.client.deviceName != data.client.deviceName ||
+        old.data.client.homeserver != data.client.homeserver;
     return update;
   }
 }

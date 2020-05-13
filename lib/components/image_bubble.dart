@@ -15,7 +15,7 @@ class ImageBubble extends StatefulWidget {
 }
 
 class _ImageBubbleState extends State<ImageBubble> {
-  static Map<String, MatrixFile> _matrixFileMap = {};
+  static final Map<String, MatrixFile> _matrixFileMap = {};
   MatrixFile get _file => _matrixFileMap[widget.event.eventId];
   set _file(MatrixFile file) {
     _matrixFileMap[widget.event.eventId] = file;
