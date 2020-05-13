@@ -37,10 +37,6 @@ class AppInfo extends StatelessWidget {
             subtitle: Text(client.homeserver),
           ),
           ListTile(
-            title: Text("Supported versions:"),
-            subtitle: Text(client.matrixVersions.toString()),
-          ),
-          ListTile(
             title: Text("Device name:"),
             subtitle: Text(client.deviceName),
           ),

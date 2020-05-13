@@ -66,9 +66,6 @@ class _ImageBubbleState extends State<ImageBubble> {
             _getFile().then((MatrixFile file) {
               setState(() => _file = file);
             }, onError: (error, stacktrace) {
-              print('===============');
-              print(error.toString());
-              print(stacktrace);
               setState(() => _error = error);
             });
             return Center(

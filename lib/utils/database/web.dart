@@ -1,10 +1,10 @@
 import 'package:famedlysdk/famedlysdk.dart';
-import 'package:moor/moor.dart';
 import 'package:moor/moor_web.dart';
+import 'package:flutter/material.dart';
 import 'dart:html';
 
 Database constructDb({bool logStatements = false, String filename = 'database.sqlite', String password = ''}) {
-  print('[Moor] Using moor web');
+  debugPrint('[Moor] Using moor web');
   return Database(WebDatabase.withStorage(MoorWebStorage.indexedDbIfSupported(filename), logStatements: logStatements));
 }
 

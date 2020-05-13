@@ -1,9 +1,9 @@
 import 'package:famedlysdk/famedlysdk.dart';
-import 'package:moor/moor.dart';
 import 'package:encrypted_moor/encrypted_moor.dart';
+import 'package:flutter/material.dart';
 
 Database constructDb({bool logStatements = false, String filename = 'database.sqlite', String password = ''}) {
-  print('[Moor] using encrypted moor');
+  debugPrint('[Moor] using encrypted moor');
   return Database(EncryptedExecutor(path: filename, password: password, logStatements: logStatements));
 }
 

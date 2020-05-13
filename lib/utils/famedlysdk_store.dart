@@ -1,13 +1,12 @@
 import 'dart:convert';
-import 'dart:typed_data';
 
 import 'package:famedlysdk/famedlysdk.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:localstorage/localstorage.dart';
 import 'dart:async';
 import 'dart:core';
-import 'package:path/path.dart' as p;
 import './database/shared.dart';
 import 'package:olm/olm.dart' as olm; // needed for migration
 import 'package:random_string/random_string.dart';
@@ -32,20 +31,20 @@ Future<Database> getDatabase(Client client, Store store) async {
 }
 
 Future<void> migrate(String clientName, Database db, Store store) async {
-  print('[Store] attempting old migration to moor...');
+  debugPrint('[Store] attempting old migration to moor...');
   final oldKeys = await store.getAllItems();
   if (oldKeys == null || oldKeys.isEmpty) {
-    print('[Store] empty store!');
+    debugPrint('[Store] empty store!');
     return; // we are done!
   }
   final credentialsStr = oldKeys[clientName];
   if (credentialsStr == null || credentialsStr.isEmpty) {
-    print('[Store] no credentials found!');
+    debugPrint('[Store] no credentials found!');
     return; // no credentials
   }
   final Map<String, dynamic> credentials = json.decode(credentialsStr);
   if (!credentials.containsKey('homeserver') || !credentials.containsKey('token') || !credentials.containsKey('userID')) {
-    print('[Store] invalid credentials!');
+    debugPrint('[Store] invalid credentials!');
     return; // invalid old store, we are done, too!
   }
   var clientId = 0;
@@ -53,23 +52,23 @@ Future<void> migrate(String clientName, Database db, Store store) async {
   if (oldClient == null) {
     clientId = await db.insertClient(
       clientName, credentials['homeserver'], credentials['token'], credentials['userID'], credentials['deviceID'],
-      credentials['deviceName'], List<String>.from(credentials['matrixVersions'] ?? []).join(','),
+      credentials['deviceName'],
       null, credentials['olmAccount'],
     );
   } else {
     clientId = oldClient.clientId;
     await db.updateClient(
       credentials['homeserver'], credentials['token'], credentials['userID'], credentials['deviceID'],
-      credentials['deviceName'], List<String>.from(credentials['matrixVersions'] ?? []).join(','),
+      credentials['deviceName'],
       null, credentials['olmAccount'], clientId,
     );
   }
   await db.clearCache(clientId);
-  print('[Store] Inserted/updated client, clientId = ${clientId}');
+  debugPrint('[Store] Inserted/updated client, clientId = ${clientId}');
   await db.transaction(() async {
     // alright, we stored / updated the client and have the account ID, time to import everything else!
     // user_device_keys and user_device_keys_key
-    print('[Store] Migrating user device keys...');
+    debugPrint('[Store] Migrating user device keys...');
     final deviceKeysListString = oldKeys["${clientName}.user_device_keys"];
     if (deviceKeysListString != null && deviceKeysListString.isNotEmpty) {
       Map<String, dynamic> rawUserDeviceKeys = json.decode(deviceKeysListString);
@@ -94,7 +93,7 @@ Future<void> migrate(String clientName, Database db, Store store) async {
         if (olmSessionsMatch[1] != credentials['deviceID']) {
           continue;
         }
-        print('[Store] migrating olm sessions...');
+        debugPrint('[Store] migrating olm sessions...');
         final identityKey = json.decode(value);
         for (final olmKey in identityKey.entries) {
           final identKey = olmKey.key;
@@ -115,7 +114,7 @@ Future<void> migrate(String clientName, Database db, Store store) async {
         }
         final pickle = value;
         final roomId = outboundGroupSessionsMatch[2];
-        print('[Store] Migrating outbound group sessions for room ${roomId}...');
+        debugPrint('[Store] Migrating outbound group sessions for room ${roomId}...');
         final devicesString = oldKeys['/clients/${outboundGroupSessionsMatch[1]}/rooms/${roomId}/outbound_group_session_devices'];
         var devices = <String>[];
         if (devicesString != null) {
@@ -130,10 +129,10 @@ Future<void> migrate(String clientName, Database db, Store store) async {
           continue;
         }
         final roomId = sessionKeysMatch[2];
-        print('[Store] Migrating session keys for room ${roomId}...');
+        debugPrint('[Store] Migrating session keys for room ${roomId}...');
         final map = json.decode(value);
         for (final entry in map.entries) {
-          await db.storeRoomSessionKey(clientId, roomId, entry.key,
+          await db.storeInboundGroupSession(clientId, roomId, entry.key,
             entry.value['inboundGroupSession'],
             json.encode(entry.value['content']), json.encode(entry.value['indexes']));
         }

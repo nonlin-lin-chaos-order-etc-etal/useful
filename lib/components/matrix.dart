@@ -227,7 +227,6 @@ class _InheritedMatrix extends InheritedWidget {
   bool updateShouldNotify(_InheritedMatrix old) {
     bool update = old.data.client.accessToken != this.data.client.accessToken ||
         old.data.client.userID != this.data.client.userID ||
-        old.data.client.matrixVersions != this.data.client.matrixVersions ||
         old.data.client.deviceID != this.data.client.deviceID ||
         old.data.client.deviceName != this.data.client.deviceName ||
         old.data.client.homeserver != this.data.client.homeserver;
