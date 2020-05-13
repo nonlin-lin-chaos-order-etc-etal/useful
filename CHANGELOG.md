@@ -1,7 +1,22 @@
-# Version 0.13.0 - 2020-??-??
+# Version 0.13.2 - 2020-05-13
+### Fixes:
+- Fix textfields copy&paste
+- Clean up pushers on server
+- Show rich notifications
+
+# Version 0.13.1 - 2020-05-11
+### Fixes:
+- Fix share content
+
+# Version 0.13.0 - 2020-05-10
 ### Features:
 - New status feature
+- HTML rendering of messages
+- Markdown support
 - Enhanced chat list design
+- New translations (Polish, Hungarian)
+### Fixes:
+- Lots of minor fixes and refactoring
 
 # Version 0.12.4 - 2020-04-17
 ### Fixed

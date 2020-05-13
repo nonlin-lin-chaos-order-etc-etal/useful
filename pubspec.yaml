@@ -11,7 +11,7 @@ description: Chat with your friends.
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 0.12.4+36
+version: 0.13.2+39
 
 environment:
   sdk: ">=2.6.0 <3.0.0"
@@ -53,7 +53,7 @@ dependencies:
   flutter_sound: ^2.1.1
   open_file: ^3.0.1
   mime_type: ^0.3.0
-  flutter_styled_toast: ^1.2.1
+  bot_toast: ^3.0.0
   flutter_matrix_html: ^0.0.5
   moor: ^3.0.2
   random_string: ^2.0.1

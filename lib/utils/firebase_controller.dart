@@ -9,7 +9,7 @@ import 'package:fluffychat/views/chat.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:flutter_styled_toast/flutter_styled_toast.dart';
+import 'package:bot_toast/bot_toast.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:famedlysdk/famedlysdk.dart';
 import 'famedlysdk_store.dart';
@@ -22,6 +22,9 @@ abstract class FirebaseController {
   static const String CHANNEL_ID = 'fluffychat_push';
   static const String CHANNEL_NAME = 'FluffyChat push channel';
   static const String CHANNEL_DESCRIPTION = 'Push notifications for FluffyChat';
+  static const String APP_ID = 'chat.fluffy.fluffychat';
+  static const String GATEWAY_URL = 'https://janian.de:7023/';
+  static const String PUSHER_FORMAT = 'event_id_only';
 
   static Future<void> setupFirebase(Client client, String clientName) async {
     if (Platform.isIOS) iOS_Permission();
@@ -33,23 +36,51 @@ abstract class FirebaseController {
       token = null;
     }
     if (token?.isEmpty ?? true) {
-      showToast(
-        L10n.of(context).noGoogleServicesWarning,
+      BotToast.showText(
+        text: L10n.of(context).noGoogleServicesWarning,
         duration: Duration(seconds: 15),
       );
       return;
     }
-    await client.setPushers(
-      token,
-      "http",
-      "chat.fluffy.fluffychat",
-      clientName,
-      client.deviceName,
-      "en",
-      "https://janian.de:7023/",
-      append: false,
-      format: "event_id_only",
-    );
+    final pushers = await client.getPushers();
+    final currentPushers = pushers.where((pusher) => pusher.pushkey == token);
+    if (currentPushers.length == 1 &&
+        currentPushers.first.kind == 'http' &&
+        currentPushers.first.appId == APP_ID &&
+        currentPushers.first.appDisplayName == clientName &&
+        currentPushers.first.deviceDisplayName == client.deviceName &&
+        currentPushers.first.lang == 'en' &&
+        currentPushers.first.data.url == GATEWAY_URL &&
+        currentPushers.first.data.format == PUSHER_FORMAT) {
+      debugPrint("[Push] Pusher already set");
+    } else {
+      if (currentPushers.isNotEmpty) {
+        for (final currentPusher in currentPushers) {
+          await client.setPushers(
+            token,
+            'null',
+            currentPusher.appId,
+            currentPusher.appDisplayName,
+            currentPusher.deviceDisplayName,
+            currentPusher.lang,
+            currentPusher.data.url,
+            append: true,
+          );
+          debugPrint("[Push] Remove legacy pusher for this device");
+        }
+      }
+      await client.setPushers(
+        token,
+        "http",
+        APP_ID,
+        clientName,
+        client.deviceName,
+        "en",
+        GATEWAY_URL,
+        append: false,
+        format: PUSHER_FORMAT,
+      );
+    }
 
     Function goToRoom = (dynamic message) async {
       try {
@@ -67,7 +98,7 @@ abstract class FirebaseController {
             ),
             (r) => r.isFirst);
       } catch (_) {
-        showToast("Failed to open chat...");
+        BotToast.showText(text: "Failed to open chat...");
         debugPrint(_);
       }
     };
@@ -86,7 +117,7 @@ abstract class FirebaseController {
 
     _firebaseMessaging.configure(
       onMessage: _onMessage,
-      onBackgroundMessage: _showDefaultNotification,
+      onBackgroundMessage: _onMessage,
       onResume: goToRoom,
       onLaunch: goToRoom,
     );

@@ -1,7 +1,7 @@
 import 'package:fluffychat/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:famedlysdk/famedlysdk.dart';
-import 'package:flutter_styled_toast/flutter_styled_toast.dart';
+import 'package:bot_toast/bot_toast.dart';
 
 class SimpleDialogs {
   final BuildContext context;
@@ -107,6 +107,30 @@ class SimpleDialogs {
     return confirmed;
   }
 
+  Future<void> inform({
+    String titleText,
+    String contentText,
+    String okText,
+  }) async {
+    await showDialog(
+      context: context,
+      builder: (c) => AlertDialog(
+        title: titleText != null ? Text(titleText) : null,
+        content: contentText != null ? Text(contentText) : null,
+        actions: <Widget>[
+          FlatButton(
+            child: Text(
+              okText ?? L10n.of(context).ok.toUpperCase(),
+            ),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
   Future<dynamic> tryRequestWithLoadingDialog(Future<dynamic> request,
       {Function(MatrixException) onAdditionalAuth}) async {
     showLoadingDialog(context);
@@ -125,10 +149,10 @@ class SimpleDialogs {
           onAdditionalAuth != null) {
         return await tryRequestWithErrorToast(onAdditionalAuth(exception));
       } else {
-        showToast(exception.errorMessage);
+        BotToast.showText(text: exception.errorMessage);
       }
     } catch (exception) {
-      showToast(exception.toString());
+      BotToast.showText(text: exception.toString());
       return false;
     }
   }

@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:famedlysdk/famedlysdk.dart';
 import 'package:fluffychat/components/settings_themes.dart';
-import 'package:fluffychat/views/homeserver_picker.dart';
 import 'package:fluffychat/views/settings_devices.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -17,6 +16,7 @@ import '../components/content_banner.dart';
 import '../components/matrix.dart';
 import '../l10n/l10n.dart';
 import '../utils/app_route.dart';
+import 'settings_emotes.dart';
 
 class SettingsView extends StatelessWidget {
   @override
@@ -45,9 +45,6 @@ class _SettingsState extends State<Settings> {
     MatrixState matrix = Matrix.of(context);
     await SimpleDialogs(context)
         .tryRequestWithLoadingDialog(matrix.client.logout());
-    matrix.clean();
-    await Navigator.of(context).pushAndRemoveUntil(
-        AppRoute.defaultRoute(context, HomeserverPicker()), (r) => false);
   }
 
   void setJitsiInstanceAction(BuildContext context) async {
@@ -224,10 +221,21 @@ class _SettingsState extends State<Settings> {
                 activeColor: Theme.of(context).primaryColor,
                 onChanged: (bool newValue) async {
                   Matrix.of(context).renderHtml = newValue;
-                  await Matrix.of(context).store.setItem("chat.fluffy.renderHtml", newValue ? "1" : "0");
+                  await Matrix.of(context).store
+                      .setItem("chat.fluffy.renderHtml", newValue ? "1" : "0");
                   setState(() => null);
                 },
               ),
+            ),
+            ListTile(
+              title: Text(L10n.of(context).emoteSettings),
+              onTap: () async => await Navigator.of(context).push(
+                AppRoute.defaultRoute(
+                  context,
+                  EmotesSettingsView(),
+                ),
+              ),
+              trailing: Icon(Icons.insert_emoticon),
             ),
             Divider(thickness: 1),
             ListTile(
