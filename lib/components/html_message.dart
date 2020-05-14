@@ -22,7 +22,7 @@ class HtmlMessage extends StatelessWidget {
     return Html(
       data: html,
       defaultTextStyle: defaultTextStyle,
-      linkStyle: linkStyle ?? themeData.textTheme.body1.copyWith(
+      linkStyle: linkStyle ?? themeData.textTheme.bodyText2.copyWith(
         color: themeData.accentColor,
         decoration: TextDecoration.underline,
       ),
