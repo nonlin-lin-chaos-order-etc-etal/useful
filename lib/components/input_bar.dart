@@ -192,7 +192,9 @@ class InputBar extends StatelessWidget {
     return TypeAheadField<Map<String, String>>(
       direction: AxisDirection.up,
       hideOnEmpty: true,
+      hideOnLoading: true,
       keepSuggestionsOnSuggestionSelected: true,
+      debounceDuration: Duration(milliseconds: 50), // show suggestions after 50ms idle time (default is 300)
       textFieldConfiguration: TextFieldConfiguration(
         minLines: minLines,
         maxLines: maxLines,
@@ -211,6 +213,7 @@ class InputBar extends StatelessWidget {
       itemBuilder: buildSuggestion,
       onSuggestionSelected: (Map<String, String> suggestion) => insertSuggestion(context, suggestion),
       errorBuilder: (BuildContext context, Object error) => Container(),
+      loadingBuilder: (BuildContext context) => Container(), // fix loading briefly flickering a dark box
       noItemsFoundBuilder: (BuildContext context) => Container(), // fix loading briefly showing no suggestions
     );
   }
