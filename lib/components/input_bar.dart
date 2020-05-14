@@ -54,7 +54,7 @@ class InputBar extends StatelessWidget {
     }
     final searchText = controller.text.substring(0, controller.selection.baseOffset);
     final ret = <Map<String, String>>[];
-    final emojiMatch = RegExp(r"(?:\s|^):(?:([-\w]+)~)?([-\w]+)$").firstMatch(searchText);
+    final emojiMatch = RegExp(r'(?:\s|^):(?:([-\w]+)~)?([-\w]+)$').firstMatch(searchText);
     if (emojiMatch != null) {
       final packSearch = emojiMatch[1];
       final emoteSearch = emojiMatch[2].toLowerCase();
@@ -142,7 +142,7 @@ class InputBar extends StatelessWidget {
 
   void insertSuggestion(Map<String, String> suggestion) {
     if (suggestion['type'] == 'emote') {
-      bool isUnique = true;
+      var isUnique = true;
       final insertEmote = suggestion['name'];
       final insertPack = suggestion['pack'];
       final emotePacks = getEmotePacks();
@@ -164,7 +164,7 @@ class InputBar extends StatelessWidget {
       var replaceText = controller.text.substring(0, controller.selection.baseOffset);
       final afterText = replaceText == controller.text ? '' : controller.text.substring(controller.selection.baseOffset + 1);
       final startText = replaceText.replaceAllMapped(
-        RegExp(r"(\s|^)(:(?:[-\w]+~)?[-\w]+)$"),
+        RegExp(r'(\s|^)(:(?:[-\w]+~)?[-\w]+)$'),
         (Match m) => '${m[1]}${insertText} ',
       );
       controller.text = startText + afterText;
