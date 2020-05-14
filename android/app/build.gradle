@@ -43,7 +43,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "chat.fluffy.fluffychat.dev"
+        applicationId "chat.fluffy.fluffychat"
         minSdkVersion 18
         targetSdkVersion 28
         versionCode flutterVersionCode.toInteger()
@@ -100,4 +100,4 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
 }
 
-// apply plugin: "com.google.gms.google-services"
+apply plugin: "com.google.gms.google-services"
