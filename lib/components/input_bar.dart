@@ -140,7 +140,7 @@ class InputBar extends StatelessWidget {
     return Container();
   }
 
-  void insertSuggestion(Map<String, String> suggestion) {
+  void insertSuggestion(BuildContext context, Map<String, String> suggestion) {
     if (suggestion['type'] == 'emote') {
       var isUnique = true;
       final insertEmote = suggestion['name'];
@@ -161,17 +161,29 @@ class InputBar extends StatelessWidget {
         }
       }
       final insertText = isUnique ? insertEmote : ':${insertPack}~${insertEmote.substring(1)}';
-      var replaceText = controller.text.substring(0, controller.selection.baseOffset);
+      final replaceText = controller.text.substring(0, controller.selection.baseOffset);
       final afterText = replaceText == controller.text ? '' : controller.text.substring(controller.selection.baseOffset + 1);
       final startText = replaceText.replaceAllMapped(
         RegExp(r'(\s|^)(:(?:[-\w]+~)?[-\w]+)$'),
         (Match m) => '${m[1]}${insertText} ',
       );
       controller.text = startText + afterText;
-      controller.selection = TextSelection(
-        baseOffset: startText.length,
-        extentOffset: startText.length,
-      );
+      if (startText == insertText + ' ') {
+        // stupid fix for now
+        FocusScope.of(context).requestFocus(FocusNode());
+        Future.delayed(Duration(milliseconds: 1)).then((res) {
+          focusNode.requestFocus();
+          controller.selection = TextSelection(
+            baseOffset: startText.length,
+            extentOffset: startText.length,
+          );
+        });
+      } else {
+        controller.selection = TextSelection(
+          baseOffset: startText.length,
+          extentOffset: startText.length,
+        );
+      }
     }
   }
 
@@ -197,7 +209,7 @@ class InputBar extends StatelessWidget {
       ),
       suggestionsCallback: getSuggestions,
       itemBuilder: buildSuggestion,
-      onSuggestionSelected: insertSuggestion,
+      onSuggestionSelected: (Map<String, String> suggestion) => insertSuggestion(context, suggestion),
       errorBuilder: (BuildContext context, Object error) => Container(),
       noItemsFoundBuilder: (BuildContext context) => Container(), // fix loading briefly showing no suggestions
     );
