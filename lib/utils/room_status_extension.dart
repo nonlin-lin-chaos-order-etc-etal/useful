@@ -11,12 +11,13 @@ extension RoomStatusExtension on Room {
     if (isDirectChat) {
       if (directChatPresence != null) {
         if (directChatPresence.currentlyActive == true) {
-          return 'Jetzt gerade aktiv';
+          return L10n.of(context).currentlyActive;
         }
-        return 'Zuletzt gesehen: ${directChatPresence.time.localizedTimeShort(context)}';
+        return L10n.of(context)
+            .lastActiveAgo(directChatPresence.time.localizedTimeShort(context));
       }
-      return 'Zuletzt gesehen vor sehr langer Zeit';
+      return L10n.of(context).lastSeenLongTimeAgo;
     }
-    return '$mJoinedMemberCount Mitglieder';
+    return L10n.of(context).countParticipants(mJoinedMemberCount.toString());
   }
 }
