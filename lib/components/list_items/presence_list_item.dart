@@ -1,13 +1,9 @@
 import 'package:famedlysdk/famedlysdk.dart';
 import 'package:fluffychat/components/dialogs/presence_dialog.dart';
-import 'package:fluffychat/l10n/l10n.dart';
-import 'package:fluffychat/utils/app_route.dart';
-import 'package:fluffychat/views/chat.dart';
 import 'package:flutter/material.dart';
 
 import '../avatar.dart';
 import '../matrix.dart';
-import 'package:fluffychat/utils/presence_extension.dart';
 
 class PresenceListItem extends StatelessWidget {
   final Presence presence;
