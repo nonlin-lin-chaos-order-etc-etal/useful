@@ -13,12 +13,23 @@ code_analyze:
   dependencies: []
   script:
     - flutter analyze
+  only:
+    changes:
+      #- .gitlab-ci.yml
+      - lib/**/*
+      - pubspec*
+      - analysis_options.yaml
 
 test:
   stage: coverage
   dependencies: []
   script:
     - flutter test
+  only:
+    changes:
+      - .gitlab-ci.yml
+      - lib/**/*
+      - pubspec*
 
 build_web:
   stage: coverage
@@ -37,7 +48,12 @@ build_web:
   artifacts:
     paths:
       - build/web/
-
+  only:
+    changes:
+      - .gitlab-ci.yml
+      - lib/**/*
+      - web/**/*
+      - pubspec*
 
 build_android_apk:
   stage: coverage
