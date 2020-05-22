@@ -185,10 +185,11 @@ class ChatListItem extends StatelessWidget {
                       )
                     : Text(
                         room.lastEvent?.getLocalizedBody(
-                          L10n.of(context),
-                          withSenderNamePrefix: !room.isDirectChat,
-                          hideReply: true,
-                        ) ?? '',
+                              L10n.of(context),
+                              withSenderNamePrefix: !room.isDirectChat,
+                              hideReply: true,
+                            ) ??
+                            '',
                         softWrap: false,
                         maxLines: 1,
                         overflow: TextOverflow.fade,
