@@ -80,7 +80,7 @@ class _EmotesSettingsState extends State<EmotesSettings> {
     debugPrint(path);
     await SimpleDialogs(context).tryRequestWithLoadingDialog(
       client.jsonRequest(
-        type: HTTPType.PUT,
+        type: RequestType.PUT,
         action: path,
         data: content,
       ),
@@ -378,11 +378,10 @@ class _EmoteImagePickerState extends State<_EmoteImagePicker> {
               maxWidth: 128,
               maxHeight: 128);
           if (file == null) return;
+          final matrixFile = MatrixFile(bytes: await file.readAsBytes(), path: file.path);
           final uploadResp =
               await SimpleDialogs(context).tryRequestWithLoadingDialog(
-            Matrix.of(context).client.upload(
-                  MatrixFile(bytes: await file.readAsBytes(), path: file.path),
-                ),
+            Matrix.of(context).client.api.upload(matrixFile.bytes, matrixFile.path),
           );
           setState(() {
             widget.controller.text = uploadResp;

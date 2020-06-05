@@ -90,7 +90,7 @@ class _NewPrivateChatState extends State<_NewPrivateChat> {
     final matrix = Matrix.of(context);
     final response = await SimpleDialogs(context).tryRequestWithErrorToast(
       matrix.client.jsonRequest(
-          type: HTTPType.POST,
+          type: RequestType.POST,
           action: '/client/r0/user_directory/search',
           data: {
             'search_term': text,

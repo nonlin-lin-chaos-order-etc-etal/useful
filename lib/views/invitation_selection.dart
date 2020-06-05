@@ -85,7 +85,7 @@ class _InvitationSelectionState extends State<InvitationSelection> {
     final matrix = Matrix.of(context);
     final response = await SimpleDialogs(context).tryRequestWithErrorToast(
       matrix.client.jsonRequest(
-          type: HTTPType.POST,
+          type: RequestType.POST,
           action: '/client/r0/user_directory/search',
           data: {
             'search_term': text,

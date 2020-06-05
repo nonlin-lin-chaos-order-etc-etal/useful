@@ -1,5 +1,6 @@
 import 'package:bubble/bubble.dart';
 import 'package:famedlysdk/famedlysdk.dart';
+import 'package:famedlysdk/encryption.dart';
 import 'package:fluffychat/components/dialogs/simple_dialogs.dart';
 import 'package:fluffychat/components/message_content.dart';
 import 'package:fluffychat/components/reply_content.dart';
@@ -98,11 +99,11 @@ class Message extends StatelessWidget {
                                       ['m.in_reply_to']['event_id'],
                                   content: {'msgtype': 'm.text', 'body': '...'},
                                   senderId: event.senderId,
-                                  typeKey: 'm.room.message',
+                                  type: 'm.room.message',
                                   room: event.room,
                                   roomId: event.roomId,
                                   status: 1,
-                                  time: DateTime.now(),
+                                  originServerTs: DateTime.now(),
                                 );
                           return Container(
                             margin: EdgeInsets.symmetric(vertical: 4.0),

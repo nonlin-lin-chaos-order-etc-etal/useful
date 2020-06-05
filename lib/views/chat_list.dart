@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:famedlysdk/famedlysdk.dart';
+import 'package:famedlysdk/matrix_api.dart';
 import 'package:fluffychat/components/dialogs/simple_dialogs.dart';
 import 'package:fluffychat/components/list_items/presence_list_item.dart';
 import 'package:fluffychat/components/list_items/public_room_list_item.dart';
@@ -93,7 +94,7 @@ class _ChatListState extends State<ChatList> {
         setState(() => loadingPublicRooms = true);
         final newPublicRoomsResponse =
             await SimpleDialogs(context).tryRequestWithErrorToast(
-          Matrix.of(context).client.requestPublicRooms(
+          Matrix.of(context).client.api.searchPublicRooms(
                 limit: 30,
                 includeAllNetworks: true,
                 genericSearchTerm: searchController.text,
@@ -107,13 +108,12 @@ class _ChatListState extends State<ChatList> {
             if (searchController.text.isNotEmpty &&
                 searchController.text.isValidMatrixId &&
                 searchController.text.sigil == '#') {
-              publicRoomsResponse.publicRooms.add(
-                PublicRoomEntry(
-                  aliases: [searchController.text],
-                  name: searchController.text,
-                  roomId: searchController.text,
-                  client: Matrix.of(context).client,
-                ),
+              publicRoomsResponse.chunk.add(
+                PublicRoom.fromJson({
+                  'aliases': [searchController.text],
+                  'name': searchController.text,
+                  'room_id': searchController.text,
+                }),
               );
             }
           }
@@ -200,7 +200,7 @@ class _ChatListState extends State<ChatList> {
     if (status?.isEmpty ?? true) return;
     await SimpleDialogs(context).tryRequestWithLoadingDialog(
       Matrix.of(context).client.jsonRequest(
-        type: HTTPType.PUT,
+        type: RequestType.PUT,
         action:
             '/client/r0/presence/${Matrix.of(context).client.userID}/status',
         data: {
@@ -412,7 +412,7 @@ class _ChatListState extends State<ChatList> {
                                 );
                               }
                               final publicRoomsCount =
-                                  (publicRoomsResponse?.publicRooms?.length ??
+                                  (publicRoomsResponse?.chunk?.length ??
                                       0);
                               final totalCount =
                                   rooms.length + publicRoomsCount;
@@ -469,7 +469,7 @@ class _ChatListState extends State<ChatList> {
                                                 rooms[i].id,
                                           )
                                         : PublicRoomListItem(publicRoomsResponse
-                                            .publicRooms[i - rooms.length]);
+                                            .chunk[i - rooms.length]);
                                   });
                             } else {
                               return Center(

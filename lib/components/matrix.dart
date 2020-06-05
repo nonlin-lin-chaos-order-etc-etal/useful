@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:famedlysdk/famedlysdk.dart';
+import 'package:famedlysdk/encryption.dart';
 import 'package:fluffychat/components/dialogs/simple_dialogs.dart';
 import 'package:fluffychat/utils/firebase_controller.dart';
 import 'package:flutter/foundation.dart';
@@ -84,7 +85,7 @@ class MatrixState extends State<Matrix> {
     }
   }
 
-  Map<String, dynamic> getAuthByPassword(String password, String session) => {
+  Map<String, dynamic> getAuthByPassword(String password, [String session]) => {
         'type': 'm.login.password',
         'identifier': {
           'type': 'm.id.user',
@@ -92,7 +93,8 @@ class MatrixState extends State<Matrix> {
         },
         'user': client.userID,
         'password': password,
-        'session': session,
+        if (session != null)
+          'session': session,
       };
 
   StreamSubscription onRoomKeyRequestSub;
@@ -227,11 +229,11 @@ class _InheritedMatrix extends InheritedWidget {
 
   @override
   bool updateShouldNotify(_InheritedMatrix old) {
-    var update = old.data.client.accessToken != data.client.accessToken ||
+    var update = old.data.client.api.accessToken != data.client.api.accessToken ||
         old.data.client.userID != data.client.userID ||
         old.data.client.deviceID != data.client.deviceID ||
         old.data.client.deviceName != data.client.deviceName ||
-        old.data.client.homeserver != data.client.homeserver;
+        old.data.client.api.homeserver != data.client.api.homeserver;
     return update;
   }
 }
