@@ -15,8 +15,8 @@ class PublicRoomListItem extends StatelessWidget {
   const PublicRoomListItem(this.publicRoomEntry, {Key key}) : super(key: key);
 
   void joinAction(BuildContext context) async {
-    final success = await SimpleDialogs(context)
-        .tryRequestWithLoadingDialog(Matrix.of(context).client.api.joinRoom(publicRoomEntry.roomId));
+    final success = await SimpleDialogs(context).tryRequestWithLoadingDialog(
+        Matrix.of(context).client.api.joinRoom(publicRoomEntry.roomId));
     if (success != false) {
       await Navigator.of(context).push(
         AppRoute.defaultRoute(

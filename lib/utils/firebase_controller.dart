@@ -50,7 +50,7 @@ abstract class FirebaseController {
         currentPushers.first.appDisplayName == clientName &&
         currentPushers.first.deviceDisplayName == client.deviceName &&
         currentPushers.first.lang == 'en' &&
-        currentPushers.first.data.url == GATEWAY_URL &&
+        currentPushers.first.data.url.toString() == GATEWAY_URL &&
         currentPushers.first.data.format == PUSHER_FORMAT) {
       debugPrint('[Push] Pusher already set');
     } else {
@@ -224,7 +224,7 @@ abstract class FirebaseController {
             messages: [
               Message(
                 body,
-                event.time,
+                event.originServerTs,
                 person,
               )
             ],

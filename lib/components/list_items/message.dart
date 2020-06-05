@@ -219,7 +219,7 @@ class _MetaRow extends StatelessWidget {
           ),
         if (showDisplayname) SizedBox(width: 4),
         Text(
-          event.time.localizedTime(context),
+          event.originServerTs.localizedTime(context),
           style: TextStyle(
             color: color,
             fontSize: 11,

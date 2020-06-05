@@ -557,7 +557,8 @@ class _ChatState extends State<_Chat> {
                                             );
                                           }
                                           selectedEvents.sort(
-                                            (a, b) => a.time.compareTo(b.time),
+                                            (a, b) => a.originServerTs
+                                                .compareTo(b.originServerTs),
                                           );
                                         }
                                       },

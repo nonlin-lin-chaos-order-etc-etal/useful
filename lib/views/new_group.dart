@@ -36,9 +36,12 @@ class _NewGroupState extends State<_NewGroup> {
     final String roomID =
         await SimpleDialogs(context).tryRequestWithLoadingDialog(
       matrix.client.api.createRoom(
-        preset: publicGroup ? api.CreateRoomPreset.public_chat : api.CreateRoomPreset.private_chat,
+        preset: publicGroup
+            ? api.CreateRoomPreset.public_chat
+            : api.CreateRoomPreset.private_chat,
         visibility: publicGroup ? api.Visibility.public : null,
-        roomAliasName: publicGroup && controller.text.isNotEmpty ? controller.text : null,
+        roomAliasName:
+            publicGroup && controller.text.isNotEmpty ? controller.text : null,
         name: controller.text.isNotEmpty ? controller.text : null,
       ),
     );

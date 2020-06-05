@@ -199,15 +199,9 @@ class _ChatListState extends State<ChatList> {
     );
     if (status?.isEmpty ?? true) return;
     await SimpleDialogs(context).tryRequestWithLoadingDialog(
-      Matrix.of(context).client.jsonRequest(
-        type: RequestType.PUT,
-        action:
-            '/client/r0/presence/${Matrix.of(context).client.userID}/status',
-        data: {
-          'presence': 'online',
-          'status_msg': status,
-        },
-      ),
+      Matrix.of(context).client.api.sendPresence(
+          Matrix.of(context).client.userID, PresenceType.online,
+          statusMsg: status),
     );
   }
 
@@ -412,8 +406,7 @@ class _ChatListState extends State<ChatList> {
                                 );
                               }
                               final publicRoomsCount =
-                                  (publicRoomsResponse?.chunk?.length ??
-                                      0);
+                                  (publicRoomsResponse?.chunk?.length ?? 0);
                               final totalCount =
                                   rooms.length + publicRoomsCount;
                               return ListView.separated(

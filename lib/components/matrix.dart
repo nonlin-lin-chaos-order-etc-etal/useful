@@ -93,8 +93,7 @@ class MatrixState extends State<Matrix> {
         },
         'user': client.userID,
         'password': password,
-        if (session != null)
-          'session': session,
+        if (session != null) 'session': session,
       };
 
   StreamSubscription onRoomKeyRequestSub;
@@ -104,7 +103,7 @@ class MatrixState extends State<Matrix> {
     final event = Event.fromJson(
         eventUpdate.content, client.getRoomById(eventUpdate.roomID));
     if (DateTime.now().millisecondsSinceEpoch -
-            event.time.millisecondsSinceEpoch >
+            event.originServerTs.millisecondsSinceEpoch >
         1000 * 60 * 5) {
       return;
     }
@@ -229,11 +228,12 @@ class _InheritedMatrix extends InheritedWidget {
 
   @override
   bool updateShouldNotify(_InheritedMatrix old) {
-    var update = old.data.client.api.accessToken != data.client.api.accessToken ||
-        old.data.client.userID != data.client.userID ||
-        old.data.client.deviceID != data.client.deviceID ||
-        old.data.client.deviceName != data.client.deviceName ||
-        old.data.client.api.homeserver != data.client.api.homeserver;
+    var update =
+        old.data.client.api.accessToken != data.client.api.accessToken ||
+            old.data.client.userID != data.client.userID ||
+            old.data.client.deviceID != data.client.deviceID ||
+            old.data.client.deviceName != data.client.deviceName ||
+            old.data.client.api.homeserver != data.client.api.homeserver;
     return update;
   }
 }

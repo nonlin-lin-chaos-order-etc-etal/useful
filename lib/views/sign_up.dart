@@ -73,7 +73,12 @@ class _SignUpState extends State<SignUp> {
         elevation: 0,
         leading: loading ? Container() : null,
         title: Text(
-          Matrix.of(context).client.api.homeserver.toString().replaceFirst('https://', ''),
+          Matrix.of(context)
+              .client
+              .api
+              .homeserver
+              .toString()
+              .replaceFirst('https://', ''),
         ),
       ),
       body: ListView(
