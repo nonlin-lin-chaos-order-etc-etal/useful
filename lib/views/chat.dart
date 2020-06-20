@@ -19,7 +19,6 @@ import 'package:fluffychat/utils/room_status_extension.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:bot_toast/bot_toast.dart';
 import 'package:memoryfilepicker/memoryfilepicker.dart';
 import 'package:pedantic/pedantic.dart';
 import 'package:image_picker/image_picker.dart';
