@@ -345,9 +345,7 @@ class _ChatState extends State<_Chat> {
     }
 
     return Scaffold(
-      extendBodyBehindAppBar: true,
       appBar: AppBar(
-        backgroundColor: Theme.of(context).appBarTheme.color.withOpacity(0.95),
         leading: selectMode
             ? IconButton(
                 icon: Icon(Icons.close),
