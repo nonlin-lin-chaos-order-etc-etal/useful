@@ -52,6 +52,7 @@ class PresenceListItem extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
                 maxLines: 1,
                 style: TextStyle(
+                  fontSize: 12,
                   fontWeight: presence?.presence?.statusMsg == null
                       ? null
                       : FontWeight.bold,
