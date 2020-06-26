@@ -90,14 +90,16 @@ String get helloWorld => Intl.message('Hello world');
 flutter pub run intl_translation:extract_to_arb --output-dir=lib/l10n lib/l10n/l10n.dart
 ```
 
-3. Copy the new translation objects from `/lib/l10n/intl_message.arb` to `/lib/l10n/intl_<yourlanguage>.arb` and translate it or create a new file for your language by copying `intl_message.arb`.
+3. Copy the new translation objects from `/lib/l10n/intl_message.arb` to `/lib/l10n/intl_<yourlanguage>.arb` using `dart cleanup_arb.dart`.
 
-4. Update the translations with this command:
+4. Translate the strings or create a new file for your language by copying `intl_message.arb`.
+
+5. Update the translations with this command:
 ```
 flutter pub pub run intl_translation:generate_from_arb --output-dir=lib/l10n --no-use-deferred-loading lib/l10n/l10n.dart lib/l10n/intl_*.arb
 ```
 
-5. Make sure your language is in `supportedLocales` in `/lib/main.dart` and in the List at `https://gitlab.com/ChristianPauly/fluffychat-flutter/-/blob/master/lib/l10n/l10n.dart#L11`.
+6. Make sure your language is in `supportedLocales` in `/lib/main.dart` and in the List at `https://gitlab.com/ChristianPauly/fluffychat-flutter/-/blob/master/lib/l10n/l10n.dart#L11`.
 
 
 # Special thanks to

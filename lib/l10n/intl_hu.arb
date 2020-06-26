@@ -1,7 +1,12 @@
 {
-  "@@last_modified": "2020-04-12T11:11:56.595233",
+  "@@last_modified": "2020-06-26 12:07:29.214512",
   "About": "Névjegy",
   "@About": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "Accept": "Accept",
+  "@Accept": {
     "type": "text",
     "placeholders": {}
   },
@@ -74,6 +79,28 @@
     "type": "text",
     "placeholders": {}
   },
+  "askSSSSCache": "Please enter your secure store passphrase or recovery key to cache the keys.",
+  "@askSSSSCache": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "askSSSSSign": "To be able to sign the other person, please enter your secure store passphrase or recovery key.",
+  "@askSSSSSign": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "askSSSSVerify": "Please enter your secure store passphrase or recovery key to verify your session.",
+  "@askSSSSVerify": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "askVerificationRequest": "Accept this verification request from {username}?",
+  "@askVerificationRequest": {
+    "type": "text",
+    "placeholders": {
+      "username": {}
+    }
+  },
   "Authentication": "Hitelesítés",
   "@Authentication": {
     "type": "text",
@@ -102,6 +129,11 @@
       "targetName": {}
     }
   },
+  "Block Device": "Block Device",
+  "@Block Device": {
+    "type": "text",
+    "placeholders": {}
+  },
   "byDefaultYouWillBeConnectedTo": "Alapértelmezésben {homeserver}-hoz csatlakozol",
   "@byDefaultYouWillBeConnectedTo": {
     "type": "text",
@@ -109,8 +141,38 @@
       "homeserver": {}
     }
   },
+  "cachedKeys": "Successfully cached keys!",
+  "@cachedKeys": {
+    "type": "text",
+    "placeholders": {}
+  },
   "Cancel": "Mégsem",
   "@Cancel": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "Change the homeserver": "Matrix szerver váltás",
+  "@Change the homeserver": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "Change the name of the group": "Csoport nevének módosítása",
+  "@Change the name of the group": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "Change the server": "Szerver módosítás",
+  "@Change the server": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "Change wallpaper": "Háttér módosítása",
+  "@Change wallpaper": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "Change your style": "Stílus módosítása",
+  "@Change your style": {
     "type": "text",
     "placeholders": {}
   },
@@ -121,20 +183,20 @@
       "username": {}
     }
   },
-  "changedTheChatNameTo": "{username} módosította a csevegés nevét erre: '{chatname}'",
-  "@changedTheChatNameTo": {
-    "type": "text",
-    "placeholders": {
-      "username": {},
-      "chatname": {}
-    }
-  },
   "changedTheChatDescriptionTo": "{username} módosította a csevegés leírását erre: '{description}'",
   "@changedTheChatDescriptionTo": {
     "type": "text",
     "placeholders": {
       "username": {},
       "description": {}
+    }
+  },
+  "changedTheChatNameTo": "{username} módosította a csevegés nevét erre: '{chatname}'",
+  "@changedTheChatNameTo": {
+    "type": "text",
+    "placeholders": {
+      "username": {},
+      "chatname": {}
     }
   },
   "changedTheChatPermissions": "{username} módosította a csevegési enegedélyeket",
@@ -151,11 +213,6 @@
       "username": {},
       "displayname": {}
     }
-  },
-  "Change the homeserver": "Matrix szerver váltás",
-  "@Change the homeserver": {
-    "type": "text",
-    "placeholders": {}
   },
   "changedTheGuestAccessRules": "{username} módosította a vendégek hozzáférési jogait",
   "@changedTheGuestAccessRules": {
@@ -228,26 +285,6 @@
     "type": "text",
     "placeholders": {}
   },
-  "Change the name of the group": "Csoport nevének módosítása",
-  "@Change the name of the group": {
-    "type": "text",
-    "placeholders": {}
-  },
-  "Change wallpaper": "Háttér módosítása",
-  "@Change wallpaper": {
-    "type": "text",
-    "placeholders": {}
-  },
-  "Change the server": "Szerver módosítás",
-  "@Change the server": {
-    "type": "text",
-    "placeholders": {}
-  },
-  "The encryption has been corrupted": "A titkosítás sérült és megbízhatatlan",
-  "@The encryption has been corrupted": {
-    "type": "text",
-    "placeholders": {}
-  },
   "Chat": "Csevegés",
   "@Chat": {
     "type": "text",
@@ -270,6 +307,16 @@
   },
   "Close": "Bezárás",
   "@Close": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "compareEmojiMatch": "Compare and make sure the following emoji match those of the other device:",
+  "@compareEmojiMatch": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "compareNumbersMatch": "Compare and make sure the following numbers match those of the other device:",
+  "@compareNumbersMatch": {
     "type": "text",
     "placeholders": {}
   },
@@ -325,6 +372,13 @@
     "type": "text",
     "placeholders": {}
   },
+  "couldNotDecryptMessage": "Could not decrypt message: {error}",
+  "@couldNotDecryptMessage": {
+    "type": "text",
+    "placeholders": {
+      "error": {}
+    }
+  },
   "countParticipants": "{count} résztvevő",
   "@countParticipants": {
     "type": "text",
@@ -342,6 +396,11 @@
     "type": "text",
     "placeholders": {}
   },
+  "Create new group": "Új csoport létrehozása",
+  "@Create new group": {
+    "type": "text",
+    "placeholders": {}
+  },
   "createdTheChat": "{username} létrehozta a csevegést",
   "@createdTheChat": {
     "type": "text",
@@ -349,8 +408,23 @@
       "username": {}
     }
   },
-  "Create new group": "Új csoport létrehozása",
-  "@Create new group": {
+  "crossSigningDisabled": "Cross-Signing is disabled",
+  "@crossSigningDisabled": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "crossSigningEnabled": "Cross-Signing is enabled",
+  "@crossSigningEnabled": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "Currently active": "Currently active",
+  "@Currently active": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "Dark": "Sötét",
+  "@Dark": {
     "type": "text",
     "placeholders": {}
   },
@@ -414,6 +488,11 @@
     "type": "text",
     "placeholders": {}
   },
+  "Donate": "Támogatom",
+  "@Donate": {
+    "type": "text",
+    "placeholders": {}
+  },
   "Download file": "File letöltése",
   "@Download file": {
     "type": "text",
@@ -421,6 +500,11 @@
   },
   "Edit displayname": "Megjelenítési név módosítása",
   "@Edit displayname": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "Edit Jitsi instance": "Jitsi példány módosítása",
+  "@Edit Jitsi instance": {
     "type": "text",
     "placeholders": {}
   },
@@ -434,11 +518,6 @@
     "type": "text",
     "placeholders": {}
   },
-  "emoteWarnNeedToPick": "A hangulatjelhez válassz egy képet és egy rövid kód",
-  "@emoteWarnNeedToPick": {
-    "type": "text",
-    "placeholders": {}
-  },
   "emoteExists": "A hangulatjel már létezik!",
   "@emoteExists": {
     "type": "text",
@@ -449,13 +528,18 @@
     "type": "text",
     "placeholders": {}
   },
+  "emoteWarnNeedToPick": "A hangulatjelhez válassz egy képet és egy rövid kód",
+  "@emoteWarnNeedToPick": {
+    "type": "text",
+    "placeholders": {}
+  },
   "Empty chat": "Üres csevegés",
   "@Empty chat": {
     "type": "text",
     "placeholders": {}
   },
-  "You won't be able to disable the encryption anymore. Are you sure?": "Többé nem tudod kikapcsolni a titkosítás. Biztosan folytatod?",
-  "@You won't be able to disable the encryption anymore. Are you sure?": {
+  "Encryption": "Encryption",
+  "@Encryption": {
     "type": "text",
     "placeholders": {}
   },
@@ -466,6 +550,11 @@
   },
   "Encryption is not enabled": "Titkosítás nincs engedélyezve",
   "@Encryption is not enabled": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "End to end encryption is currently in Beta! Use at your own risk!": "Végpontól-végpontig titkosítás egyelőre béta! Csak saját felelősségre!",
+  "@End to end encryption is currently in Beta! Use at your own risk!": {
     "type": "text",
     "placeholders": {}
   },
@@ -579,6 +668,11 @@
     "type": "text",
     "placeholders": {}
   },
+  "How are you today?": "Hogy vagy?",
+  "@How are you today?": {
+    "type": "text",
+    "placeholders": {}
+  },
   "ID": "ID",
   "@ID": {
     "type": "text",
@@ -586,6 +680,11 @@
   },
   "Identity": "Azonosság",
   "@Identity": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "incorrectPassphraseOrKey": "Incorrect passphrase or recovery key",
+  "@incorrectPassphraseOrKey": {
     "type": "text",
     "placeholders": {}
   },
@@ -606,13 +705,10 @@
     "type": "text",
     "placeholders": {}
   },
-  "inviteText": "{username} meghívott a FluffyChatre. \n1. FluffyChat telepítése: http://fluffy.chat \n2. Jelentkezz be vagy regisztrálj. \n3. Nyisd meg a meghívó linket: {link}",
-  "@inviteText": {
+  "Invited users only": "Csak meghívottak",
+  "@Invited users only": {
     "type": "text",
-    "placeholders": {
-      "username": {},
-      "link": {}
-    }
+    "placeholders": {}
   },
   "invitedUser": "{username} meghívta {targetName}-t",
   "@invitedUser": {
@@ -622,18 +718,26 @@
       "targetName": {}
     }
   },
-  "Invited users only": "Csak meghívottak",
-  "@Invited users only": {
+  "inviteText": "{username} meghívott a FluffyChatre. \n1. FluffyChat telepítése: http://fluffy.chat \n2. Jelentkezz be vagy regisztrálj. \n3. Nyisd meg a meghívó linket: {link}",
+  "@inviteText": {
     "type": "text",
-    "placeholders": {}
+    "placeholders": {
+      "username": {},
+      "link": {}
+    }
   },
   "is typing...": "gépel...",
   "@is typing...": {
     "type": "text",
     "placeholders": {}
   },
-  "Edit Jitsi instance": "Jitsi példány módosítása",
-  "@Edit Jitsi instance": {
+  "isDeviceKeyCorrect": "Is the following device key correct?",
+  "@isDeviceKeyCorrect": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "It seems that you have no google services on your phone. That's a good decision for your privacy! To receive push notifications in FluffyChat we recommend using microG: https://microg.org/": "Úgy tűnik ügyelsz a magánszférádra és nincsenek google szolgáltatások telepítve. Hogy így is kapj azonnali értesítéseket javasoljuk a microG-t: https://microg.org/",
+  "@It seems that you have no google services on your phone. That's a good decision for your privacy! To receive push notifications in FluffyChat we recommend using microG: https://microg.org/": {
     "type": "text",
     "placeholders": {}
   },
@@ -643,6 +747,21 @@
     "placeholders": {
       "username": {}
     }
+  },
+  "keysCached": "Keys are cached",
+  "@keysCached": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "keysMissing": "Keys are missing",
+  "@keysMissing": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "Kick from chat": "Csevegésből kirúgás",
+  "@Kick from chat": {
+    "type": "text",
+    "placeholders": {}
   },
   "kicked": "{username} kirúgta {targetName}-t",
   "@kicked": {
@@ -660,10 +779,17 @@
       "targetName": {}
     }
   },
-  "Kick from chat": "Csevegésből kirúgás",
-  "@Kick from chat": {
+  "Last seen IP": "Utoljára látott IP",
+  "@Last seen IP": {
     "type": "text",
     "placeholders": {}
+  },
+  "lastActiveAgo": "Utoljára aktív: {localizedTimeShort}",
+  "@lastActiveAgo": {
+    "type": "text",
+    "placeholders": {
+      "localizedTimeShort": {}
+    }
   },
   "Leave": "Csevegés elhagyása",
   "@Leave": {
@@ -675,37 +801,13 @@
     "type": "text",
     "placeholders": {}
   },
-  "Logout": "Kijelentkezés",
-  "@Logout": {
-    "type": "text",
-    "placeholders": {}
-  },
-  "userLeftTheChat": "{username} elhagyta a csevegést",
-  "@userLeftTheChat": {
-    "type": "text",
-    "placeholders": {
-      "username": {}
-    }
-  },
-  "lastActiveAgo": "Utoljára aktív: {localizedTimeShort}",
-  "@lastActiveAgo": {
-    "type": "text",
-    "placeholders": {
-      "localizedTimeShort": {}
-    }
-  },
-  "Last seen IP": "Utoljára látott IP",
-  "@Last seen IP": {
-    "type": "text",
-    "placeholders": {}
-  },
   "License": "Licenc",
   "@License": {
     "type": "text",
     "placeholders": {}
   },
-  "Loading... Please wait": "Betöltés... Kérlek várj",
-  "@Loading... Please wait": {
+  "Light": "Világos",
+  "@Light": {
     "type": "text",
     "placeholders": {}
   },
@@ -721,6 +823,11 @@
       "count": {}
     }
   },
+  "Loading... Please wait": "Betöltés... Kérlek várj",
+  "@Loading... Please wait": {
+    "type": "text",
+    "placeholders": {}
+  },
   "Login": "Bejelentkezés",
   "@Login": {
     "type": "text",
@@ -732,6 +839,11 @@
     "placeholders": {
       "homeserver": {}
     }
+  },
+  "Logout": "Kijelentkezés",
+  "@Logout": {
+    "type": "text",
+    "placeholders": {}
   },
   "Make a moderator": "Kinevezés moderátorrá",
   "@Make a moderator": {
@@ -768,11 +880,6 @@
     "type": "text",
     "placeholders": {}
   },
-  "Please be aware that you need Pantalaimon to use end-to-end encryption for now.": "Tájékoztatlak, hogy egyelőre szükséged van a Pantalaimon-ra, hogy a végponttól-végpontig titkosítást hasnzáld.",
-  "@Please be aware that you need Pantalaimon to use end-to-end encryption for now.": {
-    "type": "text",
-    "placeholders": {}
-  },
   "New message in FluffyChat": "Új üzenet a FluffyChaten",
   "@New message in FluffyChat": {
     "type": "text",
@@ -783,13 +890,8 @@
     "type": "text",
     "placeholders": {}
   },
-  "It seems that you have no google services on your phone. That's a good decision for your privacy! To receive push notifications in FluffyChat we recommend using microG: https://microg.org/": "Úgy tűnik ügyelsz a magánszférádra és nincsenek google szolgáltatások telepítve. Hogy így is kapj azonnali értesítéseket javasoljuk a microG-t: https://microg.org/",
-  "@It seems that you have no google services on your phone. That's a good decision for your privacy! To receive push notifications in FluffyChat we recommend using microG: https://microg.org/": {
-    "type": "text",
-    "placeholders": {}
-  },
-  "None": "Nincs",
-  "@None": {
+  "newVerificationRequest": "New verification request!",
+  "@newVerificationRequest": {
     "type": "text",
     "placeholders": {}
   },
@@ -805,6 +907,21 @@
   },
   "No rooms found...": "Nem találtam szobákat...",
   "@No rooms found...": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "noCrossSignBootstrap": "Fluffychat currently does not support enabling Cross-Signing. Please enable it from within Riot.",
+  "@noCrossSignBootstrap": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "noMegolmBootstrap": "Fluffychat currently does not support enabling Online Key Backup. Please enable it from within Riot.",
+  "@noMegolmBootstrap": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "None": "Nincs",
+  "@None": {
     "type": "text",
     "placeholders": {}
   },
@@ -825,6 +942,16 @@
     "type": "text",
     "placeholders": {}
   },
+  "onlineKeyBackupDisabled": "Online Key Backup is disabled",
+  "@onlineKeyBackupDisabled": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "onlineKeyBackupEnabled": "Online Key Backup is enabled",
+  "@onlineKeyBackupEnabled": {
+    "type": "text",
+    "placeholders": {}
+  },
   "Oops something went wrong...": "Hoppá, valami baj történt...",
   "@Oops something went wrong...": {
     "type": "text",
@@ -835,7 +962,7 @@
     "type": "text",
     "placeholders": {}
   },
-   "Open camera": "Kamera megnyitása",
+  "Open camera": "Kamera megnyitása",
   "@Open camera": {
     "type": "text",
     "placeholders": {}
@@ -847,6 +974,11 @@
   },
   "Participating user devices": "Résztvevő felhasználók eszközei",
   "@Participating user devices": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "passphraseOrKey": "passphrase or recovery key",
+  "@passphraseOrKey": {
     "type": "text",
     "placeholders": {}
   },
@@ -866,6 +998,11 @@
     "placeholders": {
       "fileName": {}
     }
+  },
+  "Please be aware that you need Pantalaimon to use end-to-end encryption for now.": "Tájékoztatlak, hogy egyelőre szükséged van a Pantalaimon-ra, hogy a végponttól-végpontig titkosítást hasnzáld.",
+  "@Please be aware that you need Pantalaimon to use end-to-end encryption for now.": {
+    "type": "text",
+    "placeholders": {}
   },
   "Please choose a username": "Válassz egy felhasználónevet",
   "@Please choose a username": {
@@ -892,16 +1029,6 @@
     "type": "text",
     "placeholders": {}
   },
-  "Rejoin": "Újracsatlakozás",
-  "@Rejoin": {
-    "type": "text",
-    "placeholders": {}
-  },
-  "Render rich message content": "Formázott üzenetek megjelenítése",
-  "@Render rich message content": {
-    "type": "text",
-    "placeholders": {}
-  },
   "Recording": "Felvétel",
   "@Recording": {
     "type": "text",
@@ -914,6 +1041,11 @@
       "username": {}
     }
   },
+  "Reject": "Reject",
+  "@Reject": {
+    "type": "text",
+    "placeholders": {}
+  },
   "rejectedTheInvitation": "{username} elutasította a meghívást",
   "@rejectedTheInvitation": {
     "type": "text",
@@ -921,17 +1053,20 @@
       "username": {}
     }
   },
+  "Rejoin": "Újracsatlakozás",
+  "@Rejoin": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "Remove": "Eltávolítás",
+  "@Remove": {
+    "type": "text",
+    "placeholders": {}
+  },
   "Remove all other devices": "Minden más eszköz eltávolítása",
   "@Remove all other devices": {
     "type": "text",
     "placeholders": {}
-  },
-  "removedBy": "Törölve {username} által",
-  "@removedBy": {
-    "type": "text",
-    "placeholders": {
-      "username": {}
-    }
   },
   "Remove device": "Eszköz eltávolítása",
   "@Remove device": {
@@ -943,18 +1078,20 @@
     "type": "text",
     "placeholders": {}
   },
-  "Revoke all permissions": "Minden jogosultság megvonása",
-  "@Revoke all permissions": {
-    "type": "text",
-    "placeholders": {}
-  },
-  "Remove": "Eltávolítás",
-  "@Remove": {
-    "type": "text",
-    "placeholders": {}
-  },
   "Remove message": "Üzenet eltávolítása",
   "@Remove message": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "removedBy": "Törölve {username} által",
+  "@removedBy": {
+    "type": "text",
+    "placeholders": {
+      "username": {}
+    }
+  },
+  "Render rich message content": "Formázott üzenetek megjelenítése",
+  "@Render rich message content": {
     "type": "text",
     "placeholders": {}
   },
@@ -973,25 +1110,28 @@
     "type": "text",
     "placeholders": {}
   },
+  "Revoke all permissions": "Minden jogosultság megvonása",
+  "@Revoke all permissions": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "Room has been upgraded": "Room has been upgraded",
+  "@Room has been upgraded": {
+    "type": "text",
+    "placeholders": {}
+  },
   "Saturday": "Szombat",
   "@Saturday": {
     "type": "text",
     "placeholders": {}
   },
-  "Share": "Megosztás",
-  "@Share": {
+  "Search for a chat": "Csevegés keresése",
+  "@Search for a chat": {
     "type": "text",
     "placeholders": {}
   },
-  "sharedTheLocation": "{username} megosztotta a pozícióját",
-  "@sharedTheLocation": {
-    "type": "text",
-    "placeholders": {
-      "username": {}
-    }
-  },
-  "Search for a chat": "Csevegés keresése",
-  "@Search for a chat": {
+  "Seen a long time ago": "Seen a long time ago",
+  "@Seen a long time ago": {
     "type": "text",
     "placeholders": {}
   },
@@ -1002,20 +1142,20 @@
       "username": {}
     }
   },
-  "seenByUserAndUser": "{username} és {username2} látta",
-  "@seenByUserAndUser": {
-    "type": "text",
-    "placeholders": {
-      "username": {},
-      "username2": {}
-    }
-  },
   "seenByUserAndCountOthers": "{username} és {count} másik résztvevő látta",
   "@seenByUserAndCountOthers": {
     "type": "text",
     "placeholders": {
       "username": {},
       "count": {}
+    }
+  },
+  "seenByUserAndUser": "{username} és {username2} látta",
+  "@seenByUserAndUser": {
+    "type": "text",
+    "placeholders": {
+      "username": {},
+      "username2": {}
     }
   },
   "Send": "Küldés",
@@ -1073,6 +1213,11 @@
       "username": {}
     }
   },
+  "sessionVerified": "Session is verified",
+  "@sessionVerified": {
+    "type": "text",
+    "placeholders": {}
+  },
   "Set a profile picture": "Profilkép beállítása",
   "@Set a profile picture": {
     "type": "text",
@@ -1098,38 +1243,25 @@
     "type": "text",
     "placeholders": {}
   },
+  "Share": "Megosztás",
+  "@Share": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "sharedTheLocation": "{username} megosztotta a pozícióját",
+  "@sharedTheLocation": {
+    "type": "text",
+    "placeholders": {
+      "username": {}
+    }
+  },
   "Sign up": "Felíratkozás",
   "@Sign up": {
     "type": "text",
     "placeholders": {}
   },
-  "Change your style": "Stílus módosítása",
-  "@Change your style": {
-    "type": "text",
-    "placeholders": {}
-  },
-  "System": "Rendszer",
-  "@System": {
-    "type": "text",
-    "placeholders": {}
-  },
-  "How are you today?": "Hogy vagy?",
-  "@How are you today?": {
-    "type": "text",
-    "placeholders": {}
-  },
-  "Light": "Világos",
-  "@Light": {
-    "type": "text",
-    "placeholders": {}
-  },
-  "Dark": "Sötét",
-  "@Dark": {
-    "type": "text",
-    "placeholders": {}
-  },
-  "Use Amoled compatible colors?": "AmoLED kompatibilis színek használata?",
-  "@Use Amoled compatible colors?": {
+  "Skip": "Skip",
+  "@Skip": {
     "type": "text",
     "placeholders": {}
   },
@@ -1143,18 +1275,38 @@
     "type": "text",
     "placeholders": {}
   },
+  "Submit": "Submit",
+  "@Submit": {
+    "type": "text",
+    "placeholders": {}
+  },
   "Sunday": "Vasárnap",
   "@Sunday": {
     "type": "text",
     "placeholders": {}
   },
-  "Donate": "Támogatom",
-  "@Donate": {
+  "System": "Rendszer",
+  "@System": {
     "type": "text",
     "placeholders": {}
   },
   "Tap to show menu": "Érintsd meg a menü megnyitásához",
   "@Tap to show menu": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "The encryption has been corrupted": "A titkosítás sérült és megbízhatatlan",
+  "@The encryption has been corrupted": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "They Don't Match": "They Don't Match",
+  "@They Don't Match": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "They Match": "They Match",
+  "@They Match": {
     "type": "text",
     "placeholders": {}
   },
@@ -1202,8 +1354,8 @@
       "targetName": {}
     }
   },
-  "Unmute chat": "Csevegés felhangosítása",
-  "@Unmute chat": {
+  "Unblock Device": "Unblock Device",
+  "@Unblock Device": {
     "type": "text",
     "placeholders": {}
   },
@@ -1223,6 +1375,16 @@
     "placeholders": {
       "type": {}
     }
+  },
+  "unknownSessionVerify": "Unknown session, please verify",
+  "@unknownSessionVerify": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "Unmute chat": "Csevegés felhangosítása",
+  "@Unmute chat": {
+    "type": "text",
+    "placeholders": {}
   },
   "unreadChats": "{unreadCount} olvasatlan üzenet",
   "@unreadChats": {
@@ -1246,6 +1408,11 @@
       "unreadChats": {}
     }
   },
+  "Use Amoled compatible colors?": "AmoLED kompatibilis színek használata?",
+  "@Use Amoled compatible colors?": {
+    "type": "text",
+    "placeholders": {}
+  },
   "userAndOthersAreTyping": "{username} és {count} másik résztvevő gépel...",
   "@userAndOthersAreTyping": {
     "type": "text",
@@ -1262,17 +1429,24 @@
       "username2": {}
     }
   },
-  "Username": "Felhasználónév",
-  "@Username": {
-    "type": "text",
-    "placeholders": {}
-  },
   "userIsTyping": "{username} gépel...",
   "@userIsTyping": {
     "type": "text",
     "placeholders": {
       "username": {}
     }
+  },
+  "userLeftTheChat": "{username} elhagyta a csevegést",
+  "@userLeftTheChat": {
+    "type": "text",
+    "placeholders": {
+      "username": {}
+    }
+  },
+  "Username": "Felhasználónév",
+  "@Username": {
+    "type": "text",
+    "placeholders": {}
   },
   "userSentUnknownEvent": "{username} {type} eseményt küldött",
   "@userSentUnknownEvent": {
@@ -1282,13 +1456,48 @@
       "type": {}
     }
   },
+  "verifiedSession": "Successfully verified session!",
+  "@verifiedSession": {
+    "type": "text",
+    "placeholders": {}
+  },
   "Verify": "Igazol",
   "@Verify": {
     "type": "text",
     "placeholders": {}
   },
+  "Verify User": "Verify User",
+  "@Verify User": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "verifyManual": "Verify Manually",
+  "@verifyManual": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "verifyStart": "Start Verification",
+  "@verifyStart": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "verifySuccess": "You successfully verified!",
+  "@verifySuccess": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "verifyTitle": "Verifying other account",
+  "@verifyTitle": {
+    "type": "text",
+    "placeholders": {}
+  },
   "Video call": "Videó hívás",
   "@Video call": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "Visibility of the chat history": "Csevegési előzmény láthatósága",
+  "@Visibility of the chat history": {
     "type": "text",
     "placeholders": {}
   },
@@ -1302,23 +1511,28 @@
     "type": "text",
     "placeholders": {}
   },
-  "Visibility of the chat history": "Csevegési előzmény láthatósága",
-  "@Visibility of the chat history": {
-    "type": "text",
-    "placeholders": {}
-  },
   "Voice message": "Hang üzenet",
   "@Voice message": {
     "type": "text",
     "placeholders": {}
   },
-  "Wallpaper": "Háttér",
-  "@Wallpaper": {
+  "waitingPartnerAcceptRequest": "Waiting for partner to accept the request...",
+  "@waitingPartnerAcceptRequest": {
     "type": "text",
     "placeholders": {}
   },
-  "End to end encryption is currently in Beta! Use at your own risk!": "Végpontól-végpontig titkosítás egyelőre béta! Csak saját felelősségre!",
-  "@End to end encryption is currently in Beta! Use at your own risk!": {
+  "waitingPartnerEmoji": "Waiting for partner to accept the emoji...",
+  "@waitingPartnerEmoji": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "waitingPartnerNumbers": "Waiting for partner to accept the numbers...",
+  "@waitingPartnerNumbers": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "Wallpaper": "Háttér",
+  "@Wallpaper": {
     "type": "text",
     "placeholders": {}
   },
@@ -1369,6 +1583,11 @@
   },
   "You have been banned from this chat": "Kitiltottak ebből a csevegésből",
   "@You have been banned from this chat": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "You won't be able to disable the encryption anymore. Are you sure?": "Többé nem tudod kikapcsolni a titkosítás. Biztosan folytatod?",
+  "@You won't be able to disable the encryption anymore. Are you sure?": {
     "type": "text",
     "placeholders": {}
   },
