@@ -1,4 +1,4 @@
-# Version 0.15.0
+# Version 0.15.0 - 2020-06-26
 ### Features:
 - New room list app bar design
 - Chat app bar transparent
