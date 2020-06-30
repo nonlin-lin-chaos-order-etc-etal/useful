@@ -12,7 +12,8 @@ class HomeserverPicker extends StatelessWidget {
     final homeserver = await SimpleDialogs(context).enterText(
         titleText: L10n.of(context).enterYourHomeserver,
         hintText: Matrix.defaultHomeserver,
-        prefixText: 'https://');
+        prefixText: 'https://',
+        keyboardType: TextInputType.url);
     if (homeserver?.isEmpty ?? true) return;
     _checkHomeserverAction(homeserver, context);
   }
@@ -21,6 +22,7 @@ class HomeserverPicker extends StatelessWidget {
     if (!homeserver.startsWith('https://')) {
       homeserver = 'https://$homeserver';
     }
+    homeserver = homeserver.replaceAll(RegExp(r'\/?\s*$'), '');
     final success = await SimpleDialogs(context).tryRequestWithLoadingDialog(
         Matrix.of(context).client.checkServer(homeserver));
     if (success != false) {

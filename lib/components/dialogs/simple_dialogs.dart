@@ -18,6 +18,7 @@ class SimpleDialogs {
     String suffixText,
     bool password = false,
     bool multiLine = false,
+    TextInputType keyboardType
   }) async {
     var textEditingController = TextEditingController();
     final controller = textEditingController;
@@ -38,6 +39,7 @@ class SimpleDialogs {
           maxLines: multiLine ? 3 : 1,
           obscureText: password,
           textInputAction: multiLine ? TextInputAction.newline : null,
+          keyboardType: keyboardType,
           decoration: InputDecoration(
             hintText: hintText,
             labelText: labelText,
