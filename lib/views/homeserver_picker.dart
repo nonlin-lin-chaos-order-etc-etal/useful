@@ -22,7 +22,13 @@ class HomeserverPicker extends StatelessWidget {
     if (!homeserver.startsWith('https://')) {
       homeserver = 'https://$homeserver';
     }
-    homeserver = homeserver.replaceAll(RegExp(r'\/?\s*$'), '');
+
+    // removes trailing spaces and slash from url if present (api errors on it)
+    homeserver = homeserver.trim();
+    if (homeserver.endsWith('/')) {
+      homeserver = homeserver.substring(0, homeserver.length - 1);
+    }
+
     final success = await SimpleDialogs(context).tryRequestWithLoadingDialog(
         Matrix.of(context).client.checkServer(homeserver));
     if (success != false) {
