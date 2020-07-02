@@ -234,7 +234,8 @@ class _ChatState extends State<_Chat> {
     final audioFile = File(result);
     await SimpleDialogs(context).tryRequestWithLoadingDialog(
       room.sendFileEvent(
-        MatrixAudioFile(bytes: audioFile.readAsBytesSync(), name: audioFile.path),
+        MatrixAudioFile(
+            bytes: audioFile.readAsBytesSync(), name: audioFile.path),
       ),
     );
   }
