@@ -148,15 +148,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "4.0.2"
-  encrypted_moor:
-    dependency: "direct main"
-    description:
-      path: "extras/encryption"
-      ref: HEAD
-      resolved-ref: "6f930b011577e5bc8a5e5511691c8fcc43869a1c"
-      url: "https://github.com/simolus3/moor.git"
-    source: git
-    version: "1.0.0"
   fake_async:
     dependency: transitive
     description:
@@ -475,6 +466,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.0.2"
+  moor_ffi:
+    dependency: "direct main"
+    description:
+      name: moor_ffi
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.5.0"
   multi_server_socket:
     dependency: transitive
     description:
@@ -706,20 +704,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.2.0"
-  sqflite_common:
-    dependency: transitive
-    description:
-      name: sqflite_common
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.0.1"
-  sqflite_sqlcipher:
-    dependency: transitive
-    description:
-      name: sqflite_sqlcipher
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.0.0+6"
   stack_trace:
     dependency: transitive
     description:
