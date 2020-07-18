@@ -182,7 +182,6 @@ class _KeyVerificationPageState extends State<KeyVerificationPage> {
         );
         break;
       case KeyVerificationState.askSas:
-        var emojiWidgets = <Widget>[];
         TextSpan compareWidget;
         // maybe add a button to switch between the two and only determine default
         // view for if "emoji" is a present sasType or not?
@@ -190,13 +189,16 @@ class _KeyVerificationPageState extends State<KeyVerificationPage> {
         if (widget.request.sasTypes.contains('emoji')) {
           compareText = L10n.of(context).compareEmojiMatch;
           compareWidget = TextSpan(
-            children: widget.request.sasEmojis.map((e) => WidgetSpan(child: _Emoji(e))).toList(),
+            children: widget.request.sasEmojis
+                .map((e) => WidgetSpan(child: _Emoji(e)))
+                .toList(),
           );
         } else {
           compareText = L10n.of(context).compareNumbersMatch;
           final numbers = widget.request.sasNumbers;
           final numbstr = '${numbers[0]}-${numbers[1]}-${numbers[2]}';
-          compareWidget = TextSpan(text: numbstr, style: TextStyle(fontSize: 40));
+          compareWidget =
+              TextSpan(text: numbstr, style: TextStyle(fontSize: 40));
         }
         body = Column(
           children: <Widget>[
