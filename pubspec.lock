@@ -159,8 +159,8 @@ packages:
     dependency: "direct main"
     description:
       path: "."
-      ref: ac720df3d26985faef0b6d6a86a8013f44c5c6e3
-      resolved-ref: ac720df3d26985faef0b6d6a86a8013f44c5c6e3
+      ref: "175cb0fbd224928c72ceab43f131e81aac950836"
+      resolved-ref: "175cb0fbd224928c72ceab43f131e81aac950836"
       url: "https://gitlab.com/famedly/famedlysdk.git"
     source: git
     version: "0.0.1"
@@ -240,10 +240,10 @@ packages:
   flutter_matrix_html:
     dependency: "direct main"
     description:
-      name: flutter_matrix_html
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.1.1"
+      path: "/home/sorunome/repos/flutter_matrix_html"
+      relative: false
+    source: path
+    version: "0.1.2"
   flutter_plugin_android_lifecycle:
     dependency: transitive
     description:
@@ -425,12 +425,10 @@ packages:
   matrix_file_e2ee:
     dependency: transitive
     description:
-      path: "."
-      ref: "1.x.y"
-      resolved-ref: "32edeff765369a7a77a0822f4b19302ca24a017b"
-      url: "https://gitlab.com/famedly/libraries/matrix_file_e2ee.git"
-    source: git
-    version: "1.0.3"
+      name: matrix_file_e2ee
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.4"
   memoryfilepicker:
     dependency: "direct main"
     description:
@@ -504,12 +502,10 @@ packages:
   olm:
     dependency: transitive
     description:
-      path: "."
-      ref: "1.x.y"
-      resolved-ref: "8e4fcccff7a2d4d0bd5142964db092bf45061905"
-      url: "https://gitlab.com/famedly/libraries/dart-olm.git"
-    source: git
-    version: "1.2.0"
+      name: olm
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.2.1"
   open_file:
     dependency: "direct main"
     description:
