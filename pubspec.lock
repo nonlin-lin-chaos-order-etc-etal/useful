@@ -240,9 +240,9 @@ packages:
   flutter_matrix_html:
     dependency: "direct main"
     description:
-      path: "/home/sorunome/repos/flutter_matrix_html"
-      relative: false
-    source: path
+      name: flutter_matrix_html
+      url: "https://pub.dartlang.org"
+    source: hosted
     version: "0.1.2"
   flutter_plugin_android_lifecycle:
     dependency: transitive
