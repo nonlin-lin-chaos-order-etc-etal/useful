@@ -25,7 +25,7 @@ Future<Database> getDatabase(Client client) async {
       needMigration = true;
       password = randomString(255);
     }
-    _db = constructDb(
+    _db = await constructDb(
       logStatements: false,
       filename: 'moor.sqlite',
       password: password,
