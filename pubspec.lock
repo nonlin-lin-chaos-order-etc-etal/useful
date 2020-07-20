@@ -159,8 +159,8 @@ packages:
     dependency: "direct main"
     description:
       path: "."
-      ref: "175cb0fbd224928c72ceab43f131e81aac950836"
-      resolved-ref: "175cb0fbd224928c72ceab43f131e81aac950836"
+      ref: f4c8cfe992ceed937721af87abbd13fce7700ea5
+      resolved-ref: f4c8cfe992ceed937721af87abbd13fce7700ea5
       url: "https://gitlab.com/famedly/famedlysdk.git"
     source: git
     version: "0.0.1"
@@ -244,6 +244,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.1.2"
+  flutter_olm:
+    dependency: "direct main"
+    description:
+      name: flutter_olm
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.1"
   flutter_plugin_android_lifecycle:
     dependency: transitive
     description:

@@ -4,6 +4,8 @@
 ### Changes
 - Various performance improvements
 - Added languages: Galician, Croatian, Japanese, Russian
+### Fixes:
+- Various fixes, including key verification fixes
 
 # Version 0.15.1 - 2020-06-26
 ### Fixes:
