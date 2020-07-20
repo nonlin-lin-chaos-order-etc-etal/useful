@@ -3,6 +3,7 @@
 - Implement web notifications
 ### Changes
 - Various performance improvements
+- Added languages: Galician, Croatian, Japanese, Russian
 
 # Version 0.15.1 - 2020-06-26
 ### Fixes:
