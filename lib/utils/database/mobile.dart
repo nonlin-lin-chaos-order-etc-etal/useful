@@ -39,7 +39,8 @@ class _IsolateStartRequest {
   final String password;
   final bool logStatements;
 
-  _IsolateStartRequest(this.sendMoorIsolate, this.targetPath, this.password, this.logStatements);
+  _IsolateStartRequest(
+      this.sendMoorIsolate, this.targetPath, this.password, this.logStatements);
 }
 
 Future<Database> constructDb(
@@ -52,7 +53,8 @@ Future<Database> constructDb(
   final receivePort = ReceivePort();
   await Isolate.spawn(
     _startBackground,
-    _IsolateStartRequest(receivePort.sendPort, targetPath, password, logStatements),
+    _IsolateStartRequest(
+        receivePort.sendPort, targetPath, password, logStatements),
   );
   final isolate = (await receivePort.first as MoorIsolate);
   return Database.connect(await isolate.connect());
