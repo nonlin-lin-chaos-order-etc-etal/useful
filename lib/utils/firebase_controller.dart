@@ -29,7 +29,7 @@ abstract class FirebaseController {
 
   static Future<void> setupFirebase(
       MatrixState matrix, String clientName) async {
-    Client client = matrix.client;
+    final client = matrix.client;
     if (Platform.isIOS) iOS_Permission();
 
     String token;
