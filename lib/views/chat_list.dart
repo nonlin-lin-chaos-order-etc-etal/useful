@@ -337,7 +337,32 @@ class _ChatListState extends State<ChatList> {
                                       (r) => r.isFirst),
                             ),
                   body: StreamBuilder(
-                      stream: Matrix.of(context).client.onSync.stream,
+                      stream:
+                          Matrix.of(context).client.onSync.stream.where((sync) {
+                        // needs to have room updates
+                        if (sync.rooms == null) {
+                          return false;
+                        }
+                        // if we have an invite or we left a room, we update
+                        if (sync.rooms.invite != null ||
+                            sync.rooms.leave != null) {
+                          return true;
+                        }
+                        // if there are somehow no join updates, don't update
+                        if (sync.rooms.join == null) {
+                          return false;
+                        }
+                        // now, at least one room needs to have a new message event, so that the preview is updated
+                        for (final roomUpdate in sync.rooms.join.values) {
+                          if (roomUpdate.timeline != null &&
+                              roomUpdate.timeline.events != null &&
+                              roomUpdate.timeline.events
+                                  .any((e) => e.type == EventTypes.Message)) {
+                            return true;
+                          }
+                        }
+                        return false;
+                      }),
                       builder: (context, snapshot) {
                         return FutureBuilder<void>(
                           future: waitForFirstSync(context),
