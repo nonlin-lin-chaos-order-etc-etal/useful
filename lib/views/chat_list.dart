@@ -356,8 +356,7 @@ class _ChatListState extends State<ChatList> {
                         for (final roomUpdate in sync.rooms.join.values) {
                           if (roomUpdate.timeline != null &&
                               roomUpdate.timeline.events != null &&
-                              roomUpdate.timeline.events
-                                  .any((e) => e.type == EventTypes.Message)) {
+                              roomUpdate.timeline.events.isNotEmpty) {
                             return true;
                           }
                         }
