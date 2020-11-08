@@ -610,6 +610,8 @@ class _ChatState extends State<_Chat> {
                                             3.5) /
                                     2),
                           ),
+                          keyboardDismissBehavior:
+                              ScrollViewKeyboardDismissBehavior.onDrag,
                           reverse: true,
                           itemCount: filteredEvents.length + 2,
                           controller: _scrollController,
