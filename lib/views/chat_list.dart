@@ -481,6 +481,9 @@ class _ChatListState extends State<ChatList> {
                                     final totalCount =
                                         rooms.length + publicRoomsCount;
                                     return ListView.separated(
+                                      keyboardDismissBehavior:
+                                          ScrollViewKeyboardDismissBehavior
+                                              .onDrag,
                                       controller: _scrollController,
                                       separatorBuilder: (BuildContext context,
                                               int i) =>
