@@ -1,3 +1,7 @@
+# Useful. A Matrix chat client.
+
+OLDER INFO IS BELOW.
+
 ![](https://i.imgur.com/wi7RlVt.png)
 
 <p align="center">
